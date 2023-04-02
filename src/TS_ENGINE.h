@@ -1,0 +1,9 @@
+#pragma once
+#include "Core/Base.h"
+#include "Core/Application.h"
+#include "Core/Layer.h"
+#include "Core/Log.h"
+#include "Core/TSAssert.h"
+#include "Core/Input.h"
+#include "Core/KeyCodes.h"
+#include "Core/MouseCodes.h"
