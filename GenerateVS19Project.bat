@@ -1,12 +1,12 @@
-REM Install CMake if not installed
 @echo off
-where cmake >nul 2>nul
-if %errorlevel% == 0 (
-    echo CMake is already installed
-) else (
-    echo Installing CMake...
-    choco install cmake -y
-)
+
+REM Installing assimp and spdlog
+cd vcpkg
+vcpkg install assimp:x64-windows --recurse
+vcpkg install spdlog:x64-windows --recurse
+echo Installed assimp, imgui, and spdlog. 
+echo To generate project,
+PAUSE
 
 REM Generate Solution
 cmake -G "Visual Studio 16 2019" -A=x64 -B=./build/x64/Debug -DCMAKE_ARCHITECTURE=x64 -DCMAKE_BUILD_TYPE=Debug
