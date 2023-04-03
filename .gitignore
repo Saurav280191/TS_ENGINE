@@ -1,3 +1,5 @@
+!Dependencies/*.lib
+
 build/
 vcpkg/
 
@@ -33,3 +35,5 @@ vcpkg/
 *.exe
 *.out
 *.app
+
+
