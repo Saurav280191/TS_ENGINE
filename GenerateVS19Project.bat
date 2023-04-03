@@ -8,6 +8,8 @@ echo Installed assimp, imgui, and spdlog.
 echo To generate project,
 PAUSE
 
+cd ..
+
 REM Generate Solution
 cmake -G "Visual Studio 16 2019" -A=x64 -B=./build/x64/Debug -DCMAKE_ARCHITECTURE=x64 -DCMAKE_BUILD_TYPE=Debug
 REM Build Binaries
