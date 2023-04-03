@@ -1,6 +1,6 @@
 !Dependencies/
 
-#build/
+build/
 vcpkg/
 
 # Prerequisites
@@ -19,7 +19,7 @@ vcpkg/
 # Compiled Dynamic libraries
 *.so
 *.dylib
-#*.dll
+*.dll
 
 # Fortran module files
 *.mod
@@ -29,7 +29,7 @@ vcpkg/
 *.lai
 *.la
 *.a
-#*.lib
+*.lib
 
 # Executables
 *.exe
