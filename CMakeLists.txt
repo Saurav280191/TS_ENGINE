@@ -173,18 +173,17 @@ add_compile_definitions(
      )
 
 
+message ("Including assimp from: " ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/installed/${CMAKE_ARCHITECTURE}-windows/include)
+
  #Include directories
 target_include_directories (TS_ENGINE PUBLIC 
-${CMAKE_SOURCE_DIR}
-${CMAKE_SOURCE_DIR}/src
-${CMAKE_SOURCE_DIR}/src/Core
-${CMAKE_SOURCE_DIR}/ExternalDependencies/include
-${CMAKE_SOURCE_DIR}/ExternalDependencies/include/glad
-${CMAKE_SOURCE_DIR}/ThirdParty/imgui
-${CMAKE_SOURCE_DIR}/ThirdParty/imgui/backends
-${CMAKE_SOURCE_DIR}/ThirdParty/assimp/include
-${CMAKE_SOURCE_DIR}/ThirdParty/assimp/build/$(Platform)/include
-${CMAKE_SOURCE_DIR}/ThirdParty/spdlog/include
+${CMAKE_CURRENT_SOURCE_DIR}/src
+${CMAKE_CURRENT_SOURCE_DIR}/src/Core
+${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include
+${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/imgui
+${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/imgui/backends
+${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/glad
+${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/installed/${CMAKE_ARCHITECTURE}-windows/include
 )
 
 #Add Library directories
@@ -201,13 +200,9 @@ ${CMAKE_SOURCE_DIR}/ThirdParty/spdlog/include
 target_precompile_headers(TS_ENGINE PRIVATE src/Core/tspch.h)
 
 #Add libraries
-#target_link_libraries(TS_Engine LINK_PUBLIC opengl32.lib
-target_link_libraries(TS_ENGINE opengl32.lib
-${CMAKE_SOURCE_DIR}/ExternalDependencies/lib/$(Platform)/$(Configuration)/glfw3.lib
-#${CMAKE_SOURCE_DIR}/ThirdParty/assimp/build/x64/lib/Debug/assimp-vc142-mtd.lib#Assimp lib
+target_link_libraries(TS_ENGINE 
+opengl32.lib
+${CMAKE_SOURCE_DIR}/ExternalDependencies/libraries/${CMAKE_ARCHITECTURE}/${CMAKE_BUILD_TYPE}/glfw3.lib
+assimp
 )
 
-#add_subdirectory (src)
-#add_subdirectory (TS_Sandbox)
-
-#file(COPY ${CMAKE_SOURCE_DIR}/../../assimp/build/${CMAKE_ARCHITECTURE}/bin/${CMAKE_BUILD_TYPE}/assimp-vc142-mtd.dll DESTINATION ${CMAKE_BINARY_DIR}/bin/)
