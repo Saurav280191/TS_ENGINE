@@ -1,6 +1,6 @@
-!Dependencies/*.lib
+!Dependencies/
 
-build/
+#build/
 vcpkg/
 
 # Prerequisites
