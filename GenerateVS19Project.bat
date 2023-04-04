@@ -1,10 +1,11 @@
 @echo off
 
-REM Installing assimp and spdlog
+REM Installing assimp
 cd vcpkg
 vcpkg install assimp:x64-windows --recurse
-vcpkg install spdlog:x64-windows --recurse
-echo Installed assimp, imgui, and spdlog. 
+::vcpkg install spdlog:x64-windows --recurse
+::vcpkg install imgui:x64-windows --recurse
+echo Installed assimp
 echo To generate project,
 PAUSE
 
@@ -15,5 +16,5 @@ cmake -G "Visual Studio 16 2019" -A=x64 -B=./build/x64/Debug -DCMAKE_ARCHITECTUR
 REM Build Binaries
 cmake --build build/x64/Debug --config Debug
 
-copy "ThirdParty\assimp\build\x64\bin\Debug\assimp-vc142-mtd.dll" "build\x64\Debug\bin"
-
+copy "vcpkg\installed\x64-windows\debug\bin\assimp-vc143-mtd.dll" "build\x64\Debug\bin"
+PAUSE
