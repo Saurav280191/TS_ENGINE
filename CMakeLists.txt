@@ -69,8 +69,8 @@ src/Platform/OpenGL/OpenGLBuffer.h
 src/Platform/OpenGL/OpenGLBuffer.cpp
 src/Platform/OpenGL/OpenGLContext.h
 src/Platform/OpenGL/OpenGLContext.cpp
-src/Platform/OpenGL/OpenGLRenderAPI.h
-src/Platform/OpenGL/OpenGLRenderAPI.cpp
+src/Platform/OpenGL/OpenGLRendererAPI.h
+src/Platform/OpenGL/OpenGLRendererAPI.cpp
 src/Platform/OpenGL/OpenGLShader.h
 src/Platform/OpenGL/OpenGLShader.cpp
 src/Platform/OpenGL/OpenGLTexture.h
@@ -153,8 +153,8 @@ ${EventsSrc} #Events Filter
 ${ImGuiSrc} #ImGui Filter
 ${PlatformOpenGLSrc} #Platform OpenGL Filter
 ${PlatformWindowsSrc} #Platform Windows Filter
-${PrimitiveHeaderSrc} #Primitives Filter
-${RendererHeaderSrc} #Renderer Filter
+${PrimitiveSrc} #Primitives Filter
+${RendererSrc} #Renderer Filter
 )
 
 #Add definations
@@ -171,9 +171,6 @@ add_compile_definitions(
      _CRT_SECURE_NO_DEPRECATE
      _SCL_SECURE_NO_WARNINGS
      )
-
-
-message ("Including assimp from: " ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/installed/${CMAKE_ARCHITECTURE}-windows/include)
 
  #Include directories
 target_include_directories (TS_ENGINE PUBLIC 
@@ -200,9 +197,9 @@ ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/installed/${CMAKE_ARCHITECTURE}-windows/includ
 target_precompile_headers(TS_ENGINE PRIVATE src/Core/tspch.h)
 
 #Add libraries
-target_link_libraries(TS_ENGINE 
-opengl32.lib
-${CMAKE_SOURCE_DIR}/ExternalDependencies/libraries/${CMAKE_ARCHITECTURE}/${CMAKE_BUILD_TYPE}/glfw3.lib
-assimp
-)
+#target_link_libraries(TS_ENGINE 
+#opengl32.lib
+#glfw3.lib
+#assimp-vc143-mtd.lib
+#)
 

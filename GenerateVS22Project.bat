@@ -3,7 +3,8 @@
 REM Installing assimp and spdlog
 cd vcpkg
 vcpkg install assimp:x64-windows --recurse
-vcpkg install spdlog:x64-windows --recurse
+::vcpkg install spdlog:x64-windows --recurse
+::vcpkg install imgui:x64-windows --recurse
 echo Installed assimp, imgui, and spdlog. 
 echo To generate project,
 PAUSE
