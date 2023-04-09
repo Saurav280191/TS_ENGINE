@@ -138,13 +138,6 @@ src/Renderer/VertexArray.cpp
 )
 source_group("Renderer" FILES ${RendererSrc})
 
-#Setting type of GLAD project ie. .lib in this case
-#add_library (GLAD ../ExternalDependencies/include/glad/glad.h ../ExternalDependencies/src/glad/glad.c) 
-#target_include_directories (TS_Engine PUBLIC ../ExternalDependencies/include)
-
-#Add precompiled headers
-#target_precompile_headers(TS_Engine PRIVATE "include/tspch.h")
-
 #Setting type of TS_Engine project ie. .lib in this case
 add_library (TS_ENGINE
 ${SOURCE_FILES} #Source Files Default Filter
@@ -180,26 +173,8 @@ ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include
 ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/imgui
 ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/imgui/backends
 ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/glad
-${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/installed/${CMAKE_ARCHITECTURE}-windows/include
+${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/assimp/include
+${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/assimp/build/x64/include
 )
 
-#Add Library directories
-#link_directories(TS_Engine PUBLIC 
-    #${CMAKE_SOURCE_DIR}/ExternalDependencies/lib/$(Platform)/$(Configuration)
-    #${CMAKE_SOURCE_DIR}../../assimp/build/$(Platform)/lib/$(Configuration)
-#)
-
-#set_target_properties(TS_Engine PROPERTIES
-#  IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/ExternalDependencies/lib/$(Platform)/$(Configuration)"
-#  INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/ExternalDependencies/lib/$(Platform)/$(Configuration)"
-#)
-
 target_precompile_headers(TS_ENGINE PRIVATE src/Core/tspch.h)
-
-#Add libraries
-#target_link_libraries(TS_ENGINE 
-#opengl32.lib
-#glfw3.lib
-#assimp-vc143-mtd.lib
-#)
-
