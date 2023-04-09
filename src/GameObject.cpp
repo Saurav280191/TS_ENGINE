@@ -3,7 +3,6 @@
 
 namespace TS_ENGINE {
 
-	//TEST
 	GameObject::GameObject() :
 		mHasTexture(false),
 		//mTextureID(0),
