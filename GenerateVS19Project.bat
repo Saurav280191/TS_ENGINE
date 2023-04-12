@@ -2,7 +2,7 @@
 
 echo Building assimp
 cd Dependencies\include\assimp
-call Build_vs2022_x64.bat
+call Build_vs2019_x64.bat
 cd ..\..\..\
 
 REM Generate Solution
@@ -11,4 +11,5 @@ REM Build Binaries
 cmake --build build/x64/Debug --config Debug
 
 copy "Dependencies\include\assimp\build\x64\bin\Debug\assimp-vc143-mtd.dll" "build\x64\Debug\bin"
+echo TS_ENGINE build completed
 PAUSE

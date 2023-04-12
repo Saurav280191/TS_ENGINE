@@ -11,4 +11,5 @@ REM Build Binaries
 cmake --build build/x64/Debug --config Debug
 
 copy "Dependencies\include\assimp\build\x64\bin\Debug\assimp-vc143-mtd.dll" "build\x64\Debug\bin"
+echo TS_ENGINE build completed
 PAUSE
