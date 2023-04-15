@@ -9,7 +9,7 @@ namespace TS_ENGINE
 {
 	Camera::Camera(CameraType cameraType) :
 		mMoveSpeed(0.02f),
-		mRotateSpeed(0.0003f)
+		mRotateSpeed(0.0006f)
 	{	
 		mForward = Vector3(0, 0, 1);
 		mUp = Vector3(0, 1, 0);
@@ -82,7 +82,7 @@ namespace TS_ENGINE
 	}
 	void Camera::Pitch(float pitchSpeed, float deltaTime)
 	{
-		mEulerAngles.x -= mRotateSpeed * pitchSpeed * deltaTime;
+		mEulerAngles.x += mRotateSpeed * pitchSpeed * deltaTime;
 		//TS_CORE_INFO("Camera rotated to {0}, {1}, {2}", mEulerAngles.x, mEulerAngles.y, mEulerAngles.z);
 	}
 	void Camera::Roll(float rollSpeed, float deltaTime)
@@ -204,21 +204,11 @@ namespace TS_ENGINE
 			if (Input::IsMouseButtonPressed(Mouse::Button1))
 			{
 				if (deltaMousePos.x != 0)
-				{
-					if (deltaMousePos.x < 0)
-						Yaw(1.0f, deltaTime);
-					if (deltaMousePos.x > 0)
-						Yaw(-1.0f, deltaTime);
-				}
+					Yaw(-20.0f * deltaMousePos.x, deltaTime);
 
 				//Pitch Mouse
-				if (deltaMousePos.y != 0)
-				{
-					if (deltaMousePos.y < 0)
-						Pitch(1.0f, deltaTime);
-					if (deltaMousePos.y > 0)
-						Pitch(-1.0f, deltaTime);
-				}
+				if (deltaMousePos.y != 0)				
+					Pitch(20.0f * deltaMousePos.y, deltaTime);				
 			}
 		}
 	}
