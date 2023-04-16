@@ -47,15 +47,10 @@ namespace TS_ENGINE {
 
 	class Mesh
 	{
-	private:
-		std::vector<Vertex> mVertices;
-		std::vector<uint32_t> mIndices;
-		
-		//unsigned int mVAO, mVBO, mEBO;		
-		Ref<VertexArray> mVertexArray;
-
-		bool mStatsRegistered;
 	public:
+
+		Mesh();
+
 		void AddVertex(Vertex vertex);
 		void AddIndex(uint32_t index);
 
@@ -69,6 +64,12 @@ namespace TS_ENGINE {
 		std::vector<Vertex> GetVertices();
 		std::vector<Vertex> GetWorldSpaceVertices(Vector3 position, Vector3 eulerAngles, Vector3 scale);
 		std::vector<uint32_t> GetIndices();
+
+	private:
+		std::vector<Vertex> mVertices;
+		std::vector<uint32_t> mIndices;		
+		Ref<VertexArray> mVertexArray;
+		bool mStatsRegistered;
 	};
 }
 

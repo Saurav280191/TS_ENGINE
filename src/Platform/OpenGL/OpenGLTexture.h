@@ -38,6 +38,8 @@ namespace TS_ENGINE {
 
 		virtual void SetData(unsigned char* data, uint32_t size) override;
 		virtual void Bind(uint32_t slot) const override;
+		virtual void SetVerticalFlip(bool flip) const override;
+		
 		virtual bool IsLoaded() const override
 		{
 			return mIsLoaded;

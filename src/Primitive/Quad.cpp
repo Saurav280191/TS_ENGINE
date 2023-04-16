@@ -6,23 +6,24 @@ namespace TS_ENGINE {
 	Quad::Quad(const char* name)
 	{
 		mName = name;
-		mMesh = new Mesh();
+		mMesh = CreateRef<Mesh>();
 	}
 
 	Quad::Quad(const char* name, Vector3 color)
 	{
 		mName = name;
-		mMesh = new Mesh();
+		mMesh = CreateRef<Mesh>();
 		mColor = color;
 	}
 
 	void Quad::OverrideTexCoords(std::vector<Vector2> texCoords)
 	{
 		for (auto mesh : mMeshes)
-			mesh->Destroy();
+			mesh->~Mesh();
+
 		mMeshes.clear();
 
-		mMesh = new Mesh();
+		mMesh = CreateRef<Mesh>();
 
 		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.0f), GetColor(), Vector3(0, 1, 0), Vector2(texCoords[0].x, texCoords[0].y)));
 		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.0f), GetColor(), Vector3(0, 1, 0), Vector2(texCoords[1].x, texCoords[1].y)));

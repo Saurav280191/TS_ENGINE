@@ -3,6 +3,7 @@
 #include "Primitive/Mesh.h"
 #include "Renderer/Shader.h"
 #include "Renderer/Texture.h"
+//#include "Core/Transform.h"
 
 namespace TS_ENGINE {
 
@@ -11,38 +12,24 @@ namespace TS_ENGINE {
 	class GameObject
 	{
 	private:
-		//GLuint mTextureID;
-		Vector3 mPosition = Vector3(0);
-		Vector3 mEulerAngle = Vector3(0);
-		Vector3 mScale = Vector3(1);
-
+		//Ref<Transform> mTransform;
 		bool mHasTexture;
 	protected:
 		Vector3 mColor;
 		Ref<TS_ENGINE::Texture2D> mTexture;
 
 		Vector2 mTiling = Vector2(1);
-		std::vector<Mesh*> mMeshes;
-		const char* mName;
+		std::vector<Ref<Mesh>> mMeshes;
+		std::string mName;
 	public:
 		GameObject();
+		~GameObject();
 		
-		void SetName(const char* name);
-		const char* GetName() const
+		void SetName(std::string name);
+		const std::string& GetName() const
 		{
 			return mName;
 		}
-		void SetPosition(Vector3 position);
-		void SetPosition(float x, float y, float z);
-		void SetEulerAngle(float x, float y, float z);
-		void SetScale(float x);
-		void SetScale(float x, float y, float z);
-
-		Vector3 GetPosition();
-
-		Vector3 GetEulerAngle();
-
-		Vector3 GetScale();
 
 		void SetColor(Vector3 color);
 
@@ -60,9 +47,9 @@ namespace TS_ENGINE {
 
 		void Destroy();
 
-		void AddMesh(Mesh* mesh);
-		void AddMeshes(std::vector<Mesh*> _meshes);
-		std::vector<Mesh*> GetMeshes();
+		void AddMesh(Ref<Mesh> mesh);
+		void AddMeshes(std::vector<Ref<Mesh>> _meshes);
+		std::vector<Ref<Mesh>> GetMeshes();
 		const bool GetHasTexture()
 		{
 			return mHasTexture;

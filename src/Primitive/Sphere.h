@@ -11,7 +11,7 @@ namespace TS_ENGINE {
 		int mStackCount = 20;
 		int mSectorCount = 20;
 
-		Mesh* mMesh;
+		Ref<Mesh> mMesh;
 	public:
 		Sphere(const char* name);
 		void CreateVertices();

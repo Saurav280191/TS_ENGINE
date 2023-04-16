@@ -16,10 +16,6 @@ endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 
 #SOURCE_FILES
 set (SOURCE_FILES
-src/GameObject.h
-src/GameObject.cpp
-src/ModelLoader.h
-src/ModelLoader.cpp
 src/stb_image.h
 )
 
@@ -43,6 +39,14 @@ src/Core/tcpch.h
 src/Core/tcpch.cpp
 src/Core/Window.h
 src/Core/Window.cpp
+src/Core/Object.h
+src/Core/Object.cpp
+src/Core/GameObject.h
+src/Core/GameObject.cpp
+src/Core/ModelLoader.h
+src/Core/ModelLoader.cpp
+src/Core/Transform.h
+src/Core/Transform.cpp
 )
 source_group("Core" FILES ${CoreSrc})
 
@@ -138,6 +142,18 @@ src/Renderer/VertexArray.cpp
 )
 source_group("Renderer" FILES ${RendererSrc})
 
+#Renderer Filter
+file(GLOB SceneManagerSrc
+src/SceneManager/Node.h
+src/SceneManager/Node.cpp
+src/SceneManager/Scene.h
+src/SceneManager/Scene.cpp
+#src/SceneManager/SceneManager.h
+#src/SceneManager/SceneManager.cpp
+
+)
+source_group("SceneManager" FILES ${SceneManagerSrc})
+
 #Setting type of TS_Engine project ie. .lib in this case
 add_library (TS_ENGINE
 ${SOURCE_FILES} #Source Files Default Filter
@@ -148,6 +164,7 @@ ${PlatformOpenGLSrc} #Platform OpenGL Filter
 ${PlatformWindowsSrc} #Platform Windows Filter
 ${PrimitiveSrc} #Primitives Filter
 ${RendererSrc} #Renderer Filter
+${SceneManagerSrc}
 )
 
 #Add definations

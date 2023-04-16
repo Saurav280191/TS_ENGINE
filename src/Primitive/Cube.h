@@ -6,7 +6,7 @@ namespace TS_ENGINE {
 	class Cube : public GameObject
 	{
 	private:
-		Mesh* mMesh;
+		Ref<Mesh> mMesh;
 	public:
 		Cube(const char* name);
 		void Create();

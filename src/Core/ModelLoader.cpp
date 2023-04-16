@@ -5,7 +5,7 @@ namespace TS_ENGINE {
 	
 	ModelLoader::ModelLoader() :
 		mLoadedModelMap(),
-		mLastLoadedModel(NULL)
+		mLastLoadedModel(nullptr)
 	{
 
 	}
@@ -15,7 +15,7 @@ namespace TS_ENGINE {
 		for (auto& loadedModelPair : mLoadedModelMap)
 			loadedModelPair.second->Destroy();
 
-		mLastLoadedModel = NULL;
+		mLastLoadedModel = nullptr;
 		mLoadedModelMap.clear();
 	}
 

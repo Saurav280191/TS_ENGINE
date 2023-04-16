@@ -6,7 +6,7 @@ namespace TS_ENGINE {
 	Cube::Cube(const char* name)
 	{
 		mName = name;
-		mMesh = new Mesh();
+		mMesh = CreateRef<Mesh>();
 	}
 
 	void Cube::Create()

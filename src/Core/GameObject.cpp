@@ -5,50 +5,22 @@ namespace TS_ENGINE {
 
 	GameObject::GameObject() :
 		mHasTexture(false),
-		//mTextureID(0),
 		mColor(Vector3(1, 1, 1))
 	{
-		//mMesh = CreateRef<Mesh>();
 		mMeshes = {};
+		//mTransform = CreateRef<Transform>();
 	}
 
-	void GameObject::SetName(const char* name)
+	GameObject::~GameObject()
+	{
+		mHasTexture = false;
+		mColor = Vector3(0.0f);
+		mMeshes.clear();
+	}
+
+	void GameObject::SetName(std::string name)
 	{
 		mName = name;
-	}
-
-	void GameObject::SetPosition(Vector3 position)
-	{
-		mPosition = position;
-	}
-	void GameObject::SetPosition(float x, float y, float z)
-	{
-		mPosition = glm::vec3(x, y, z);
-	}
-	void GameObject::SetEulerAngle(float x, float y, float z)
-	{
-		mEulerAngle = glm::vec3(x, y, z);
-	}
-	void GameObject::SetScale(float x)
-	{
-		mScale = glm::vec3(x);
-	}
-	void GameObject::SetScale(float x, float y, float z)
-	{
-		mScale = glm::vec3(x, y, z);
-	}
-
-	Vector3 GameObject::GetPosition()
-	{
-		return mPosition;
-	}
-	Vector3 GameObject::GetEulerAngle()
-	{
-		return mEulerAngle;
-	}
-	Vector3 GameObject::GetScale()
-	{
-		return mScale;
 	}
 
 	void GameObject::SetColor(Vector3 color)
@@ -110,15 +82,15 @@ namespace TS_ENGINE {
 
 	void GameObject::Draw(Ref<Shader> shader)
 	{
+		/*shader->SetMat4("u_Model",//Moved to Node class
+			glm::translate(glm::mat4(1), mTransform->GetLocalPosition())
+			* glm::rotate(glm::mat4(1), glm::radians(mTransform->GetLocalEulerAngles().x), glm::vec3(1, 0, 0))
+			* glm::rotate(glm::mat4(1), glm::radians(-mTransform->GetLocalEulerAngles().y), glm::vec3(0, 1, 0))
+			* glm::rotate(glm::mat4(1), glm::radians(mTransform->GetLocalEulerAngles().z), glm::vec3(0, 0, 1))
+			* glm::scale(glm::mat4(1), mTransform->GetLocalScale()));*/
+
 		if(mTexture)
 			mTexture->Bind();
-
-		shader->SetMat4("u_Model",
-			glm::translate(glm::mat4(1), mPosition)
-			* glm::rotate(glm::mat4(1), glm::radians(mEulerAngle.x), glm::vec3(1, 0, 0))
-			* glm::rotate(glm::mat4(1), glm::radians(-mEulerAngle.y), glm::vec3(0, 1, 0))
-			* glm::rotate(glm::mat4(1), glm::radians(mEulerAngle.z), glm::vec3(0, 0, 1))
-			* glm::scale(glm::mat4(1), mScale));
 
 		for(auto mesh : mMeshes)
 			mesh->Draw();
@@ -126,21 +98,21 @@ namespace TS_ENGINE {
 
 	void GameObject::Destroy()
 	{
-		for(auto mesh : mMeshes)
+		for(auto& mesh : mMeshes)
 			mesh->Destroy();
 	}
 
-	void GameObject::AddMesh(Mesh* mesh)
+	void GameObject::AddMesh(Ref<Mesh> mesh)
 	{
 		mMeshes.push_back(mesh);
 	}
 
-	void GameObject::AddMeshes(std::vector<Mesh*> _meshes)
+	void GameObject::AddMeshes(std::vector<Ref<Mesh>> _meshes)
 	{
 		mMeshes = _meshes;
 	}
 
-	std::vector<Mesh*> GameObject::GetMeshes()
+	std::vector<Ref<Mesh>> GameObject::GetMeshes()
 	{
 		return mMeshes;
 	}

@@ -5,6 +5,12 @@
 
 namespace TS_ENGINE {
 
+	Mesh::Mesh() :
+		mStatsRegistered(false)
+	{
+
+	}
+
 	void Mesh::AddVertex(Vertex vertex)
 	{
 		mVertices.push_back(vertex);
@@ -28,9 +34,9 @@ namespace TS_ENGINE {
 	void Mesh::Create()
 	{
 		mVertexArray = VertexArray::Create();
-		
+
 		Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(&mVertices[0], mVertices.size() * sizeof(Vertex));
-		
+
 		vertexBuffer->SetLayout({
 			{ShaderDataType::FLOAT3, "a_Position"},
 			{ShaderDataType::FLOAT3, "a_Color"},
@@ -49,25 +55,32 @@ namespace TS_ENGINE {
 	{
 		RenderCommand::DrawIndexed(mVertexArray, mIndices.size());
 
-		#pragma region STATS
+#pragma region STATS
 		TS_ENGINE::Application::Get().AddDrawCalls(1);
 		TS_ENGINE::Application::Get().AddVertices(mVertices.size());
-		TS_ENGINE::Application::Get().AddIndices(mIndices.size());	
-		#pragma endregion
+		TS_ENGINE::Application::Get().AddIndices(mIndices.size());
+#pragma endregion
 	}
-
+	
 	void Mesh::Destroy()
 	{
-		for (auto vertexBuffer : mVertexArray->GetVertexBuffers())
+		for (auto& vertexBuffer : mVertexArray->GetVertexBuffers())
 		{
 			vertexBuffer->Unbind();
 			vertexBuffer->~VertexBuffer();
 		}
 
-		mVertexArray->GetIndexBuffer()->Unbind();
-		mVertexArray->GetIndexBuffer()->~IndexBuffer();
+		auto& indexBuffer = mVertexArray->GetIndexBuffer();
+
+		indexBuffer->Unbind();
+		indexBuffer->~IndexBuffer();
 
 		mVertexArray->~VertexArray();
+
+
+		mVertices.clear();
+		mIndices.clear();
+		mStatsRegistered = false;
 	}
 
 	std::vector<Vertex> Mesh::GetVertices()
@@ -79,11 +92,11 @@ namespace TS_ENGINE {
 	{
 		return mIndices;
 	}
-	
+
 	std::vector<Vertex> Mesh::GetWorldSpaceVertices(Vector3 position = Vector3(0, 0, 0), Vector3 eulerAngles = Vector3(0, 0, 0), Vector3 scale = Vector3(1, 1, 1))
 	{
-		Matrix4 modelMatrix = 
-			glm::translate(Matrix4(1), position) * 
+		Matrix4 modelMatrix =
+			glm::translate(Matrix4(1), position) *
 			glm::rotate(Matrix4(1), glm::radians(eulerAngles.x), Vector3(1, 0, 0)) *
 			glm::rotate(Matrix4(1), glm::radians(-eulerAngles.y), Vector3(0, 1, 0)) *
 			glm::rotate(Matrix4(1), glm::radians(eulerAngles.z), Vector3(0, 0, 1)) *

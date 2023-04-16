@@ -5,7 +5,7 @@ namespace TS_ENGINE {
 	class Quad : public GameObject
 	{
 	private:
-		Mesh* mMesh;
+		Ref<Mesh> mMesh;
 	public:
 		Quad(const char* name);
 		Quad(const char* name, Vector3 color);

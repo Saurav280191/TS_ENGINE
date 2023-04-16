@@ -1,6 +1,6 @@
 #pragma once
 #include "TS_ENGINE.h"
-#include "GameObject.h"
+#include "SceneManager/Node.h"
 #include "TextureAtlasCreator.h"
 #include "Core/Base.h"
 
@@ -25,7 +25,7 @@ namespace TS_ENGINE {
 		void CreateAtlases();
 		AtlasSizeAndTextureRectPair GetAtlasAndTextureRectPair(uint32_t texID);
 
-		void StartBatching(std::vector<Ref<TS_ENGINE::GameObject>> gameObjects);
+		void StartBatching(std::vector<Ref<TS_ENGINE::Node>> nodes);
 		void DrawBatch();
 	private:
 		static Batcher* m_pInstance;

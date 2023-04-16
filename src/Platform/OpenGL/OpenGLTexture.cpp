@@ -27,7 +27,7 @@ namespace TS_ENGINE {
 		mPath(path)
 	{
 		int width, height, channels;
-		stbi_set_flip_vertically_on_load(1);
+		//stbi_set_flip_vertically_on_load(1);
 		
 		data = nullptr;
 		{
@@ -158,7 +158,12 @@ namespace TS_ENGINE {
 	{
 		glBindTextureUnit(slot, mRendererID);
 	}
-	
+
+	void OpenGLTexture2D::SetVerticalFlip(bool flip) const
+	{
+		stbi_set_flip_vertically_on_load(flip);
+	}
+
 	void OpenGLTexture2D::OverrideTextureID(GLuint texID)
 	{
 		mRendererID = texID;

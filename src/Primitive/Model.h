@@ -13,7 +13,7 @@ namespace TS_ENGINE {
 
 		void LoadModel(const std::string& modelPath);
 		void ProcessNode(aiNode* node, const aiScene* scene);
-		Mesh* ProcessMesh(aiMesh* mesh, const aiScene* scene);
+		Ref<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene);
 	public:
 		Model();
 		Model(const std::string& modelPath);		

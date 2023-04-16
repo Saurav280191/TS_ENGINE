@@ -60,17 +60,18 @@ namespace TS_ENGINE {
 		}
 	}
 
-	void Batcher::StartBatching(std::vector<Ref<TS_ENGINE::GameObject>> gameObjects)
+	void Batcher::StartBatching(std::vector<Ref<TS_ENGINE::Node>> nodes)
 	{
 		uint32_t lastTotalVertices = 0;
 
-		if (gameObjects.size() == 0)
+		if (nodes.size() == 0)
 			return;
 
-		for (auto& go : gameObjects)
+		for (auto& node : nodes)
 		{
 			uint32_t meshIndex = 0;
-			
+			Ref<GameObject> go = node->GetAttachedGameObject();
+
 			uint32_t texID = go->GetTextureID();
 			//TS_CORE_INFO("Texture ID for {0} is {1}",go->GetName(), texID);
 			AtlasSizeAndTextureRectPair atlasAndTextureRectPair = GetAtlasAndTextureRectPair(texID);
@@ -84,9 +85,9 @@ namespace TS_ENGINE {
 			float u2 = (rect.x + rect.w);
 			float v2 = (rect.y + rect.h);
 
-			for (auto mesh : go->GetMeshes())
+			for (auto& mesh : go->GetMeshes())
 			{
-				auto vertices = mesh->GetWorldSpaceVertices(go->GetPosition(),go->GetEulerAngle(),go->GetScale());
+				auto vertices = mesh->GetWorldSpaceVertices(node->GetTransform()->GetLocalPosition(), node->GetTransform()->GetLocalEulerAngles(), node->GetTransform()->GetLocalScale());
 				auto indices = mesh->GetIndices();
 				GLuint currentMeshTexID = go->GetTextureID();
 

@@ -54,7 +54,7 @@ namespace TS_ENGINE {
 		}
 	}
 
-	Mesh* Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+	Ref<Mesh> Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	{
 		std::vector<Vertex> vertices;
 		std::vector<GLuint> indices;
@@ -147,7 +147,7 @@ namespace TS_ENGINE {
 			}
 		}
 
-		Mesh* mMesh = new Mesh();
+		Ref<Mesh> mMesh = CreateRef<Mesh>();
 		mMesh->SetVertices(vertices);
 		mMesh->SetIndices(indices);
 		mMesh->Create();
