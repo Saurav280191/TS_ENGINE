@@ -19,7 +19,7 @@ namespace TS_ENGINE {
 	
 	Batcher::~Batcher()
 	{
-		for (auto vertexBuffer : mVertexArray->GetVertexBuffers())
+		/*for (auto vertexBuffer : mVertexArray->GetVertexBuffers())
 		{
 			vertexBuffer->Unbind();
 			vertexBuffer->~VertexBuffer();
@@ -28,12 +28,7 @@ namespace TS_ENGINE {
 		mVertexArray->GetIndexBuffer()->Unbind();
 		mVertexArray->GetIndexBuffer()->~IndexBuffer();
 
-		mVertexArray->~VertexArray();
-	}
-
-	const bool Batcher::IsBatched() const
-	{
-		return mBatched;		
+		mVertexArray->~VertexArray();*/
 	}
 
 	void Batcher::CreateAtlases()
@@ -62,6 +57,12 @@ namespace TS_ENGINE {
 
 	void Batcher::StartBatching(std::vector<Ref<TS_ENGINE::Node>> nodes)
 	{
+		mBatchedNode = CreateRef<TS_ENGINE::Node>();
+		mBatchedNode->SetName("BatchedNode");
+
+		Ref<GameObject> batchedGameObject = CreateRef<GameObject>();
+		Ref<Mesh> batchedMesh = CreateRef<Mesh>();		
+
 		uint32_t lastTotalVertices = 0;
 
 		if (nodes.size() == 0)
@@ -91,13 +92,14 @@ namespace TS_ENGINE {
 				auto indices = mesh->GetIndices();
 				GLuint currentMeshTexID = go->GetTextureID();
 
-				BatchedVertex batchedVertex;
+				//BatchedVertex batchedVertex;
+				Vertex batchedVertex;
 
 				for (const TS_ENGINE::Vertex& vertex : vertices)
 				{
 					batchedVertex.position = vertex.position;
 					batchedVertex.color = go->GetColor();					
-
+					
 					float u = (u1 + vertex.texCoord.x * rect.w) / atlasWidth;
 					float v = (v1 + vertex.texCoord.y * rect.h) / atlasHeight;
 
@@ -109,12 +111,16 @@ namespace TS_ENGINE {
 					batchedVertex.texCoord = alteredTexCoord;
 
 					//TS_CORE_INFO("UV: {0}, {1}", vertex.uv.x, vertex.uv.y);
-					batchedVertex.texID = currentMeshTexID;
-					mBatchedVertices.push_back(batchedVertex);
+					//batchedVertex.texID = currentMeshTexID;
+					//mBatchedVertices.push_back(batchedVertex);
+					batchedMesh->AddVertex(batchedVertex);
 				}
 
 				for (const uint32_t& index : indices)
-					mBatchedIndices.push_back(lastTotalVertices + index);
+				{
+					//mBatchedIndices.push_back(lastTotalVertices + index);
+					batchedMesh->AddIndex(lastTotalVertices + index);
+				}
 
 				lastTotalVertices += vertices.size();
 
@@ -125,38 +131,43 @@ namespace TS_ENGINE {
 			}
 		}
 
-		mVertexArray = VertexArray::Create();
-		auto vao = mVertexArray->GetRendererID();
+		//mVertexArray = VertexArray::Create();
+		//auto vao = mVertexArray->GetRendererID();
 
-		Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(&mBatchedVertices[0], mBatchedVertices.size() * sizeof(BatchedVertex));
-		auto vbo = vertexBuffer->GetRendererID();
-		
-		vertexBuffer->SetLayout({
-			{ShaderDataType::FLOAT3, "a_Position"},
-			{ShaderDataType::FLOAT3, "a_Color"},
-			{ShaderDataType::FLOAT2, "a_TexCoord"},
-			{ShaderDataType::INT, "a_TexID"},
-			});
+		//Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(&mBatchedVertices[0], mBatchedVertices.size() * sizeof(Vertex));
+		//auto vbo = vertexBuffer->GetRendererID();
+		//
+		//vertexBuffer->SetLayout({
+		//	{ShaderDataType::FLOAT3, "a_Position"},
+		//	{ShaderDataType::FLOAT3, "a_Color"},
+		//	{ShaderDataType::FLOAT2, "a_TexCoord"}//,
+		//	//{ShaderDataType::INT, "a_TexID"},
+		//	});
 
-		mVertexArray->AddVertexBuffer(vertexBuffer);
+		//mVertexArray->AddVertexBuffer(vertexBuffer);
 
-		Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(&mBatchedIndices[0], mBatchedIndices.size());
-		
-		mVertexArray->SetIndexBuffer(indexBuffer);
-		
-		mVertexArray->Unbind();
+		//Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(&mBatchedIndices[0], mBatchedIndices.size());
+		//
+		//mVertexArray->SetIndexBuffer(indexBuffer);
+		//
+		//mVertexArray->Unbind();
+
+		batchedMesh->Create();
+		batchedGameObject->AddMesh(batchedMesh);
+		batchedGameObject->SetTexture(mAtlasTextures[0]);
+		mBatchedNode->AttachGameObject(batchedGameObject);
 
 		TS_CORE_INFO("***Batching completed***");
 		mBatched = true;
 	}
 
-	void Batcher::DrawBatch()
-	{
-		mAtlasTextures[0]->Bind();
+	//void Batcher::DrawBatch()
+	//{
+		/*mAtlasTextures[0]->Bind();
 		RenderCommand::DrawIndexed(mVertexArray, mBatchedIndices.size());
 		
 		TS_ENGINE::Application::Get().AddDrawCalls(1);
 		TS_ENGINE::Application::Get().AddVertices(mBatchedVertices.size());
-		TS_ENGINE::Application::Get().AddIndices(mBatchedIndices.size());
-	}
+		TS_ENGINE::Application::Get().AddIndices(mBatchedIndices.size());*/
+	//}
 }

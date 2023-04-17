@@ -17,6 +17,7 @@ namespace TS_ENGINE
 		void SetParentNode(Ref<Node> parentNode);
 		void AddChild(Ref<Node> child);
 		void RemoveChild(Ref<Node> child);
+		void RemoveAllChildren();
 
 		void Draw(const Matrix4& parentTransformModelMatrix, Ref<Shader> shader);
 
@@ -56,7 +57,6 @@ namespace TS_ENGINE
 	public:
 		//For IMGUI
 		bool m_Enabled = false;
-		bool m_ScaleLock = false;
 	private:
 		std::string mName;
 		Ref<Node> mParentNode;

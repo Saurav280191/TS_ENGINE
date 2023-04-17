@@ -58,6 +58,14 @@ namespace TS_ENGINE
 		}
 	}
 
+	void Node::RemoveAllChildren()
+	{
+		for (auto& child : mChildren)
+			child.reset();
+
+		mChildren.clear();
+	}
+
 	//If there is no parent set parentTransformModelMatrix to identity
 	void Node::Draw(const Matrix4& parentTransformModelMatrix, Ref<Shader> shader)
 	{
