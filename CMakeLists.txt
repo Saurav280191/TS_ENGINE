@@ -193,6 +193,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/Core
 ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include
 ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/imgui
 ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/imgui/backends
+${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/ImGuizmo
 ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/glad
 ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/assimp/include
 ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/assimp/build/x64/include
