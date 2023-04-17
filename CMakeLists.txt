@@ -83,6 +83,8 @@ src/Platform/OpenGL/OpenGLUniformBuffer.h
 src/Platform/OpenGL/OpenGLUniformBuffer.cpp
 src/Platform/OpenGL/OpenGLVertexArray.h
 src/Platform/OpenGL/OpenGLVertexArray.cpp
+src/Platform/OpenGL/OpenGLFramebuffer.h
+src/Platform/OpenGL/OpenGLFramebuffer.cpp
 )
 source_group("Platform\\OpenGL" FILES ${PlatformOpenGLSrc})
 
@@ -139,6 +141,8 @@ src/Renderer/UniformBuffer.h
 src/Renderer/UniformBuffer.cpp
 src/Renderer/VertexArray.h
 src/Renderer/VertexArray.cpp
+src/Renderer/Framebuffer.h
+src/Renderer/Framebuffer.cpp
 )
 source_group("Renderer" FILES ${RendererSrc})
 
