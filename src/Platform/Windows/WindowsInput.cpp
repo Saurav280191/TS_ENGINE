@@ -20,6 +20,13 @@ namespace TS_ENGINE {
 		return state == GLFW_PRESS;
 	}
 
+	bool Input::IsMouseButtonReleased(const MouseCode button)
+	{
+		auto* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		auto state = glfwGetMouseButton(window, static_cast<int32_t>(button));
+		return state == GLFW_RELEASE;
+	}
+
 	glm::vec2 Input::GetMousePosition()
 	{
 		auto* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());

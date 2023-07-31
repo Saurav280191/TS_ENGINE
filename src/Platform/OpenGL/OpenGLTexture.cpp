@@ -27,7 +27,7 @@ namespace TS_ENGINE {
 		mPath(path)
 	{
 		int width, height, channels;
-		//stbi_set_flip_vertically_on_load(1);
+		stbi_set_flip_vertically_on_load(1);
 		
 		data = nullptr;
 		{
@@ -47,13 +47,17 @@ namespace TS_ENGINE {
 
 			if (channels == 4)
 			{
-				internalFormat = GL_RGBA8;
-				dataFormat = GL_RGBA;
+				internalFormat = GL_RGBA32F;
+				dataFormat = GL_RGBA;				
+				//internalFormat = GL_RGBA32F;//For Gamma Correction
+				//dataFormat = GL_RGBA;//For Gamma Correction
 			}
 			else if (channels == 3)
 			{
 				internalFormat = GL_RGB8;
 				dataFormat = GL_RGB;
+				//internalFormat = GL_RGB32F;//For Gamma Correction;
+				//dataFormat = GL_RGB;//For Gamma Correction
 			}
 
 			//Copy pixels data to mPixels vector
@@ -75,6 +79,7 @@ namespace TS_ENGINE {
 			glTextureParameteri(mRendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 			glTextureSubImage2D(mRendererID, 0, 0, 0, mWidth, mHeight, dataFormat, GL_UNSIGNED_BYTE, data);
+			//glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, mWidth, mHeight, 0, dataFormat, GL_UNSIGNED_BYTE, data);
 
 			TS_CORE_INFO("Width: {0}, height : {1}, channel : {2} TextureID: {3}", mWidth, mHeight, channels, mRendererID);			
 
@@ -85,7 +90,7 @@ namespace TS_ENGINE {
 	OpenGLTexture2D::OpenGLTexture2D(const char* name, const unsigned char* pixelData, uint32_t len)
 	{
 		int width, height, channels;
-		stbi_set_flip_vertically_on_load(1);
+		stbi_set_flip_vertically_on_load(0);
 
 		data = nullptr;
 		{

@@ -15,6 +15,7 @@ namespace TS_ENGINE {
 
 		unsigned int GetWidth() const override { return m_Data.Width; }
 		unsigned int GetHeight() const override { return m_Data.Height; }
+		float GetAspectRatio() const override { return static_cast<float>(m_Data.Width) / static_cast<float>(m_Data.Height); }
 
 		//Window attributes
 		void SetEventCallback(const EventCallbackFn& callback) override

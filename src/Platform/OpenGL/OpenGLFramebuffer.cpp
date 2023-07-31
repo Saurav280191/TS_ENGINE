@@ -215,6 +215,18 @@ namespace TS_ENGINE {
 		return pixelData;
 	}
 
+	Vector4 OpenGLFramebuffer::ReadPixelColor(uint32_t attachmentIndex, int x, int y)
+	{
+		TS_CORE_ASSERT(attachmentIndex < mColorAttachments.size());
+
+		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
+		unsigned char pixelColor[4];
+		glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixelColor);
+
+		Vector4 pixelData = Vector4(pixelColor[0], pixelColor[1], pixelColor[2], pixelColor[3]);
+		return pixelData;
+	}
+
 	void OpenGLFramebuffer::ClearAttachment(uint32_t attachmentIndex, int value)
 	{
 		TS_CORE_ASSERT(attachmentIndex < mColorAttachments.size());

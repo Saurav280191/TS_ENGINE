@@ -19,6 +19,8 @@ namespace TS_ENGINE {
 
 		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) override;
 
+		Vector4 ReadPixelColor(uint32_t attachmentIndex, int x, int y);
+
 		virtual void ClearAttachment(uint32_t attachmentIndex, int value) override;
 
 		virtual uint32_t GetColorAttachmentRendererID(uint32_t index) const override;
