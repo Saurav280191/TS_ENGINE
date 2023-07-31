@@ -6,6 +6,20 @@ namespace TS_ENGINE
 	Node::Node()
 	{
 		mTransform = CreateRef<Transform>();
+#ifdef TS_ENGINE_EDITOR
+		mIsVisibleInEditor = true;
+#endif
+	}
+
+	Node::Node(Node* node)
+	{
+		this->m_Enabled = node->m_Enabled;
+		this->mTransform = node->mTransform;
+		this->mParentNode = node->mParentNode;
+		this->mName = node->mName;
+		this->mChildren = node->mChildren;
+		this->mAttachedObject = node->mAttachedObject;
+		//this->mAttachedGameObject = node->mAttachedGameObject;
 	}
 
 	void Node::Destroy()
@@ -13,13 +27,13 @@ namespace TS_ENGINE
 		mName = "";
 		mTransform.reset();
 
-		if(mAttachedGameObject)
-			mAttachedGameObject.reset();
+		mAttachedObject.reset();
+		//mAttachedGameObject.reset();
+		//mAttachedCamera.reset();
 
 		for (auto& node : mChildren)
 			node.reset();
 
-		mParentNode.reset();
 		mChildren.clear();
 	}
 
@@ -28,31 +42,38 @@ namespace TS_ENGINE
 		mName = name;
 	}
 
-	void Node::AttachGameObject(Ref<GameObject> gameObject)
+	void Node::AttachObject(Ref<Object> object)
 	{
-		mAttachedGameObject = gameObject;
+		mAttachedObject = object;
 	}
 
-	void Node::SetParentNode(Ref<Node> parentNode)
+	/*void Node::AttachGameObject(Ref<GameObject> gameObject)
 	{
-		mParentNode = parentNode;
-	}
+		mAttachedGameObject = gameObject;
+	}*/
+
+	/*void Node::AttachCamera(Ref<Camera> camera)
+	{
+		mAttachedCamera = camera;
+	}*/
 
 	void Node::AddChild(Ref<Node> child)
 	{
+		child->mParentNode = CreateRef<Node>(this);
 		mChildren.push_back(child);
+		TS_CORE_INFO(child->GetName() + " is set as child of " + this->GetName());
 	}
 
 	void Node::RemoveChild(Ref<Node> child)
 	{
 		auto iter = std::find(mChildren.begin(), mChildren.end(), child);
-		
-		if (iter != mChildren.end()) 
-		{ 
+
+		if (iter != mChildren.end())
+		{
 			mChildren.erase(iter);
 			TS_CORE_INFO("Element " + child->mName + " removed from vector");
 		}
-		else 
+		else
 		{
 			TS_CORE_ERROR("Element " + child->mName + " not found in vector");
 		}
@@ -66,54 +87,93 @@ namespace TS_ENGINE
 		mChildren.clear();
 	}
 
-	//If there is no parent set parentTransformModelMatrix to identity
-	void Node::Draw(const Matrix4& parentTransformModelMatrix, Ref<Shader> shader)
+	void Node::SetTarget(Ref<Transform> target)
 	{
-		mTransform->ComputeModelMatrix(parentTransformModelMatrix);
-
-		shader->SetMat4("u_Model",
-			glm::translate(glm::mat4(1), mTransform->GetLocalPosition())
-			* glm::rotate(glm::mat4(1), glm::radians( mTransform->GetLocalEulerAngles().x), glm::vec3(1, 0, 0))
-			* glm::rotate(glm::mat4(1), glm::radians(-mTransform->GetLocalEulerAngles().y), glm::vec3(0, 1, 0))
-			* glm::rotate(glm::mat4(1), glm::radians( mTransform->GetLocalEulerAngles().z), glm::vec3(0, 0, 1))
-			* glm::scale(glm::mat4(1), mTransform->GetLocalScale()));
-
-		if (mAttachedGameObject)
-			mAttachedGameObject->Draw(shader);
-
-		for(auto& child : mChildren)
-		{
-			child->Draw(this->mTransform->GetModelMatrix(), shader);
-		}
+		//mTransform->LookAt(target);
 	}
-	
+
 	const Ref<Node> Node::GetChildAt(uint32_t childIndex) const
 	{
+		try
 		{
-			try
-			{
-				Ref<Node> child = mChildren[childIndex];
-				return child;
-			}
-			catch (std::out_of_range& e)
-			{
-				TS_CORE_ERROR(e.what());
-			}
+			Ref<Node> child = mChildren[childIndex];
+			return child;
+		}
+		catch (std::out_of_range& e)
+		{
+			TS_CORE_ERROR(e.what());
 		}
 	}
-	
-	/// <summary>
-		/// Updates Model matrix for it's self and for children
-		/// </summary>
-	void Node::UpdateModelMatrices()
+
+	void Node::LookAt(Ref<Node> targetNode)
 	{
-		if(mParentNode == nullptr)
-			mTransform->ComputeModelMatrix();
+		mTransform->LookAt(mParentNode, targetNode->GetTransform());
+	}
+
+	/// <summary>
+	/// Updates Model matrix for it's self and for children
+	/// </summary>
+	void Node::InitializeTransformMatrices()
+	{
+		mTransform->ComputeTransformationMatrix(this, mParentNode.get());
+
+		for (auto& child : mChildren)		
+			child->InitializeTransformMatrices();		
+	}
+
+	void Node::SetPosition(float* pos)
+	{
+		mTransform->SetLocalPosition(pos);
+
+		mTransform->ComputeTransformationMatrix(this, mParentNode.get());
 
 		for (auto& child : mChildren)
+			child->InitializeTransformMatrices();
+	}
+
+	void Node::SetEulerAngles(float* eulerAngles)
+	{
+		mTransform->SetLocalEulerAngles(eulerAngles);
+
+		mTransform->ComputeTransformationMatrix(this, mParentNode.get());
+
+		for (auto& child : mChildren)
+			child->InitializeTransformMatrices();
+	}
+
+	void Node::SetScale(float* scale)
+	{
+		mTransform->SetLocalScale(scale);
+
+		mTransform->ComputeTransformationMatrix(this, mParentNode.get());
+
+		for (auto& child : mChildren)
+			child->InitializeTransformMatrices();
+	}
+
+	void Node::UpdateTransformationMatrices(Matrix4 transformationMatrix)
+	{
+		mTransform->SetTransformationMatrix(transformationMatrix);
+
+		for (auto& child : mChildren)
+			child->InitializeTransformMatrices();
+	}
+
+	//If there is no parent set parentTransformModelMatrix to identity
+	void Node::Update(Ref<Shader> shader, float deltaTime)
+	{
+		//Send modelMatrix to shader
+		shader->SetMat4("u_Model", mTransform->GetTransformationMatrix());
+		
+		//Draw GameObject
+		if (mAttachedObject)
 		{
-			child->GetTransform()->ComputeModelMatrix(mTransform->GetModelMatrix());
-			child->UpdateModelMatrices();
+			shader->SetInt("u_EntityID", mAttachedObject->GetEntityID());
+			mAttachedObject->Update(deltaTime);
 		}
+
+		//Send children modelMatrix to shader and draw gameobject with attached to child
+		for (auto& child : mChildren)		
+			child->Update(shader, deltaTime);		
 	}
 }

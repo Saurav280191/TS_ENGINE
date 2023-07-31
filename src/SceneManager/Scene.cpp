@@ -1,15 +1,16 @@
 #include "tspch.h"
 #include "SceneManager/Scene.h"
+#include <Renderer/Camera.h>
 
 namespace TS_ENGINE
 {
-	Scene::Scene(std::string name):
-		m_BatchingEnabled(false)
+	Scene::Scene(std::string name)//:
+		//m_BatchingEnabled(false)
 	{
 		mSceneNode = CreateRef<Node>();
 		mSceneNode->SetName(name);
 
-		m_BatchButton.RegisterClickHandler(std::bind(&ButtonHandler::OnButtonClicked, &mBatchButtonHandler, std::placeholders::_1, std::placeholders::_2));
+		//m_BatchButton.RegisterClickHandler(std::bind(&ButtonHandler::OnButtonClicked, &mBatchButtonHandler, std::placeholders::_1, std::placeholders::_2));
 	}
 
 	Scene::~Scene()
@@ -18,27 +19,56 @@ namespace TS_ENGINE
 		mSceneNode.reset();
 	}
 
-	void Scene::OnBatched()
+	/*void Scene::OnBatched()
 	{
 		mSceneNode->RemoveAllChildren();
 		Ref<Node> batchedNode = Batcher::GetInstance()->GetBatchedNode();
-		mSceneNode->AddChild(batchedNode);
+		mSceneNode->AddChild(mSceneNode, batchedNode);
 		batchedNode->SetParentNode(mSceneNode);
-	}
+	}*/
 
-	void Scene::OnUnBatched()
+	/*void Scene::OnUnBatched()
 	{
 		mSceneNode->RemoveChild(Batcher::GetInstance()->GetBatchedNode());
 		Batcher::GetInstance()->GetBatchedNode()->GetTransform()->Reset();
+	}*/
+
+	void Scene::Initialize(Camera& camera)
+	{
+		Renderer::BeginScene(camera);
+		mSceneNode->InitializeTransformMatrices();
 	}
 
-	void Scene::Draw(Ref<Shader> shader)
+	void Scene::Update(Ref<Shader> shader, float deltaTime)
 	{
-		if (mSceneNode)
-		{
-			mSceneNode->Draw(Matrix4(1), shader);
-		}
+		if (mSceneNode)		
+			mSceneNode->Update(shader, deltaTime);		
 		else
 			TS_CORE_ERROR("Scene node not set");
+	}
+
+	Ref<Node> Scene::GetNodeByEntityID(int entityID)
+	{		
+		SearchNode(mSceneNode, entityID);
+		return mMatchingNode;
+	}
+
+	void Scene::SearchNode(Ref<Node> node, int entityID)
+	{
+		if (node->HasAttachedObject())
+		{
+			TS_CORE_TRACE("Checking: {0}", node->GetName());
+
+			if (node->GetAttachedObject()->GetEntityID() == entityID)
+			{
+				TS_CORE_TRACE("{0} has matching entityID", node->GetName());
+				mMatchingNode = node;
+			}
+		}
+
+		for (auto& childNode : node->GetChildren())
+		{
+			SearchNode(childNode, entityID);
+		}
 	}
 }
