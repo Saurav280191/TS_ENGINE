@@ -69,10 +69,15 @@ namespace TS_ENGINE
 			if (!mMinimized)
 			{
 				for (Layer* layer : mLayerStack)
+				{
+					//glEnable(GL_POLYGON_SMOOTH);
 					layer->OnUpdate(mDeltaTime);
+				}
 
 				mImGuiLayer->Begin();
 				{
+					//glDisable(GL_POLYGON_SMOOTH);
+
 					for (Layer* layer : mLayerStack)
 						layer->OnImGUIRender();
 				}

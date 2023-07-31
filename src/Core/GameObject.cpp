@@ -5,10 +5,21 @@ namespace TS_ENGINE {
 
 	GameObject::GameObject() :
 		mHasTexture(false),
-		mColor(Vector3(1, 1, 1))
+		mColor(Vector3(0.5f)),
+		mDepthTestEnabled(true)
 	{
+		mEntityType = EntityType::GAMEOBJECT;
 		mMeshes = {};
-		//mTransform = CreateRef<Transform>();
+	}
+
+	GameObject::GameObject(const std::string& name = "") :
+		mHasTexture(false),
+		mColor(Vector3(0.5f)),
+		mDepthTestEnabled(true)
+	{
+		mName = name;
+		mEntityType = EntityType::GAMEOBJECT;
+		mMeshes = {};
 	}
 
 	GameObject::~GameObject()
@@ -18,9 +29,18 @@ namespace TS_ENGINE {
 		mMeshes.clear();
 	}
 
-	void GameObject::SetName(std::string name)
+	void GameObject::Initialize()
+	{
+		mEntityID = EntityManager::GetInstance()->Instantiate(mName, mEntityType);
+	}
+	void GameObject::SetName(const std::string& name)
 	{
 		mName = name;
+		mNode->SetName(name);
+	}
+	void GameObject::Update(float deltaTime)
+	{
+		Draw();
 	}
 
 	void GameObject::SetColor(Vector3 color)
@@ -52,6 +72,11 @@ namespace TS_ENGINE {
 		return mColor;
 	}
 
+	void GameObject::SetMaterial(Ref<Material> material)
+	{
+		mMaterial = material;
+	}
+
 	void GameObject::SetTexture(std::string path)
 	{
 		mHasTexture = true;
@@ -80,20 +105,27 @@ namespace TS_ENGINE {
 		mTiling = Vector2(x, y);
 	}
 
-	void GameObject::Draw(Ref<Shader> shader)
+	//Shader over here is passed to copy the properties to fragment shader
+	//void GameObject::Draw(Ref<Shader> shader)
+	void GameObject::Draw()
 	{
-		/*shader->SetMat4("u_Model",//Moved to Node class
-			glm::translate(glm::mat4(1), mTransform->GetLocalPosition())
-			* glm::rotate(glm::mat4(1), glm::radians(mTransform->GetLocalEulerAngles().x), glm::vec3(1, 0, 0))
-			* glm::rotate(glm::mat4(1), glm::radians(-mTransform->GetLocalEulerAngles().y), glm::vec3(0, 1, 0))
-			* glm::rotate(glm::mat4(1), glm::radians(mTransform->GetLocalEulerAngles().z), glm::vec3(0, 0, 1))
-			* glm::scale(glm::mat4(1), mTransform->GetLocalScale()));*/
+		RenderCommand::EnableDepthTest(mDepthTestEnabled);
+		
+		auto shader = mMaterial->GetShader();
 
-		if(mTexture)
-			mTexture->Bind();
-
+		if (mTexture)
+		{
+			mTexture->Bind();			
+			mMaterial->GetShader()->SetBool("u_HasTexture", true);
+		}
+		else
+		{
+			mMaterial->GetShader()->SetBool("u_HasTexture", false);
+		}
+		
 		for(auto mesh : mMeshes)
-			mesh->Draw();
+			mesh->Draw();		
+
 	}
 
 	void GameObject::Destroy()
@@ -115,5 +147,15 @@ namespace TS_ENGINE {
 	std::vector<Ref<Mesh>> GameObject::GetMeshes()
 	{
 		return mMeshes;
+	}
+
+	void GameObject::EnableDepthTest()
+	{
+		mDepthTestEnabled = true;
+	}
+
+	void GameObject::DisableDepthTest()
+	{
+		mDepthTestEnabled = false;
 	}
 }
