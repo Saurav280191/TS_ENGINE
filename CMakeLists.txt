@@ -108,17 +108,21 @@ src/Primitive/Quad.h
 src/Primitive/Quad.cpp
 src/Primitive/Sphere.h
 src/Primitive/Sphere.cpp
+src/Primitive/Line.h
+src/Primitive/Line.cpp
 )
 source_group("Primitive" FILES ${PrimitiveSrc})
 
 #Renderer Filter
 file(GLOB RendererSrc
-src/Renderer/Batcher.h
-src/Renderer/Batcher.cpp
+#src/Renderer/Batcher.h
+#src/Renderer/Batcher.cpp
 src/Renderer/Buffer.h
 src/Renderer/Buffer.cpp
 src/Renderer/Camera.h
 src/Renderer/Camera.cpp
+src/Renderer/SceneCamera.h
+src/Renderer/SceneCamera.cpp
 src/Renderer/GraphicsContext.h
 src/Renderer/GraphicsContext.cpp
 src/Renderer/RenderCommand.h
@@ -129,6 +133,8 @@ src/Renderer/RendererAPI.h
 src/Renderer/RendererAPI.cpp
 src/Renderer/Shader.h
 src/Renderer/Shader.cpp
+src/Renderer/Material.h
+src/Renderer/Material.cpp
 src/Renderer/Texture.h
 src/Renderer/Texture.cpp
 src/Renderer/TextureAtlas.h
@@ -146,7 +152,16 @@ src/Renderer/Framebuffer.cpp
 )
 source_group("Renderer" FILES ${RendererSrc})
 
-#Renderer Filter
+#Renderer/Lighting Filter
+file(GLOB LightingSrc
+src/Renderer/Lighting/Light.h
+src/Renderer/Lighting/Light.cpp
+src/Renderer/Lighting/DirectionalLight.h
+src/Renderer/Lighting/DirectionalLight.cpp
+)
+source_group("Renderer/Lighting" FILES ${LightingSrc})
+
+#SceneManager Filter
 file(GLOB SceneManagerSrc
 src/SceneManager/Node.h
 src/SceneManager/Node.cpp
@@ -154,9 +169,24 @@ src/SceneManager/Scene.h
 src/SceneManager/Scene.cpp
 #src/SceneManager/SceneManager.h
 #src/SceneManager/SceneManager.cpp
-
 )
 source_group("SceneManager" FILES ${SceneManagerSrc})
+
+#EntityManager Filter
+file(GLOB EntityManagerSrc
+src/EntityManager/Entity.h
+src/EntityManager/Entity.cpp
+src/EntityManager/EntityManager.h
+src/EntityManager/EntityManager.cpp
+)
+source_group("EntityManager" FILES ${EntityManagerSrc})
+
+#Utils Filter
+file(GLOB UtilsSrc
+src/Utils/MyMath.h
+src/Utils/Utility.h
+)
+source_group("Utils" FILES ${UtilsSrc})
 
 #Setting type of TS_Engine project ie. .lib in this case
 add_library (TS_ENGINE
@@ -168,13 +198,17 @@ ${PlatformOpenGLSrc} #Platform OpenGL Filter
 ${PlatformWindowsSrc} #Platform Windows Filter
 ${PrimitiveSrc} #Primitives Filter
 ${RendererSrc} #Renderer Filter
-${SceneManagerSrc}
+${LightingSrc} #Renderer/Lighting Filter
+${SceneManagerSrc} # SceneManager Filter
+${EntityManagerSrc} # EntityManager Filter
+${UtilsSrc} # Utils Filter
 )
 
 #Add definations
 add_compile_definitions(
     TS_PLATFORM_WINDOWS
     TS_DEBUG
+	TS_ENGINE_EDITOR#Only for editor
     _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
      WIN32
      _DEBUG
@@ -199,4 +233,5 @@ ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/assimp/include
 ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/assimp/build/x64/include
 )
 
-target_precompile_headers(TS_ENGINE PRIVATE src/Core/tspch.h)
+target_precompile_headers(TS_ENGINE PRIVATE src/Core/tspch.h) 
+ 
