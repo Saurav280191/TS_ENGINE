@@ -31,29 +31,38 @@ namespace TS_ENGINE {
 		mIndices = _indices;
 	}
 
-	void Mesh::Create()
+	void Mesh::Create(DrawMode drawMode)
 	{
+		mDrawMode = drawMode;
+
 		mVertexArray = VertexArray::Create();
 
 		Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(&mVertices[0], mVertices.size() * sizeof(Vertex));
 
 		vertexBuffer->SetLayout({
-			{ShaderDataType::FLOAT3, "a_Position"},
+			{ShaderDataType::FLOAT4, "a_Position"},
 			{ShaderDataType::FLOAT3, "a_Color"},
-			{ShaderDataType::FLOAT2, "a_TexCoord"},
+			{ShaderDataType::FLOAT3, "a_Normal"},
+			{ShaderDataType::FLOAT2, "a_TexCoord"}
 			});
 
 		mVertexArray->AddVertexBuffer(vertexBuffer);
 
-		Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(&mIndices[0], mIndices.size());
-		mVertexArray->SetIndexBuffer(indexBuffer);
+		if (mDrawMode == DrawMode::TRIANGLE)
+		{
+			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(&mIndices[0], mIndices.size());
+			mVertexArray->SetIndexBuffer(indexBuffer);
+		}
 
 		mVertexArray->Unbind();
 	}
 
 	void Mesh::Draw()
 	{
-		RenderCommand::DrawIndexed(mVertexArray, mIndices.size());
+		if(mDrawMode == DrawMode::TRIANGLE)
+			RenderCommand::DrawIndexed(mVertexArray, mIndices.size());
+		else if(mDrawMode == DrawMode::LINE)
+			RenderCommand::DrawLines(mVertexArray, mVertices.size());
 
 #pragma region STATS
 		TS_ENGINE::Application::Get().AddDrawCalls(1);
@@ -61,7 +70,7 @@ namespace TS_ENGINE {
 		TS_ENGINE::Application::Get().AddIndices(mIndices.size());
 #pragma endregion
 	}
-	
+
 	void Mesh::Destroy()
 	{
 		for (auto& vertexBuffer : mVertexArray->GetVertexBuffers())
@@ -107,7 +116,7 @@ namespace TS_ENGINE {
 		for (const Vertex& vertex : mVertices)
 		{
 			Vertex transformedVertex = Vertex();
-			transformedVertex.position = Vector3(modelMatrix * Vector4(vertex.position, 1));
+			transformedVertex.position = modelMatrix * vertex.position;
 			//transformedVertex.normal = vertex.normal;
 			transformedVertex.texCoord = vertex.texCoord;
 

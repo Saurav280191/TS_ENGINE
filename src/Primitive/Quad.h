@@ -7,8 +7,8 @@ namespace TS_ENGINE {
 	private:
 		Ref<Mesh> mMesh;
 	public:
-		Quad(const char* name);
-		Quad(const char* name, Vector3 color);
+		Quad(const std::string& name);
+		Quad(const std::string& name, const Vector3& color);
 
 		void OverrideTexCoords(std::vector<Vector2> texCoords);
 

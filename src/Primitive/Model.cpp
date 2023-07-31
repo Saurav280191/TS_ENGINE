@@ -38,6 +38,8 @@ namespace TS_ENGINE {
 		}
 
 		this->ProcessNode(scene->mRootNode, scene);
+
+		Initialize();
 	}
 
 	void Model::ProcessNode(aiNode* node, const aiScene* scene)
@@ -64,12 +66,13 @@ namespace TS_ENGINE {
 		{
 			Vertex vertex;
 			
-			Vector3 vector; 
+			Vector4 vector; 
 
 			// Position
 			vector.x = mesh->mVertices[i].x;
 			vector.y = mesh->mVertices[i].y;
 			vector.z = mesh->mVertices[i].z;
+			vector.w = 1;
 			vertex.position = vector;
 
 			//Color
@@ -155,8 +158,13 @@ namespace TS_ENGINE {
 		return mMesh;
 	}
 
-	void Model::Draw(Ref<Shader> shader)
+	/*void Model::Draw(Ref<Shader> shader)
 	{		
 		GameObject::Draw(shader);
+	}*/
+
+	void Model::Draw()
+	{
+		GameObject::Draw();
 	}
 }

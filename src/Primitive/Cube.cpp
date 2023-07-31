@@ -3,10 +3,19 @@
 
 namespace TS_ENGINE {
 
-	Cube::Cube(const char* name)
+	Cube::Cube(const std::string& name)
 	{
 		mName = name;
 		mMesh = CreateRef<Mesh>();
+		Initialize();
+	}
+
+	Cube::Cube(const std::string& name, const Vector3& color)
+	{
+		mName = name;
+		mColor = color;
+		mMesh = CreateRef<Mesh>();
+		Initialize();
 	}
 
 	void Cube::Create()

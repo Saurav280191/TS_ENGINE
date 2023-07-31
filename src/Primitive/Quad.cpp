@@ -3,17 +3,19 @@
 
 namespace TS_ENGINE {
 
-	Quad::Quad(const char* name)
+	Quad::Quad(const std::string& name)
 	{
 		mName = name;
 		mMesh = CreateRef<Mesh>();
+		Initialize();
 	}
 
-	Quad::Quad(const char* name, Vector3 color)
+	Quad::Quad(const std::string& name, const Vector3& color)
 	{
 		mName = name;
 		mMesh = CreateRef<Mesh>();
 		mColor = color;
+		Initialize();
 	}
 
 	void Quad::OverrideTexCoords(std::vector<Vector2> texCoords)

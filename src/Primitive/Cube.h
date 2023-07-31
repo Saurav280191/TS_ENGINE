@@ -8,7 +8,8 @@ namespace TS_ENGINE {
 	private:
 		Ref<Mesh> mMesh;
 	public:
-		Cube(const char* name);
+		Cube(const std::string& name);
+		Cube(const std::string& name, const Vector3& color);
 		void Create();
 		void Create(const Matrix4& transformationMatrix);
 		void Create(std::vector<Vertex> vertices, std::vector<uint32_t> indices);

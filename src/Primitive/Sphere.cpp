@@ -7,6 +7,7 @@ namespace TS_ENGINE {
 	{
 		mName = name;
 		mMesh = CreateRef<Mesh>();
+		Initialize();
 	}
 
 	void Sphere::CreateVertices()

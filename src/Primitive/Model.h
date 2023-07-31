@@ -9,19 +9,20 @@ namespace TS_ENGINE {
 	{
 	private:
 		uint32_t mRendererID;
-		Material material;
+		AssimpMaterial material;
 
-		void LoadModel(const std::string& modelPath);
 		void ProcessNode(aiNode* node, const aiScene* scene);
 		Ref<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene);
 	public:
 		Model();
 		Model(const std::string& modelPath);		
+		void LoadModel(const std::string& modelPath);
 		
 		void CopyFrom(Ref<Model> model);
 		~Model();
 
-		void Draw(Ref<Shader> shader);		
+		//void Draw(Ref<Shader> shader);		
+		void Draw();		
 	};
 }
 

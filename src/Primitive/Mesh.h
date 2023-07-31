@@ -5,7 +5,7 @@
 
 namespace TS_ENGINE {
 
-	struct Material
+	struct AssimpMaterial
 	{
 		aiString name;
 		aiColor3D ambient;
@@ -17,9 +17,9 @@ namespace TS_ENGINE {
 
 	struct Vertex
 	{
-		Vector3 position;
+		Vector4 position;
 		Vector3 color;
-		//Vector3 normal;
+		Vector3 normal;
 		Vector2 texCoord;
 
 		Vertex()
@@ -27,22 +27,34 @@ namespace TS_ENGINE {
 
 		}
 
+		Vertex(Vector3 _position, Vector3 _color)
+		{
+			position = Vector4(_position, 1);
+			color = _color;
+		}
+
 		Vertex(Vector3 _position, Vector3 _color, Vector3 _normal, Vector2 _texCoord)
 		{
-			position = _position;
+			position = Vector4(_position, 1);
 			color = _color;
-			//normal = _normal;
+			normal = _normal;
 			texCoord = _texCoord;
 		}
 
 		Vertex(Vector3 _position, Vector3 _color, Vector3 _normal, Vector2 _texCoord, const Matrix4& transformationMatrix)
 		{
 			Vector4 tranformedVertexPos = transformationMatrix * Vector4(_position.x, _position.y, _position.z, 1);
-			position = Vector3(tranformedVertexPos.x, tranformedVertexPos.y, tranformedVertexPos.z);
+			position = Vector4(tranformedVertexPos.x, tranformedVertexPos.y, tranformedVertexPos.z, tranformedVertexPos.w);
 			color = _color;
-			//normal = _normal;
+			normal = _normal;
 			texCoord = _texCoord;
 		}
+	};
+
+	enum DrawMode
+	{
+		TRIANGLE,
+		LINE
 	};
 
 	class Mesh
@@ -55,9 +67,9 @@ namespace TS_ENGINE {
 		void AddIndex(uint32_t index);
 
 		void SetVertices(std::vector<Vertex> _vertices);
-		void SetIndices(std::vector<uint32_t> _indices);		
+		void SetIndices(std::vector<uint32_t> _indices);
 
-		void Create();
+		void Create(DrawMode drawMode = DrawMode::TRIANGLE);
 		void Draw();
 		void Destroy();
 
@@ -67,9 +79,11 @@ namespace TS_ENGINE {
 
 	private:
 		std::vector<Vertex> mVertices;
-		std::vector<uint32_t> mIndices;		
+		std::vector<uint32_t> mIndices;
 		Ref<VertexArray> mVertexArray;
 		bool mStatsRegistered;
+
+		DrawMode mDrawMode;
 	};
 }
 
