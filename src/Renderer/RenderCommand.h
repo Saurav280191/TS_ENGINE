@@ -42,5 +42,10 @@ namespace TS_ENGINE {
 		{
 			sRendererAPI->SetLineWidth(width);
 		}
+
+		static void EnableDepthTest(bool enable)
+		{
+			sRendererAPI->EnableDepthTest(enable);
+		}
 	};
 }

@@ -71,7 +71,7 @@ namespace TS_ENGINE {
 		for (auto& node : nodes)
 		{
 			uint32_t meshIndex = 0;
-			Ref<GameObject> go = node->GetAttachedGameObject();
+			Ref<GameObject> go = node->GetAttachedObject();
 
 			uint32_t texID = go->GetTextureID();
 			//TS_CORE_INFO("Texture ID for {0} is {1}",go->GetName(), texID);

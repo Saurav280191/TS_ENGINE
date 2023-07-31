@@ -8,8 +8,7 @@ namespace TS_ENGINE {
 
 	void Renderer::Init()
 	{
-		RenderCommand::Init();
-		
+		RenderCommand::Init();		
 	}
 
 	void Renderer::Shutdown()

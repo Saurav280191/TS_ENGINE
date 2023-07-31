@@ -25,13 +25,14 @@ namespace TS_ENGINE {
 
 		virtual void SetLineWidth(float width) = 0;
 		
+		virtual void EnableDepthTest(bool enable) = 0;
+
 		static API GetAPI() 
 		{
 			return sAPI;
 		}
 
 		static Scope<RendererAPI> Create();
-
 	private:
 		static API sAPI;
 	};

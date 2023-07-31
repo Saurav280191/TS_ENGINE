@@ -1,20 +1,29 @@
 #pragma once
 #include "Core/tspch.h"
+#include "Core/Object.h"
+#include "Renderer/Shader.h"
+
+#include <imgui.h>
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "imgui_internal.h"
+#define IMAPP_IMPL
+#include "ImGuizmo.h"
+#include "Framebuffer.h"
 
 namespace TS_ENGINE
 {
-	class Camera
+	class Camera : public Object
 	{
 	public:
 		struct Orthographic
 		{
 		public:
 			float left = 0.0f;
-			float right= 0.0f;
-			float top= 0.0f;
-			float bottom= 0.0f;
-			float zNear= 0.0f;
-			float zFar= 0.0f;
+			float right = 0.0f;
+			float top = 0.0f;
+			float bottom = 0.0f;
+			float zNear = 0.0f;
+			float zFar = 0.0f;
 
 			Orthographic()
 			{
@@ -35,11 +44,11 @@ namespace TS_ENGINE
 		struct Perspective
 		{
 		public:
-			float fov= 0.0f;
-			float aspectRatio= 0.0f;
-			float zNear= 0.0f;
-			float zFar= 0.0f;
-			
+			float fov = 0.0f;
+			float aspectRatio = 0.0f;
+			float zNear = 0.0f;
+			float zFar = 0.0f;
+
 			Perspective()
 			{
 
@@ -54,7 +63,6 @@ namespace TS_ENGINE
 			}
 		};
 
-	public:
 		enum CameraType
 		{
 			EDITORCAMERA,
@@ -65,57 +73,16 @@ namespace TS_ENGINE
 			ORTHOGRAPHIC,
 			PERSPECTIVE
 		};
-	private:
-		Vector3 mPos;
-		Vector3 mEulerAngles;
-		Vector3 mDefaultPos;
-		Vector3 mDefaultEulerAngles;
-		float mMoveSpeed;
-		float mRotateSpeed;
+
+		Camera();
+		Camera(const std::string& name);
+		~Camera();
 		
-		Vector3 mUp;
-		Vector3 mRight;
-		Vector3 mForward;
-
-		glm::vec2 mInitialMousePosition;
-
-		CameraType mCameraType;
-		ProjectionType mProjectionType;
-		Matrix4 mProjectionMatrix;
-		glm::mat4 mViewMatrix;
-
-		Orthographic* mOrthographic;
-		Perspective* mPerspective;
-	public:
-		Camera(CameraType cameraType);
-		~Camera();		
+		void CreateFramebuffer(uint32_t _width, uint32_t _height);
 
 		Camera::ProjectionType GetProjectionType();
 		const Camera::Orthographic& GetOrthographic();
 		const Camera::Perspective& GetPerspective();
-
-		void MoveFwd(float deltaTime);
-		void MoveBack(float deltaTime);
-		void MoveLeft(float deltaTime);
-		void MoveRight(float deltaTime);
-		void MoveUp(float deltaTime);
-		void MoveDown(float deltaTime);
-
-		void Yaw(float yawSpeed, float deltaTime);
-		void Pitch(float pitchSpeed, float deltaTime);
-		void Roll(float rollSpeed, float deltaTime);
-
-		void Reset();
-
-		void SetPosition(Vector3& v);
-		void SetPosition(float x, float y, float z);
-		void SetEulerAngles(Vector3& v);
-		void SetEulerAngles(float x, float y, float z);
-
-		const Vector3& GetPosition() const;
-		const Vector3& GetEulerAngles() const;
-
-		//void SetTransform(Transform* transform);
 
 		void SetOrthographic(float left, float right, float top, float bottom, float zNear, float zFar);
 
@@ -125,11 +92,34 @@ namespace TS_ENGINE
 
 		void SetPerspective(Perspective perspective);
 
-		const Matrix4 GetProjectionMatrix() const;		
-		const Matrix4 GetViewMatrix();
+		const Matrix4 GetProjectionMatrix() const;
+		const Matrix4 GetViewMatrix() const;
+		const Matrix4 GetProjectionViewMatrix() const;
 
-		glm::quat GetOrientation();
+		void SetCurrentShader(Ref<Shader>& currentShader);
+		void Controls(float deltaTime);
 
-		void OnUpdate(float deltaTime);
+		Ref<Framebuffer> GetFramebuffer();
+	protected:
+		Ref<Shader> mCurrentShader;
+		glm::vec2 mInitialMousePosition;
+
+		Vector3 mDefaultPos;
+		Vector3 mDefaultEulerAngles;
+
+		float mMoveSpeed;
+		float mRotateSpeed;
+
+		CameraType mCameraType;
+		ProjectionType mProjectionType;
+		Matrix4 mProjectionMatrix;
+		glm::mat4 mViewMatrix;
+
+		Orthographic mOrthographic;
+		Perspective mPerspective;
+
+		void Reset();
+	private:
+		Ref<Framebuffer> mFramebuffer;
 	};
 }
