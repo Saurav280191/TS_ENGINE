@@ -63,7 +63,7 @@ namespace TS_ENGINE
 			}
 		};
 
-		enum CameraType
+		enum Type
 		{
 			EDITORCAMERA,
 			SCENECAMERA
@@ -96,12 +96,12 @@ namespace TS_ENGINE
 		const Matrix4 GetViewMatrix() const;
 		const Matrix4 GetProjectionViewMatrix() const;
 
-		void SetCurrentShader(Ref<Shader>& currentShader);
+		//void SetCurrentShader(Ref<Shader>& currentShader);
 		void Controls(float deltaTime);
 
 		Ref<Framebuffer> GetFramebuffer();
 	protected:
-		Ref<Shader> mCurrentShader;
+		//Ref<Shader> mCurrentShader;
 		glm::vec2 mInitialMousePosition;
 
 		Vector3 mDefaultPos;
@@ -110,16 +110,15 @@ namespace TS_ENGINE
 		float mMoveSpeed;
 		float mRotateSpeed;
 
-		CameraType mCameraType;
+		Type mCameraType;
 		ProjectionType mProjectionType;
 		Matrix4 mProjectionMatrix;
 		glm::mat4 mViewMatrix;
 
 		Orthographic mOrthographic;
 		Perspective mPerspective;
+		Ref<Framebuffer> mFramebuffer;
 
 		void Reset();
-	private:
-		Ref<Framebuffer> mFramebuffer;
 	};
 }

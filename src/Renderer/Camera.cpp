@@ -73,10 +73,10 @@ namespace TS_ENGINE
 		return mProjectionMatrix * mViewMatrix;
 	}
 
-	void Camera::SetCurrentShader(Ref<Shader>& currentShader)
-	{
-		mCurrentShader = currentShader;
-	}
+	//void Camera::SetCurrentShader(Ref<Shader>& currentShader)
+	//{
+		//mCurrentShader = currentShader;
+	//}
 
 	void Camera::SetOrthographic(Orthographic orthographic)
 	{

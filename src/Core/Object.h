@@ -14,7 +14,7 @@ namespace TS_ENGINE
 
 		virtual void Initialize() = 0;
 		virtual void SetName(const std::string& name) = 0;
-		virtual void Update(float deltaTime) = 0;
+		virtual void Update(Ref<Shader> shader, float deltaTime) = 0;
 
 		const std::string& GetName() const
 		{

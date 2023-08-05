@@ -4,7 +4,7 @@
 namespace TS_ENGINE {
 
 	Light::Light() :
-		mType(LightType::DIRECTIONAL)
+		mType(Type::DIRECTIONAL)
 	{
 		
 	}
@@ -23,7 +23,7 @@ namespace TS_ENGINE {
 		mName = name;
 		mNode->SetName(name);
 	}	
-	void Light::Update(float deltaTime)
+	void Light::Update(Ref<Shader> shader, float deltaTime)
 	{
 		//this->linear = 1.0f;			
 		//this->constant = 0.09f;			

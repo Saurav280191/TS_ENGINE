@@ -3,7 +3,7 @@
 
 namespace TS_ENGINE {
 
-	Sphere::Sphere(const char* name)
+	Sphere::Sphere(const std::string& name)
 	{
 		mName = name;
 		mMesh = CreateRef<Mesh>();

@@ -18,11 +18,12 @@ namespace TS_ENGINE {
 		Model(const std::string& modelPath);		
 		void LoadModel(const std::string& modelPath);
 		
-		void CopyFrom(Ref<Model> model);
-		~Model();
+		virtual void Initialize() override;
+		virtual void SetName(const std::string& name) override;
+		virtual void Update(Ref<Shader> shader, float deltaTime) override;
 
-		//void Draw(Ref<Shader> shader);		
-		void Draw();		
+		void CopyFrom(Ref<Model> model);
+		~Model();		
 	};
 }
 

@@ -10,6 +10,7 @@ namespace TS_ENGINE
 		Ref<Mesh> mMesh;
 	public:
 		Line(const std::string& name);
+		
 		void Create(const std::vector<Vector3>& points);
 		void Draw(const std::vector<Vector4>& points);
 	};

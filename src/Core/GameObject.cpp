@@ -38,9 +38,26 @@ namespace TS_ENGINE {
 		mName = name;
 		mNode->SetName(name);
 	}
-	void GameObject::Update(float deltaTime)
+	void GameObject::Update(Ref<Shader> shader, float deltaTime)
 	{
-		Draw();
+		//TS_CORE_TRACE("Rendering: {0}", mName);
+
+		RenderCommand::EnableDepthTest(mDepthTestEnabled);
+
+		//auto shader = mMaterial->GetShader();
+
+		if (mTexture)
+		{
+			mTexture->Bind();
+			shader->SetBool("u_HasTexture", true);
+		}
+		else
+		{
+			shader->SetBool("u_HasTexture", false);
+		}
+
+		for (auto mesh : mMeshes)
+			mesh->Draw();
 	}
 
 	void GameObject::SetColor(Vector3 color)
@@ -49,6 +66,14 @@ namespace TS_ENGINE {
 		mColor.g = color.y;
 		mColor.b = color.z;
 		//mColor.a = a;
+
+		for (auto& mesh : mMeshes)
+		{
+			for (auto& vertex : mesh->GetVertices())
+			{
+				vertex.color = mColor;
+			}
+		}
 	}
 
 	void GameObject::SetColor(float r, float g, float b)
@@ -57,6 +82,7 @@ namespace TS_ENGINE {
 		mColor.g = g;
 		mColor.b = b;
 		//mColor.a = a;
+	
 	}
 
 	void GameObject::SetColor32(float r, float g, float b)
@@ -105,29 +131,6 @@ namespace TS_ENGINE {
 		mTiling = Vector2(x, y);
 	}
 
-	//Shader over here is passed to copy the properties to fragment shader
-	//void GameObject::Draw(Ref<Shader> shader)
-	void GameObject::Draw()
-	{
-		RenderCommand::EnableDepthTest(mDepthTestEnabled);
-		
-		auto shader = mMaterial->GetShader();
-
-		if (mTexture)
-		{
-			mTexture->Bind();			
-			mMaterial->GetShader()->SetBool("u_HasTexture", true);
-		}
-		else
-		{
-			mMaterial->GetShader()->SetBool("u_HasTexture", false);
-		}
-		
-		for(auto mesh : mMeshes)
-			mesh->Draw();		
-
-	}
-
 	void GameObject::Destroy()
 	{
 		for(auto& mesh : mMeshes)
@@ -157,5 +160,14 @@ namespace TS_ENGINE {
 	void GameObject::DisableDepthTest()
 	{
 		mDepthTestEnabled = false;
+	}
+	
+	void GameObject::ChangeColor(Vector3 color)
+	{
+		for (int i = 0; i < mMeshes.size(); i++)
+		{
+			mMeshes[i]->ChangeColor(color);
+			mMeshes[i]->Create();
+		}
 	}
 }

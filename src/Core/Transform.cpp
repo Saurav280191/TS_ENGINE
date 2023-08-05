@@ -45,41 +45,25 @@ namespace TS_ENGINE
 		const Matrix4 translationMatrix = glm::translate(Matrix4(1.0f), m_Pos);
 		const Matrix4 scaleMatrix = glm::scale(Matrix4(1.0f), m_Scale);
 
-		if (mLookAtTarget)
-		{
-			const Matrix4 lookAtRotationMatrix = TS_ENGINE::Utility::GetLookatAtRotationMatrix(m_Pos, mLookAtTarget->GetLocalPosition(), Vector3(0, 1, 0));
-			modelMatrix = translationMatrix * lookAtRotationMatrix * scaleMatrix;
-		}
-
 		if (parentNode)
 			m_TransformationMatrix = parentNode->GetTransform()->GetTransformationMatrix() * modelMatrix;
 		else
 			m_TransformationMatrix = modelMatrix;
 
+		if (mLookAtTarget)
+		{
+			const Matrix4 lookAtRotationMatrix = TS_ENGINE::Utility::GetLookatAtRotationMatrix(m_Pos, mLookAtTarget->GetLocalPosition(), Vector3(0, 1, 0));
+			m_TransformationMatrix = m_TransformationMatrix * lookAtRotationMatrix;
+
+			auto dd = Utility::Decompose(m_TransformationMatrix);
+			m_Pos = dd->translation;
+			m_EulerAngles = dd->eulerAngles * Vector3(57.2958f);
+			m_Scale = dd->scale;		
+		}
+		
 		m_Right = GetRight();
 		m_Up = GetUp();
 		m_Forward = GetForward();
-	}
-
-	Matrix4 Transform::GetLocalModelMatrixForLookAt(TS_ENGINE::Node* parentNode, const Matrix4& parentModelMatrix, const Matrix4& lookAtRotationMatrix)
-	{
-		Matrix4 modelMatrix = Matrix4(1);
-
-		if (parentNode)
-		{
-			const Matrix4 translationMatrix = glm::translate(Matrix4(1.0f), m_Pos);
-			const Matrix4 scaleMatrix = glm::scale(Matrix4(1.0f), m_Scale);
-
-			if (parentNode->GetParentNode())
-				modelMatrix = parentModelMatrix * translationMatrix * lookAtRotationMatrix * scaleMatrix;
-			else
-				modelMatrix = translationMatrix * lookAtRotationMatrix * scaleMatrix;
-
-			if (parentNode->GetParentNode())
-				GetLocalModelMatrixForLookAt(parentNode->GetParentNode().get(), modelMatrix, lookAtRotationMatrix);
-		}
-
-		return modelMatrix;
 	}
 
 	void Transform::ComputeTransformationMatrix(TS_ENGINE::Node* node, TS_ENGINE::Node* parentNode)
@@ -89,25 +73,21 @@ namespace TS_ENGINE
 		const Matrix4 translationMatrix = glm::translate(Matrix4(1.0f), m_Pos);
 		const Matrix4 scaleMatrix = glm::scale(Matrix4(1.0f), m_Scale);
 
-		if (mLookAtTarget)
-		{
-			const Matrix4 lookAtRotationMatrix = TS_ENGINE::Utility::GetLookatAtRotationMatrix(m_Pos, mLookAtTarget->GetLocalPosition(), Vector3(0, 1, 0));
-			modelMatrix = translationMatrix * lookAtRotationMatrix * scaleMatrix;
-		}
-		else
-		{
-			const Matrix4 rotationMatrixX = glm::rotate(Matrix4(1.0f), glm::radians(m_EulerAngles.x), Vector3(1.0f, 0.0f, 0.0f));
-			const Matrix4 rotationMatrixY = glm::rotate(Matrix4(1.0f), glm::radians(m_EulerAngles.y), Vector3(0.0f, 1.0f, 0.0f));
-			const Matrix4 rotationMatrixZ = glm::rotate(Matrix4(1.0f), glm::radians(m_EulerAngles.z), Vector3(0.0f, 0.0f, 1.0f));
+		const Matrix4 rotationMatrixX = glm::rotate(Matrix4(1.0f), glm::radians(m_EulerAngles.x), Vector3(1.0f, 0.0f, 0.0f));
+		const Matrix4 rotationMatrixY = glm::rotate(Matrix4(1.0f), glm::radians(m_EulerAngles.y), Vector3(0.0f, 1.0f, 0.0f));
+		const Matrix4 rotationMatrixZ = glm::rotate(Matrix4(1.0f), glm::radians(m_EulerAngles.z), Vector3(0.0f, 0.0f, 1.0f));
 
-			const Matrix4 rotationMatrix = rotationMatrixY * rotationMatrixX * rotationMatrixZ;
+		const Matrix4 rotationMatrix = rotationMatrixY * rotationMatrixX * rotationMatrixZ;
+		
+		if (!mLookAtTarget)
+		{
 			modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+		
+			if (parentNode)		
+				m_TransformationMatrix = parentNode->GetTransform()->GetTransformationMatrix() * modelMatrix;		
+			else
+				m_TransformationMatrix = modelMatrix;
 		}
-
-		if (parentNode)		
-			m_TransformationMatrix = parentNode->GetTransform()->GetTransformationMatrix() * modelMatrix;		
-		else
-			m_TransformationMatrix = modelMatrix;
 
 		m_Right = GetRight();
 		m_Up = GetUp();
@@ -134,8 +114,7 @@ namespace TS_ENGINE
 
 	void Transform::SetLocalEulerAngles(const Vector3& newLocalEulerAngles)
 	{
-		m_EulerAngles = newLocalEulerAngles;
-		
+		m_EulerAngles = newLocalEulerAngles;		
 	}
 	void Transform::SetLocalEulerAngles(float x, float y, float z)
 	{

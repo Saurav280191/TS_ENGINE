@@ -77,6 +77,8 @@ namespace TS_ENGINE {
 		std::vector<Vertex> GetWorldSpaceVertices(Vector3 position, Vector3 eulerAngles, Vector3 scale);
 		std::vector<uint32_t> GetIndices();
 
+		void ChangeColor(Vector3 color);
+
 	private:
 		std::vector<Vertex> mVertices;
 		std::vector<uint32_t> mIndices;

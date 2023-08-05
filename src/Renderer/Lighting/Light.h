@@ -5,12 +5,6 @@
 
 namespace TS_ENGINE {
 
-	enum class LightType {
-		DIRECTIONAL,
-		POINT,
-		SPOT
-	};
-
 	/*struct DirectionalLightProperties
 	{
 		Vector3 position;
@@ -55,17 +49,23 @@ namespace TS_ENGINE {
 	class Light : public Object
 	{
 	public:
+		enum class Type {
+			DIRECTIONAL,
+			POINT,
+			SPOT
+		};
+
 		Light();
 		~Light();		
 
 		// Inherited via Object
 		virtual void Initialize() override;
 		virtual void SetName(const std::string& name) override;
-		virtual void Update(float deltaTime) override;
+		virtual void Update(Ref<Shader> shader, float deltaTime) override;
 
 		void SetCommonParams(const Ref<Shader>& shader, const Vector3& position, const Vector3& direction, const Vector3& ambient, const Vector3& diffuse, const Vector3& specular);
 	protected:
-		LightType mType;
+		Type mType;
 		Ref<Shader> mShader;
 		
 		//Common params

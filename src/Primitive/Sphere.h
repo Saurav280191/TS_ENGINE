@@ -13,7 +13,8 @@ namespace TS_ENGINE {
 
 		Ref<Mesh> mMesh;
 	public:
-		Sphere(const char* name);
+		Sphere(const std::string& name);
+
 		void CreateVertices();
 		void CreateIndices();
 		void Create();

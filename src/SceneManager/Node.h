@@ -25,7 +25,6 @@ namespace TS_ENGINE
 		void AddChild(Ref<Node> child);
 		void RemoveChild(Ref<Node> child);
 		void RemoveAllChildren();
-		void SetTarget(Ref<Transform> target);
 
 		void InitializeTransformMatrices();
 		

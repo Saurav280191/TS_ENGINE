@@ -31,7 +31,15 @@ namespace TS_ENGINE {
 		mIndices = _indices;
 	}
 
-	void Mesh::Create(DrawMode drawMode)
+	/// <summary>
+	/// 1. Sets draw mode(Traingle/Line)
+	/// 2. Creates vertex array
+	/// 3. Create vertex buffer and sets layout for it 
+	/// 4. Sets vertex buffer in created vertex array
+	/// 5. Creates index buffer and sets that in vertex array
+	/// </summary>
+	/// <param name="drawMode"></param>
+	void Mesh::Create(DrawMode drawMode)//Default is Triangle
 	{
 		mDrawMode = drawMode;
 
@@ -100,6 +108,12 @@ namespace TS_ENGINE {
 	std::vector<uint32_t> Mesh::GetIndices()
 	{
 		return mIndices;
+	}
+
+	void Mesh::ChangeColor(Vector3 color)
+	{
+		for (int i = 0; i < mVertices.size(); i++)
+			mVertices[i].color = color;
 	}
 
 	std::vector<Vertex> Mesh::GetWorldSpaceVertices(Vector3 position = Vector3(0, 0, 0), Vector3 eulerAngles = Vector3(0, 0, 0), Vector3 scale = Vector3(1, 1, 1))

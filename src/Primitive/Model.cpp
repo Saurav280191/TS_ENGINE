@@ -42,6 +42,18 @@ namespace TS_ENGINE {
 		Initialize();
 	}
 
+	void Model::Initialize()
+	{
+	}
+
+	void Model::SetName(const std::string& name)
+	{
+	}
+
+	void Model::Update(Ref<Shader> shader, float deltaTime)
+	{
+	}
+
 	void Model::ProcessNode(aiNode* node, const aiScene* scene)
 	{		
 		for (GLuint i = 0; i < node->mNumMeshes; i++)
@@ -156,15 +168,5 @@ namespace TS_ENGINE {
 		mMesh->Create();
 
 		return mMesh;
-	}
-
-	/*void Model::Draw(Ref<Shader> shader)
-	{		
-		GameObject::Draw(shader);
-	}*/
-
-	void Model::Draw()
-	{
-		GameObject::Draw();
 	}
 }

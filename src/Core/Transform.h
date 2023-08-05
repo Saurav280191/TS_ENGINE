@@ -23,7 +23,6 @@ namespace TS_ENGINE
 	public:
 		void LookAt(Ref<Node> parentNode, const Ref<Transform> target);
 		
-		Matrix4 GetLocalModelMatrixForLookAt(TS_ENGINE::Node* parentNode, const Matrix4& parentModelMatrix, const Matrix4& lookAtRotationMatrix);
 		void ComputeTransformationMatrix(TS_ENGINE::Node* node, TS_ENGINE::Node* parentNode);
 		void SetTransformationMatrix(Matrix4 transformationMatrix);
 
@@ -58,8 +57,6 @@ namespace TS_ENGINE
 		Vector3 GetUp() const;
 		Vector3 GetBackward() const;
 		Vector3 GetForward() const;
-
-		bool IsDirty() const;
 
 		void MoveFwd(float moveSpeed, float deltaTime);
 		void MoveBack(float moveSpeed, float deltaTime);

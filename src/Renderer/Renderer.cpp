@@ -21,10 +21,10 @@ namespace TS_ENGINE {
 		RenderCommand::SetViewport(0, 0, width, height);
 	}
 
-	void Renderer::BeginScene(Camera& camera)
+	void Renderer::BeginScene(Ref<Camera> camera)
 	{
-		sSceneData->viewMatrix = camera.GetViewMatrix();
-		sSceneData->projectionMatrix = camera.GetProjectionMatrix();
+		sSceneData->viewMatrix = camera->GetViewMatrix();
+		sSceneData->projectionMatrix = camera->GetProjectionMatrix();
 	}
 
 	void Renderer::EndScene()

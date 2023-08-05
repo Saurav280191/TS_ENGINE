@@ -87,11 +87,6 @@ namespace TS_ENGINE
 		mChildren.clear();
 	}
 
-	void Node::SetTarget(Ref<Transform> target)
-	{
-		//mTransform->LookAt(target);
-	}
-
 	const Ref<Node> Node::GetChildAt(uint32_t childIndex) const
 	{
 		try
@@ -169,7 +164,7 @@ namespace TS_ENGINE
 		if (mAttachedObject)
 		{
 			shader->SetInt("u_EntityID", mAttachedObject->GetEntityID());
-			mAttachedObject->Update(deltaTime);
+			mAttachedObject->Update(shader, deltaTime);
 		}
 
 		//Send children modelMatrix to shader and draw gameobject with attached to child

@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+
 namespace TS_ENGINE {
 
 	class Quad : public GameObject
