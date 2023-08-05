@@ -47,6 +47,8 @@ src/Core/ModelLoader.h
 src/Core/ModelLoader.cpp
 src/Core/Transform.h
 src/Core/Transform.cpp
+src/Core/Factory.h
+src/Core/Factory.cpp
 )
 source_group("Core" FILES ${CoreSrc})
 
@@ -167,8 +169,10 @@ src/SceneManager/Node.h
 src/SceneManager/Node.cpp
 src/SceneManager/Scene.h
 src/SceneManager/Scene.cpp
-#src/SceneManager/SceneManager.h
-#src/SceneManager/SceneManager.cpp
+src/SceneManager/SceneManager.h
+src/SceneManager/SceneManager.cpp
+src/SceneManager/SceneSerializer.h
+src/SceneManager/SceneSerializer.cpp
 )
 source_group("SceneManager" FILES ${SceneManagerSrc})
 
@@ -231,6 +235,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/ImGuizmo
 ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/glad
 ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/assimp/include
 ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/assimp/build/x64/include
+${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/json/include
 )
 
 target_precompile_headers(TS_ENGINE PRIVATE src/Core/tspch.h) 
