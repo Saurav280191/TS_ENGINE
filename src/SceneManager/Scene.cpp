@@ -33,9 +33,10 @@ namespace TS_ENGINE
 		Batcher::GetInstance()->GetBatchedNode()->GetTransform()->Reset();
 	}*/
 
-	void Scene::Initialize(Camera& camera)
+	void Scene::Initialize(Ref<Camera> editorCamera)
 	{
-		Renderer::BeginScene(camera);
+		mEditorCamera = editorCamera;
+		Renderer::BeginScene(editorCamera);
 		mSceneNode->InitializeTransformMatrices();
 	}
 
@@ -47,13 +48,13 @@ namespace TS_ENGINE
 			TS_CORE_ERROR("Scene node not set");
 	}
 
-	Ref<Node> Scene::GetNodeByEntityID(int entityID)
+	Ref<Node> Scene::PickNodeByEntityID(int entityID)
 	{		
-		SearchNode(mSceneNode, entityID);
+		PickNode(mSceneNode, entityID);
 		return mMatchingNode;
 	}
 
-	void Scene::SearchNode(Ref<Node> node, int entityID)
+	void Scene::PickNode(Ref<Node> node, int entityID)
 	{
 		if (node->HasAttachedObject())
 		{
@@ -68,7 +69,7 @@ namespace TS_ENGINE
 
 		for (auto& childNode : node->GetChildren())
 		{
-			SearchNode(childNode, entityID);
+			PickNode(childNode, entityID);
 		}
 	}
 }

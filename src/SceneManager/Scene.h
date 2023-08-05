@@ -74,15 +74,16 @@ namespace TS_ENGINE
 			return mSceneNode;
 		}
 		
-		void Initialize(Camera& camera);
-
+		void Initialize(Ref<Camera> editorCamera);
 		void Update(Ref<Shader> shader, float deltaTime);
-		Ref<Node> GetNodeByEntityID(int entityID);		
+		Ref<Node> PickNodeByEntityID(int entityID);		
 	private:		
 		Ref<Node> mSceneNode;
-		void SearchNode(Ref<Node> node, int entityID);		
+		void PickNode(Ref<Node> node, int entityID);		
 
 		Ref<Node> mMatchingNode = nullptr;
+		Ref<Camera> mEditorCamera = nullptr;
+		std::vector<Ref<Camera>> mSceneCameras = {};
 
 		//ButtonHandler mBatchButtonHandler;
 	};

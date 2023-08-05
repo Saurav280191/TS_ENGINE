@@ -3,85 +3,94 @@
 
 namespace TS_ENGINE
 {
-	namespace SceneManager
+	SceneManager* SceneManager::mInstance = NULL;
+
+	SceneManager* SceneManager::GetInstance()
 	{
-		SceneManager* SceneManager::m_pInstance = NULL;
+		if (!mInstance)
+			mInstance = new SceneManager();
 
-		SceneManager* SceneManager::GetInstance()
+		return mInstance;
+	}
+
+	SceneManager::SceneManager() :
+		mCurrentScene(NULL)
+	{
+		
+	}
+
+	SceneManager::~SceneManager()
+	{
+		if (mCurrentScene)
 		{
-			if (!m_pInstance)
-				m_pInstance = new SceneManager();
-
-			return m_pInstance;
+			mCurrentScene->~Scene();
+			mCurrentScene = nullptr;
 		}
 
-		SceneManager::SceneManager():
-			mCurrentScene(NULL)
+		mInstance = nullptr;
+		delete mInstance;
+	}
+
+	void SceneManager::SetCurrentScene(Ref<Scene> scene)
+	{
+		mCurrentScene = scene;
+	}
+
+	Ref<Scene> SceneManager::GetCurrentScene()
+	{
+		return mCurrentScene;
+	}
+
+	Ref<Node> SceneManager::GetCurrentSceneNode()
+	{
+		if (mCurrentScene)
+			return mCurrentScene->GetSceneNode();
+		else
 		{
-			Logger::Print("[Log]Created scene manager");
+			TS_CORE_ERROR("Current scene is not set!");
+			return nullptr;
 		}
+	}
 
-		SceneManager::~SceneManager()
+	/*void SceneManager::Initialize()
+	{
+		if (mCurrentScene)
 		{
-			Logger::Print("[Log]Destroying scene manager");
+			mCurrentScene->Initialize();
 		}
+	}*/
 
-		void SceneManager::SetCurrentScene(Scene* scene)
+	/*void SceneManager::Update(float deltaTime)
+	{
+		if (mCurrentScene)
 		{
-			//Delete current scene before resetting it
-			if (mCurrentScene != NULL)
-			{
-				mCurrentScene = NULL;
-				delete mCurrentScene;
-			}
-
-			mCurrentScene = scene;
+			mCurrentScene->Update(deltaTime);
 		}
+	}*/
 
-		Scene* SceneManager::GetCurrentScene()
+	/*void SceneManager::Render(ShaderManager::ShaderProgram* shaderProgram, const Matrix4& viewMatrix, const Matrix4& projectionMatrix)
+	{
+		if (mCurrentScene)
 		{
-			return mCurrentScene;
+			mCurrentScene->Render(shaderProgram, viewMatrix, projectionMatrix);
 		}
+	}*/
 
-		Node* SceneManager::GetCurrentSceneNode()
+	/*bool SceneManager::HasSiblingWithSameName(Node* parentNode, const char* name)
+	{
+		for (auto i : parentNode->GetChildren())
 		{
-			if (mCurrentScene)
-				return mCurrentScene->GetNode();
-			else
-				return NULL;
+			if(strcmp(i->GetName(), name) == 0)
+				return true;
 		}
+		return false;
+	}*/
 
-		void SceneManager::Initialize()
-		{
-			if (mCurrentScene)
-			{
-				mCurrentScene->Initialize();
-			}
-		}
-
-		void SceneManager::Update(float deltaTime)
-		{
-			if (mCurrentScene)
-			{
-				mCurrentScene->Update(deltaTime);				
-			}
-		}
-		/*void SceneManager::Render(ShaderManager::ShaderProgram* shaderProgram, const Matrix4& viewMatrix, const Matrix4& projectionMatrix)
-		{
-			if (mCurrentScene)
-			{
-				mCurrentScene->Render(shaderProgram, viewMatrix, projectionMatrix);
-			}
-		}*/
-
-		/*bool SceneManager::HasSiblingWithSameName(Node* parentNode, const char* name)
-		{
-			for (auto i : parentNode->GetChildren())
-			{
-				if(strcmp(i->GetName(), name) == 0)
-					return true;
-			}
-			return false;
-		}*/		
+	void SceneManager::SaveCurrentScene()
+	{
+		if (mCurrentScene)		
+			mSceneSerializer->Save(mCurrentScene);		
+		else		
+			TS_CORE_ERROR("Current scene is not set!");		
 	}
 }

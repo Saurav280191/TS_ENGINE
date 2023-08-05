@@ -1,34 +1,30 @@
 #pragma once
 #include "Scene.h"
-//#include "ShaderManager/ShaderProgram.h"
+#include "SceneSerializer.h"
 
 namespace TS_ENGINE
 {
-	namespace SceneManager
+	class Scene;
+	
+	class SceneManager
 	{
-		class Scene;
+	public:
+		static SceneManager* GetInstance();
+		void SetCurrentScene(Ref<Scene> scene);
+		//void Initialize();
+		//void Update(float deltaTime);	
+		//void Render(ShaderManager::ShaderProgram* shaderProgram, const Matrix4& viewMatrix, const Matrix4& projectionMatrix);
+		//bool HasSiblingWithSameName(Node* parentNode, const char* name);
+		void SaveCurrentScene();
+		Ref<Scene> GetCurrentScene();
+	private:
+		static SceneManager* mInstance;
+		Ref<Scene> mCurrentScene;
+		SceneManager();
+		~SceneManager();
 
-		class SceneManager
-		{
-		private:
-			static SceneManager* m_pInstance;
-			Scene* mCurrentScene;
-			SceneManager();
-			~SceneManager();
-		public:
-			static SceneManager* GetInstance();
-
-			void SetCurrentScene(Scene* scene);
-			
-			Scene* GetCurrentScene();
-			Node* GetCurrentSceneNode();
-
-			void Initialize();
-			void Update(float deltaTime);
-			//void Render(ShaderManager::ShaderProgram* shaderProgram, const Matrix4& viewMatrix, const Matrix4& projectionMatrix);
-
-			//bool HasSiblingWithSameName(Node* parentNode, const char* name);
-		};
-	}
+		Ref<SceneSerializer> mSceneSerializer;
+		Ref<Node> GetCurrentSceneNode();
+	};
 }
 
