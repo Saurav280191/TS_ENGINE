@@ -132,21 +132,18 @@ namespace TS_ENGINE
 			return v + 2.0 * cross(q.xyz, cross(q.xyz, v) + q.w * v);
 		}*/
 
-		static glm::mat4 GetLookatAtRotationMatrix(const glm::vec3& eye, const glm::vec3& target, const glm::vec3& up)
+		static glm::mat4 GetLookatAtRotationMatrix(const glm::vec3& objectPos, const glm::vec3& targetPos, const glm::vec3& up)
 		{
-			glm::vec3 forward = glm::normalize(target - eye);
+			glm::vec3 forward = glm::normalize(targetPos - objectPos);
 			glm::vec3 right = glm::normalize(glm::cross(forward, up));
 			glm::vec3 newUp = glm::cross(right, forward);
 
 			glm::mat4 rotationMatrix(1.0f);
 			rotationMatrix[0] = glm::vec4(right, 0.0f);
 			rotationMatrix[1] = glm::vec4(newUp, 0.0f);
-			rotationMatrix[2] = glm::vec4(-forward, 0.0f);
+			rotationMatrix[2] = glm::vec4(forward, 0.0f);
 
-			//glm::mat4 translationMatrix(1.0f);
-			//translationMatrix[3] = glm::vec4(-eye, 1.0f);
-
-			return rotationMatrix;// *translationMatrix;
+			return rotationMatrix;
 		}
 
 		static void DecomposeMtx(const glm::mat4& m, glm::vec3& pos, glm::quat& rot, glm::vec3& scale)

@@ -6,12 +6,11 @@ namespace TS_ENGINE
 	{
 
 	public:
-		MyMath();
-		~MyMath();
+		//static float Lerp(float value, float finalValue, float rate);
+		//static float Clamp(float value, float minValue, float maxValue, float rate);
+		//static float PingPong(float value, float minValue, float maxValue, float rate);
 
-		float Lerp(float value, float finalValue, float rate);
-		float Clamp(float value, float minValue, float maxValue, float rate);
-		float PingPong(float value, float minValue, float maxValue, float rate);
+		static Vector3 ClampEulerAngles(Vector3 rotationInDegrees);
 	};
 }
 
