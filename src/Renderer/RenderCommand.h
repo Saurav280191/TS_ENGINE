@@ -47,5 +47,10 @@ namespace TS_ENGINE {
 		{
 			sRendererAPI->EnableDepthTest(enable);
 		}
+
+		static void EnableAlphaBlending(bool enable)
+		{
+			sRendererAPI->EnableAlphaBlending(enable);
+		}
 	};
 }

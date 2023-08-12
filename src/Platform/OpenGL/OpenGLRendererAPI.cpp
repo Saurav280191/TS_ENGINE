@@ -63,7 +63,13 @@ namespace TS_ENGINE
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)
 	{
 		vertexArray->Bind();
-		uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
+		uint32_t count = 0;
+		
+		auto indexBuffer = vertexArray->GetIndexBuffer();
+
+		if(vertexArray->GetIndexBuffer())
+			count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
+		
 		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
 	}
 
@@ -85,4 +91,17 @@ namespace TS_ENGINE
 		else
 			glDisable(GL_DEPTH_TEST);
 	}
+
+	void OpenGLRendererAPI::EnableAlphaBlending(bool enable)
+	{
+		if (enable)
+		{
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		}
+		else
+			glDisable(GL_BLEND);
+	}
+
+	
 }
