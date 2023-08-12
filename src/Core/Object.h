@@ -5,6 +5,17 @@
 
 namespace TS_ENGINE
 {
+	enum class PrimitiveType
+	{
+		QUAD,
+		CUBE,
+		SPHERE,
+		CYLINDER,
+		CONE,
+		MODEL,
+		EMPTY
+	};
+
 	class Node;
 	class Object
 	{
@@ -12,27 +23,40 @@ namespace TS_ENGINE
 		Object();
 		~Object();
 
+		void SetName(const std::string& name);
+		void ReplaceNode(Ref<Node> node);
+
+		//Initialize and Update can change form for every child class
 		virtual void Initialize() = 0;
-		virtual void SetName(const std::string& name) = 0;
-		virtual void Update(Ref<Shader> shader, float deltaTime) = 0;
+		virtual void Update(Ref<Shader> shader, float deltaTime) = 0;		
+		virtual void DeleteMeshes() = 0;
 
 		const std::string& GetName() const
 		{
 			return mName;
 		}
-		const EntityType GetEntityType() const;				
-		EntityID GetEntityID();
-
-		const Ref<Node> GetNode()
+		const EntityType GetEntityType() const
+		{
+			return mEntityType;
+		}	
+		const EntityID GetEntityID() const
+		{
+			return mEntityID;
+		}
+		const Ref<Node> GetNode() const
 		{
 			return mNode;
 		}
+		const PrimitiveType GetPrimitiveType() const
+		{
+			return mPrimitiveType;
+		}
 	protected:
-		Ref<Node> mNode;
 		std::string mName;		
-		EntityType mEntityType;
+		Ref<Node> mNode;
+		EntityType mEntityType;		
 		EntityID mEntityID;
-	private:
+		PrimitiveType mPrimitiveType;//Only for GameObject EntityType
 	};
 }
 

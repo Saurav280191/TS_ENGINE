@@ -8,7 +8,7 @@ namespace TS_ENGINE
 		mEntityType(EntityType::DEFAULT),
 		mEntityID(0)
 	{
-		mNode = CreateRef<Node>();
+		mNode = CreateRef<Node>();		
 	}
 
 	Object::~Object()
@@ -16,13 +16,18 @@ namespace TS_ENGINE
 		mNode.reset();
 	}
 
-	const EntityType Object::GetEntityType() const
+	void Object::SetName(const std::string& name)
 	{
-		return mEntityType;
+		mName = name;
+		mNode->SetName(name);		
 	}
 
-	EntityID Object::GetEntityID()
+	void Object::ReplaceNode(Ref<Node> node)
 	{
-		return mEntityID;
+		mNode->Destroy();
+		mNode.reset();
+		mNode = nullptr;
+
+		mNode = node;
 	}
 }

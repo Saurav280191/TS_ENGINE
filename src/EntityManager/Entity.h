@@ -29,7 +29,6 @@ namespace TS_ENGINE
 
 
 		EntityID GetEntityID() const;
-		const char* GetName() const;
 
 		static const char* GetEntityTypeStr(EntityType type);
 		static const EntityType GetEntityTypeFromStr(std::string str);
