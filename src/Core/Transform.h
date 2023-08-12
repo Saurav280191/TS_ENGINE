@@ -10,8 +10,7 @@ namespace TS_ENGINE
 		Transform();
 		Transform(const char* createdFrom);
 		~Transform();
-		
-	
+
 		float* data;
 		Vector3 m_Pos;
 		Vector3 m_EulerAngles;
@@ -20,9 +19,10 @@ namespace TS_ENGINE
 		Vector3 m_Up;
 		Vector3 m_Forward;
 		Matrix4 m_TransformationMatrix;
-	public:
-		void LookAt(Ref<Node> parentNode, const Ref<Transform> target);
 		
+		void Follow(Ref<Node> targetNode);
+		void LookAt(Node* parentNode, const Ref<Transform> target);
+	
 		void ComputeTransformationMatrix(TS_ENGINE::Node* node, TS_ENGINE::Node* parentNode);
 		void SetTransformationMatrix(Matrix4 transformationMatrix);
 
@@ -44,10 +44,10 @@ namespace TS_ENGINE
 
 		Matrix4 GetInverseParentMat(Matrix4 newTransformMatrix);
 
-		const Vector3& GetGlobalPosition() const;
+		//const Vector3& GetGlobalPosition() const;
+		//const Vector3& GetGlobalEulerAngles(Vector3 parentEulerAngles) const;
+		//const Vector3& GetGlobalScale() const;
 
-		const Vector3& GetGlobalEulerAngles(Vector3 parentEulerAngles) const;
-		const Vector3& GetGlobalScale() const;
 		const Matrix4 GetTransformationMatrix() const
 		{
 			return m_TransformationMatrix;

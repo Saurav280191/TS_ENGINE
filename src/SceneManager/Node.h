@@ -12,18 +12,33 @@ namespace TS_ENGINE
 	class Node
 	{
 	public:
-		Node();
-		Node(Node* node);
+		Node();	
+		~Node();
 		void Destroy();
 
 		void SetName(std::string name);
+
 		void AttachObject(Ref<Object> object);
-		//void AttachGameObject(Ref<GameObject> gameObject);
-		//void AttachCamera(Ref<Camera> camera);
+		const Ref<Object> GetAttachedObject() const
+		{
+			if (mAttachedObject)
+				return mAttachedObject;
+			else
+			{
+				TS_CORE_ERROR("There is no object attached to node: {0}", mName);
+				return nullptr;
+			}
+		}
+
 		void AddChild(Ref<Node> child);
 		void RemoveChild(Ref<Node> child);
 		void RemoveAllChildren();
 
+		void SetEntityType(EntityType entityType);
+		EntityType GetEntityType()
+		{
+			return mEntityType;
+		}
 		void InitializeTransformMatrices();
 		
 		void SetPosition(float* pos);
@@ -49,36 +64,9 @@ namespace TS_ENGINE
 		
 		void LookAt(Ref<Node> targetNode);
 
-		const Ref<Object> GetAttachedObject() const
-		{
-			if (mAttachedObject)
-				return mAttachedObject;
-			else
-			{
-				TS_CORE_ERROR("There is no gameobject attached to node: {0}", mName);
-				return nullptr;
-			}
-		}
-		
-		/*const Ref<GameObject> GetAttachedGameObject() const
-		{
-			if(mAttachedGameObject)
-				return mAttachedGameObject;
-			else
-				TS_CORE_ERROR("There is no gameobject attached to node: {0}", mName);
-		}*/
-		
-		/*const Ref<Camera> GetAttachedCamera() const
-		{
-			if (mAttachedCamera)
-				return mAttachedCamera;
-			else
-				TS_CORE_ERROR("There is no camera attached to node: {0}", mName);
-		}*/
-
 		bool HasAttachedObject()
 		{
-			if (mAttachedObject)// || mAttachedGameObject)// || mAttachedCamera)
+			if (mAttachedObject)
 				return true;
 			else
 				return false;
@@ -91,7 +79,7 @@ namespace TS_ENGINE
 		//For IMGUI
 		bool m_Enabled = false;
 
-		Ref<Node> GetParentNode()
+		Node* GetParentNode()
 		{
 			return mParentNode;
 		}
@@ -106,19 +94,20 @@ namespace TS_ENGINE
 			mIsVisibleInEditor = false;
 		}
 #endif
+
 	private:
 		std::string mName;		
-		Ref<Node> mParentNode;
+		Node* mParentNode;//This is not a smart pointer. Handler the cleaning manually.
 		std::vector<Ref<Node>> mChildren;
 
 		Ref<Transform> mTransform;
-		Ref<Object> mAttachedObject;
-		//Ref<GameObject> mAttachedGameObject;
-		//Ref<Camera> mAttachedCamera;
+		Ref<Object> mAttachedObject;		
 
 #ifdef TS_ENGINE_EDITOR
 		bool mIsVisibleInEditor;
 #endif
+
+		EntityType mEntityType;
 	};
 }
 

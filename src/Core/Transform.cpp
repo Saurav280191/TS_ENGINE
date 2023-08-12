@@ -35,7 +35,12 @@ namespace TS_ENGINE
 
 	}
 
-	void Transform::LookAt(Ref<Node> parentNode, const Ref<Transform> target)
+	void Transform::Follow(Ref<Node> targetNode)
+	{
+		m_TransformationMatrix = targetNode->GetTransform()->GetTransformationMatrix();
+	}
+
+	void Transform::LookAt(Node* parentNode, const Ref<Transform> target)
 	{
 		mLookAtTarget = target;
 		mLookAtEnabled = true;
@@ -167,20 +172,20 @@ namespace TS_ENGINE
 		return glm::inverse(newTransformMatrix) * m_TransformationMatrix;
 	}
 
-	const Vector3& Transform::GetGlobalPosition() const
+	/*const Vector3& Transform::GetGlobalPosition() const
 	{
 		return Vector3(m_TransformationMatrix[3].x, m_TransformationMatrix[3].y, m_TransformationMatrix[3].z);
-	}
+	}*/
 
-	const Vector3& Transform::GetGlobalEulerAngles(Vector3 parentEulerAngles) const
+	/*const Vector3& Transform::GetGlobalEulerAngles(Vector3 parentEulerAngles) const
 	{
 		return parentEulerAngles + m_EulerAngles;
-	}
+	}*/
 
-	const Vector3& Transform::GetGlobalScale() const
+	/*const Vector3& Transform::GetGlobalScale() const
 	{
 		return { glm::length(GetRight()), glm::length(GetUp()), glm::length(GetBackward()) };
-	}
+	}*/
 
 	Vector3 Transform::GetRight() const
 	{

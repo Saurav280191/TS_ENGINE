@@ -4,6 +4,7 @@
 namespace TS_ENGINE
 {
 	Node::Node()
+		: mParentNode(nullptr)
 	{
 		mTransform = CreateRef<Transform>();
 #ifdef TS_ENGINE_EDITOR
@@ -11,25 +12,16 @@ namespace TS_ENGINE
 #endif
 	}
 
-	Node::Node(Node* node)
+	Node::~Node()
 	{
-		this->m_Enabled = node->m_Enabled;
-		this->mTransform = node->mTransform;
-		this->mParentNode = node->mParentNode;
-		this->mName = node->mName;
-		this->mChildren = node->mChildren;
-		this->mAttachedObject = node->mAttachedObject;
-		//this->mAttachedGameObject = node->mAttachedGameObject;
+		Destroy();
 	}
 
 	void Node::Destroy()
 	{
 		mName = "";
 		mTransform.reset();
-
-		mAttachedObject.reset();
-		//mAttachedGameObject.reset();
-		//mAttachedCamera.reset();
+		mAttachedObject.reset();	
 
 		for (auto& node : mChildren)
 			node.reset();
@@ -47,26 +39,16 @@ namespace TS_ENGINE
 		mAttachedObject = object;
 	}
 
-	/*void Node::AttachGameObject(Ref<GameObject> gameObject)
-	{
-		mAttachedGameObject = gameObject;
-	}*/
-
-	/*void Node::AttachCamera(Ref<Camera> camera)
-	{
-		mAttachedCamera = camera;
-	}*/
-
 	void Node::AddChild(Ref<Node> child)
 	{
-		child->mParentNode = CreateRef<Node>(this);
+		child->mParentNode = this; 
 		mChildren.push_back(child);
 		TS_CORE_INFO(child->GetName() + " is set as child of " + this->GetName());
 	}
 
 	void Node::RemoveChild(Ref<Node> child)
 	{
-		auto iter = std::find(mChildren.begin(), mChildren.end(), child);
+		/*auto iter = std::find(mChildren.begin(), mChildren.end(), child);
 
 		if (iter != mChildren.end())
 		{
@@ -76,7 +58,9 @@ namespace TS_ENGINE
 		else
 		{
 			TS_CORE_ERROR("Element " + child->mName + " not found in vector");
-		}
+		}*/
+
+		mChildren.erase(std::remove(mChildren.begin(), mChildren.end(), child), mChildren.end());
 	}
 
 	void Node::RemoveAllChildren()
@@ -85,6 +69,11 @@ namespace TS_ENGINE
 			child.reset();
 
 		mChildren.clear();
+	}
+
+	void Node::SetEntityType(EntityType entityType)
+	{
+		mEntityType = entityType;
 	}
 
 	const Ref<Node> Node::GetChildAt(uint32_t childIndex) const
@@ -110,7 +99,7 @@ namespace TS_ENGINE
 	/// </summary>
 	void Node::InitializeTransformMatrices()
 	{
-		mTransform->ComputeTransformationMatrix(this, mParentNode.get());
+		mTransform->ComputeTransformationMatrix(this, mParentNode);
 
 		for (auto& child : mChildren)		
 			child->InitializeTransformMatrices();		
@@ -120,7 +109,7 @@ namespace TS_ENGINE
 	{
 		mTransform->SetLocalPosition(pos);
 
-		mTransform->ComputeTransformationMatrix(this, mParentNode.get());
+		mTransform->ComputeTransformationMatrix(this, mParentNode);
 
 		for (auto& child : mChildren)
 			child->InitializeTransformMatrices();
@@ -130,7 +119,7 @@ namespace TS_ENGINE
 	{
 		mTransform->SetLocalEulerAngles(eulerAngles);
 
-		mTransform->ComputeTransformationMatrix(this, mParentNode.get());
+		mTransform->ComputeTransformationMatrix(this, mParentNode);
 
 		for (auto& child : mChildren)
 			child->InitializeTransformMatrices();
@@ -140,7 +129,7 @@ namespace TS_ENGINE
 	{
 		mTransform->SetLocalScale(scale);
 
-		mTransform->ComputeTransformationMatrix(this, mParentNode.get());
+		mTransform->ComputeTransformationMatrix(this, mParentNode);
 
 		for (auto& child : mChildren)
 			child->InitializeTransformMatrices();
