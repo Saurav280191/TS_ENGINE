@@ -68,6 +68,9 @@ namespace TS_ENGINE
 
 	void ImGuiLayer::Begin()
 	{
+		// Enable docking
+		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
