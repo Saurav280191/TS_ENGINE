@@ -34,11 +34,10 @@ namespace TS_ENGINE
 		bool OnWindowResize(WindowResizeEvent& e);
 
 		float mLastFrame;
-
+		
 		void AddDrawCalls(uint32_t drawcalls);
 		void AddVertices(uint32_t vertices);
 		void AddIndices(uint32_t indices);
-
 
 		const float GetDeltaTime() const;
 		const uint32_t GetDrawCalls() const;

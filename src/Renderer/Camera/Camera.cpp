@@ -11,7 +11,8 @@ namespace TS_ENGINE
 {
 	Camera::Camera()
 	{
-
+		mEntityType = EntityType::CAMERA;
+		mNode->SetEntityType(EntityType::CAMERA);
 	}
 
 	Camera::Camera(const std::string& name) :
@@ -20,6 +21,7 @@ namespace TS_ENGINE
 	{	
 		mName = name;
 		mEntityType = EntityType::CAMERA;
+		mNode->SetEntityType(EntityType::CAMERA);
 
 		mDefaultPos = Vector3(8.56551170f, 3.30869126f, 9.40866184f);
 		mDefaultEulerAngles = Vector3(0.493025780f, -0.706756115f, 0.0f);
@@ -27,6 +29,8 @@ namespace TS_ENGINE
 		mNode->GetTransform()->SetLocalPosition(mDefaultPos);
 		mNode->GetTransform()->SetLocalEulerAngles(mDefaultEulerAngles);
 		mProjectionType = ProjectionType::PERSPECTIVE;
+
+		mEntityID = EntityManager::GetInstance()->Instantiate(mName, mEntityType);
 	}
 
 

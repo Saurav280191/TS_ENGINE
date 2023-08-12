@@ -121,16 +121,12 @@ file(GLOB RendererSrc
 #src/Renderer/Batcher.cpp
 src/Renderer/Buffer.h
 src/Renderer/Buffer.cpp
-src/Renderer/Camera.h
-src/Renderer/Camera.cpp
-src/Renderer/SceneCamera.h
-src/Renderer/SceneCamera.cpp
 src/Renderer/GraphicsContext.h
 src/Renderer/GraphicsContext.cpp
 src/Renderer/RenderCommand.h
 src/Renderer/RenderCommand.cpp
-src/Renderer/Renderer.h
-src/Renderer/Renderer.cpp
+#src/Renderer/Renderer.h
+#src/Renderer/Renderer.cpp
 src/Renderer/RendererAPI.h
 src/Renderer/RendererAPI.cpp
 src/Renderer/Shader.h
@@ -162,6 +158,15 @@ src/Renderer/Lighting/DirectionalLight.h
 src/Renderer/Lighting/DirectionalLight.cpp
 )
 source_group("Renderer/Lighting" FILES ${LightingSrc})
+
+#Renderer/Camera Filter
+file(GLOB CameraSrc
+src/Renderer/Camera/Camera.h
+src/Renderer/Camera/Camera.cpp
+src/Renderer/Camera/SceneCamera.h
+src/Renderer/Camera/SceneCamera.cpp
+)
+source_group("Renderer/Camera" FILES ${CameraSrc})
 
 #SceneManager Filter
 file(GLOB SceneManagerSrc
@@ -203,6 +208,7 @@ ${PlatformWindowsSrc} #Platform Windows Filter
 ${PrimitiveSrc} #Primitives Filter
 ${RendererSrc} #Renderer Filter
 ${LightingSrc} #Renderer/Lighting Filter
+${CameraSrc} #Renderer/Camera Filter
 ${SceneManagerSrc} # SceneManager Filter
 ${EntityManagerSrc} # EntityManager Filter
 ${UtilsSrc} # Utils Filter

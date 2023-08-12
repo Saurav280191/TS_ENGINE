@@ -18,11 +18,13 @@ namespace TS_ENGINE
 		SceneCamera(const std::string& name);		
 #endif
 		// Inherited via Camera
-		virtual void Initialize() override;
-		virtual void SetName(const std::string& name) override;		
+		virtual void Initialize() override;			
 		virtual void Update(Ref<Shader> shader, float deltaTime) override;
-
-		void CheckIfSelected(Ref<TS_ENGINE::Node>& hoveredOnNode);
+		virtual void RenderGui(Ref<Shader> shader, float deltaTime) override;
+		virtual void DeleteMeshes() override;
+		
+		bool IsSceneCameraGuiSelected(int entityID);
+		//void CheckIfSelected(Ref<TS_ENGINE::Node>& hoveredOnNode);
 
 		Ref<TS_ENGINE::Quad> GetSceneCameraGui()
 		{
@@ -37,5 +39,6 @@ namespace TS_ENGINE
 		Ref<TS_ENGINE::Quad> mSceneCameraGui;
 		Ref<TS_ENGINE::Line> mFrustrumLine;		
 #endif
+
 	};
 }

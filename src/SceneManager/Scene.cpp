@@ -1,6 +1,6 @@
 #include "tspch.h"
 #include "SceneManager/Scene.h"
-#include <Renderer/Camera.h>
+#include <Renderer/Camera/Camera.h>
 
 namespace TS_ENGINE
 {

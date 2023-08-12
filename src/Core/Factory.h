@@ -6,9 +6,10 @@
 #include "Primitive/Sphere.h"
 #include "Primitive/Quad.h"
 #include "Primitive/Model.h"
+#include "ModelLoader.h"
 
 //Cameras
-#include "Renderer/SceneCamera.h"
+#include "Renderer/Camera/SceneCamera.h"
 
 #include "SceneManager/SceneManager.h"
 #include "SceneManager/Node.h"

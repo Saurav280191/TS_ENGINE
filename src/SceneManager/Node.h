@@ -4,8 +4,6 @@
 #include "Core/Transform.h"
 #include "Renderer/Shader.h"
 #include "Core/Object.h"
-//#include "Core/GameObject.h"
-//#include "Renderer/Camera.h"
 
 namespace TS_ENGINE
 {

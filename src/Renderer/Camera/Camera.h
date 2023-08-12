@@ -8,7 +8,7 @@
 #include "imgui_internal.h"
 #define IMAPP_IMPL
 #include "ImGuizmo.h"
-#include "Framebuffer.h"
+#include "Renderer/Framebuffer.h"
 
 namespace TS_ENGINE
 {
@@ -78,6 +78,8 @@ namespace TS_ENGINE
 		Camera(const std::string& name);
 		~Camera();
 		
+		virtual void RenderGui(Ref<Shader> shader, float deltaTime) = 0;
+
 		void CreateFramebuffer(uint32_t _width, uint32_t _height);
 
 		Camera::ProjectionType GetProjectionType();
@@ -99,7 +101,7 @@ namespace TS_ENGINE
 		//void SetCurrentShader(Ref<Shader>& currentShader);
 		void Controls(float deltaTime);
 
-		Ref<Framebuffer> GetFramebuffer();
+		Ref<Framebuffer> GetFramebuffer();		
 	protected:
 		//Ref<Shader> mCurrentShader;
 		glm::vec2 mInitialMousePosition;
@@ -120,5 +122,6 @@ namespace TS_ENGINE
 		Ref<Framebuffer> mFramebuffer;
 
 		void Reset();
-	};
+
+};
 }

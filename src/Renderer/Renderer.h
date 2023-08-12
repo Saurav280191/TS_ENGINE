@@ -1,5 +1,5 @@
 #pragma once
-#include "Renderer/Camera.h"
+#include "Renderer/Camera/Camera.h"
 #include <Renderer/VertexArray.h>
 #include <Renderer/Shader.h>
 #include "Renderer/RendererAPI.h"

@@ -1,10 +1,12 @@
 #pragma once
 #include "Node.h"
 //#include "Renderer/Batcher.h"
-#include "Renderer/Renderer.h"
+//#include "Renderer/Renderer.h"
+#include "Renderer/Camera/Camera.h"
 
 namespace TS_ENGINE
 {
+
 #pragma region Batching classes
 
 	class BatchButton

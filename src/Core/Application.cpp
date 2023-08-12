@@ -2,7 +2,7 @@
 #include "Core/Application.h"
 #include "Core/Log.h"
 #include "Core/Base.h"
-#include "Renderer/Renderer.h"
+//#include "Renderer/Renderer.h"
 
 namespace TS_ENGINE
 {
@@ -18,7 +18,7 @@ namespace TS_ENGINE
 		mWindow->SetEventCallback(TS_BIND_EVENT_FN(Application::OnEvent));
 		mWindow->SetVSync(false);//V-Sync off
 
-		Renderer::Init();
+		//Renderer::Init();
 
 		mImGuiLayer = new ImGuiLayer();
 		PushOverlay(mImGuiLayer);
@@ -26,7 +26,7 @@ namespace TS_ENGINE
 
 	Application::~Application()
 	{
-		Renderer::Shutdown();
+		//Renderer::Shutdown();
 	}
 
 	void Application::PushLayer(Layer* layer)
@@ -79,7 +79,7 @@ namespace TS_ENGINE
 					//glDisable(GL_POLYGON_SMOOTH);
 
 					for (Layer* layer : mLayerStack)
-						layer->OnImGUIRender();
+						layer->OnImGuiRender();
 				}
 				mImGuiLayer->End();
 
@@ -102,7 +102,7 @@ namespace TS_ENGINE
 		}
 
 		mMinimized = false;
-		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+		//Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
 
 		return false;
 	}

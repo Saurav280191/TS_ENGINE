@@ -87,9 +87,9 @@ namespace TS_ENGINE
 
 			mFrustrumLine->GetNode()->AttachObject(mFrustrumLine);
 			mFrustrumLine->GetNode()->SetName("FrustrumLine");
-			mFrustrumLine->GetNode()->HideInEditor();//Hides the node in hierarchy
-			
-			mNode->AddChild(mFrustrumLine->GetNode());
+
+			//mFrustrumLine->GetNode()->HideInEditor();//Hides the node in hierarchy			
+			//mNode->AddChild(mFrustrumLine->GetNode());
 		}
 
 		//SceneCameraGuiQuad
@@ -98,6 +98,7 @@ namespace TS_ENGINE
 			mCameraIcon->SetVerticalFlip(false);
 
 			mSceneCameraGui = CreateRef<TS_ENGINE::Quad>("CameraGui");
+			mSceneCameraGui->EnableAlphaBlending();//Enable transparency
 			//mSceneCameraGui->SetMaterial(mDefaultMat);
 			mSceneCameraGui->SetColor(1, 1, 1);
 			mSceneCameraGui->SetTexture(mCameraIcon);
@@ -108,22 +109,20 @@ namespace TS_ENGINE
 			mSceneCameraGui->GetNode()->GetTransform()->SetLocalEulerAngles(0.0, 90.0f, 0.0f);
 			mSceneCameraGui->GetNode()->GetTransform()->SetLocalScale(-1.0f, 1.0f, 1.0f);
 
-			mSceneCameraGui->GetNode()->HideInEditor();//Hides the node in hierarchy
-			mNode->AddChild(mSceneCameraGui->GetNode());
+			//mSceneCameraGui->GetNode()->HideInEditor();//Hides the node in hierarchy
+			//mNode->AddChild(mSceneCameraGui->GetNode());
 		}
 #endif
-	}
-	void SceneCamera::SetName(const std::string& name)
-	{
-		mName = name;
-		mNode->SetName(name);
 	}
 
 	void SceneCamera::Update(Ref<Shader> shader, float deltaTime)
 	{
 #ifdef TS_ENGINE_EDITOR
-		if(mEditorCamera)
-			mSceneCameraGui->GetNode()->GetTransform()->LookAt(mNode, mEditorCamera->GetNode()->GetTransform());
+		if (mEditorCamera)
+		{
+			mSceneCameraGui->GetNode()->GetTransform()->LookAt(mNode.get(), mEditorCamera->GetNode()->GetTransform());
+			mFrustrumLine->GetNode()->GetTransform()->Follow(mNode);
+		}
 #endif
 
 		mViewMatrix = mNode->GetTransform()->GetTransformationMatrix();
@@ -134,12 +133,30 @@ namespace TS_ENGINE
 		shader->SetMat4("u_Projection", mProjectionMatrix);
 	}
 
-	void SceneCamera::CheckIfSelected(Ref<TS_ENGINE::Node>& hoveredOnNode)
+	bool SceneCamera::IsSceneCameraGuiSelected(int entityID)
 	{
-		if (hoveredOnNode == mSceneCameraGui->GetNode()//Don't select mSceneCameraGui 
-			|| hoveredOnNode == mFrustrumLine->GetNode())//or mFrustrumLine
-		{
-			hoveredOnNode = this->mNode;//Select it's parent node instead
-		}
+		if (entityID == mSceneCameraGui->GetEntityID())
+			return true;
+		else
+			return false;
 	}
+
+	void SceneCamera::DeleteMeshes()
+	{
+	}
+
+	void SceneCamera::RenderGui(Ref<Shader> shader, float deltaTime)
+	{
+		mFrustrumLine->GetNode()->Update(shader, deltaTime);
+		mSceneCameraGui->GetNode()->Update(shader, deltaTime);
+	}
+
+	//void SceneCamera::CheckIfSelected(Ref<TS_ENGINE::Node>& hoveredOnNode)
+	//{
+	//	if (hoveredOnNode == mSceneCameraGui->GetNode()//Don't select mSceneCameraGui 
+	//		|| hoveredOnNode == mFrustrumLine->GetNode())//or mFrustrumLine
+	//	{
+	//		hoveredOnNode = this->mNode;//Select it's parent node instead
+	//	}
+	//}
 }
