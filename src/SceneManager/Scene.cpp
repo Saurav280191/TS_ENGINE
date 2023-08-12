@@ -36,7 +36,7 @@ namespace TS_ENGINE
 	void Scene::Initialize(Ref<Camera> editorCamera)
 	{
 		mEditorCamera = editorCamera;
-		Renderer::BeginScene(editorCamera);
+		//Renderer::BeginScene(editorCamera);
 		mSceneNode->InitializeTransformMatrices();
 	}
 
@@ -49,7 +49,7 @@ namespace TS_ENGINE
 	}
 
 	Ref<Node> Scene::PickNodeByEntityID(int entityID)
-	{		
+	{	
 		PickNode(mSceneNode, entityID);
 		return mMatchingNode;
 	}
