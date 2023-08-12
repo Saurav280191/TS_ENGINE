@@ -5,6 +5,7 @@ namespace TS_ENGINE {
 
 	Cube::Cube(const std::string& name)
 	{
+		mPrimitiveType = PrimitiveType::CUBE;
 		mName = name;
 		mMesh = CreateRef<Mesh>();
 		Initialize();
@@ -12,6 +13,7 @@ namespace TS_ENGINE {
 
 	Cube::Cube(const std::string& name, const Vector3& color)
 	{
+		mPrimitiveType = PrimitiveType::CUBE;
 		mName = name;
 		mColor = color;
 		mMesh = CreateRef<Mesh>();

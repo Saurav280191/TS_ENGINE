@@ -14,7 +14,7 @@ namespace TS_ENGINE {
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}
 		virtual void OnUpdate(float deltaTime) {}
-		virtual void OnImGUIRender() {}
+		virtual void OnImGuiRender() {}
 		virtual void OnEvent(Event& event) {}
 
 		const std::string& GetName() const 

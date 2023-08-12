@@ -60,7 +60,6 @@ namespace TS_ENGINE {
 
 		// Inherited via Object
 		virtual void Initialize() override;
-		virtual void SetName(const std::string& name) override;
 		virtual void Update(Ref<Shader> shader, float deltaTime) override;
 
 		void SetCommonParams(const Ref<Shader>& shader, const Vector3& position, const Vector3& direction, const Vector3& ambient, const Vector3& diffuse, const Vector3& specular);

@@ -17,10 +17,6 @@ namespace TS_ENGINE {
 		Model();
 		Model(const std::string& modelPath);		
 		void LoadModel(const std::string& modelPath);
-		
-		virtual void Initialize() override;
-		virtual void SetName(const std::string& name) override;
-		virtual void Update(Ref<Shader> shader, float deltaTime) override;
 
 		void CopyFrom(Ref<Model> model);
 		~Model();		

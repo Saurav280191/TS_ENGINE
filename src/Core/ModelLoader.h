@@ -7,13 +7,14 @@ namespace TS_ENGINE {
 	class ModelLoader
 	{
 	private:
+		static ModelLoader* mInstance;
 		std::unordered_map<std::string, Ref<Model>> mLoadedModelMap;
 		Ref<Model> mLastLoadedModel;
 	public:
-		ModelLoader();
+		static ModelLoader* GetInstance();
 		~ModelLoader();
 
-		void LoadModel(const std::string& directory, const std::string& modelName);		
+		Ref<Model> LoadModel(const std::string& directory, const std::string& modelName);		
 		const Ref<Model> GetLastLoadedModel() const
 		{
 			return mLastLoadedModel;

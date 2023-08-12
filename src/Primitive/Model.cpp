@@ -5,11 +5,12 @@ namespace TS_ENGINE {
 
 	Model::Model()
 	{
-		
+		mPrimitiveType = PrimitiveType::MODEL;
 	}
 
 	Model::Model(const std::string& modelPath)
 	{
+		mPrimitiveType = PrimitiveType::MODEL;
 		this->LoadModel(modelPath);
 	}
 
@@ -40,18 +41,6 @@ namespace TS_ENGINE {
 		this->ProcessNode(scene->mRootNode, scene);
 
 		Initialize();
-	}
-
-	void Model::Initialize()
-	{
-	}
-
-	void Model::SetName(const std::string& name)
-	{
-	}
-
-	void Model::Update(Ref<Shader> shader, float deltaTime)
-	{
 	}
 
 	void Model::ProcessNode(aiNode* node, const aiScene* scene)

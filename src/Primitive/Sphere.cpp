@@ -5,6 +5,7 @@ namespace TS_ENGINE {
 
 	Sphere::Sphere(const std::string& name)
 	{
+		mPrimitiveType = PrimitiveType::SPHERE;
 		mName = name;
 		mMesh = CreateRef<Mesh>();
 		Initialize();

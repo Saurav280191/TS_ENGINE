@@ -31,14 +31,6 @@ namespace TS_ENGINE {
 		mIndices = _indices;
 	}
 
-	/// <summary>
-	/// 1. Sets draw mode(Traingle/Line)
-	/// 2. Creates vertex array
-	/// 3. Create vertex buffer and sets layout for it 
-	/// 4. Sets vertex buffer in created vertex array
-	/// 5. Creates index buffer and sets that in vertex array
-	/// </summary>
-	/// <param name="drawMode"></param>
 	void Mesh::Create(DrawMode drawMode)//Default is Triangle
 	{
 		mDrawMode = drawMode;

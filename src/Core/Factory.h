@@ -26,7 +26,9 @@ namespace TS_ENGINE
 	public:
 		static Factory* GetInstance();
 
-		Ref<GameObject> CreateGameObject(GameObject::Type objectType);
+		Ref<GameObject> CreateGameObject(PrimitiveType type);
+		void ChangeMeshForNode(Ref<Node> node, int primitiveIndex);
+		
 #ifdef TS_ENGINE_EDITOR
 		Ref<SceneCamera> CreateSceneCamera(Ref<Camera> editorCamera);
 #else

@@ -6,7 +6,7 @@ namespace TS_ENGINE {
 	Light::Light() :
 		mType(Type::DIRECTIONAL)
 	{
-		
+		mEntityType = EntityType::LIGHT;
 	}
 
 	Light::~Light()
@@ -18,11 +18,7 @@ namespace TS_ENGINE {
 	{
 		mEntityID = EntityManager::GetInstance()->Instantiate(mName, mEntityType);
 	}
-	void Light::SetName(const std::string& name)
-	{
-		mName = name;
-		mNode->SetName(name);
-	}	
+
 	void Light::Update(Ref<Shader> shader, float deltaTime)
 	{
 		//this->linear = 1.0f;			

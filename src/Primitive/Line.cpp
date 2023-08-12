@@ -5,6 +5,7 @@ namespace TS_ENGINE
 {
 	Line::Line(const std::string& name)
 	{
+		//mPrimitiveType = PrimitiveType::LINE;
 		mName = name;
 		mMesh = CreateRef<Mesh>();
 		Initialize();		
@@ -19,7 +20,7 @@ namespace TS_ENGINE
 		AddMesh(mMesh);
 	}
 
-	void Line::Draw(const std::vector<Vector4>& points)
+	/*void Line::Draw(const std::vector<Vector4>& points)
 	{
 		mMesh->GetVertices().clear();
 
@@ -28,5 +29,5 @@ namespace TS_ENGINE
 
 		mMesh->Create(DrawMode::LINE);
 		AddMesh(mMesh);
-	}
+	}*/
 }

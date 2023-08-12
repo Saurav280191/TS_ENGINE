@@ -5,6 +5,7 @@ namespace TS_ENGINE {
 
 	Quad::Quad(const std::string& name)
 	{
+		mPrimitiveType = PrimitiveType::QUAD;
 		mName = name;
 		mMesh = CreateRef<Mesh>();
 		Initialize();
@@ -12,6 +13,7 @@ namespace TS_ENGINE {
 
 	Quad::Quad(const std::string& name, const Vector3& color)
 	{
+		mPrimitiveType = PrimitiveType::QUAD;
 		mName = name;
 		mMesh = CreateRef<Mesh>();
 		mColor = color;

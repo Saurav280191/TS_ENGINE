@@ -6,19 +6,23 @@ namespace TS_ENGINE {
 	GameObject::GameObject() :
 		mHasTexture(false),
 		mColor(Vector3(0.5f)),
-		mDepthTestEnabled(true)
+		mDepthTestEnabled(true),
+		mAlphaBlendingEnabled(false)
 	{
 		mEntityType = EntityType::GAMEOBJECT;
+		mNode->SetEntityType(EntityType::GAMEOBJECT);
 		mMeshes = {};
 	}
 
 	GameObject::GameObject(const std::string& name = "") :
 		mHasTexture(false),
 		mColor(Vector3(0.5f)),
-		mDepthTestEnabled(true)
+		mDepthTestEnabled(true),
+		mAlphaBlendingEnabled(false)
 	{
 		mName = name;
 		mEntityType = EntityType::GAMEOBJECT;
+		mNode->SetEntityType(EntityType::GAMEOBJECT);
 		mMeshes = {};
 	}
 
@@ -33,16 +37,13 @@ namespace TS_ENGINE {
 	{
 		mEntityID = EntityManager::GetInstance()->Instantiate(mName, mEntityType);
 	}
-	void GameObject::SetName(const std::string& name)
-	{
-		mName = name;
-		mNode->SetName(name);
-	}
+	
 	void GameObject::Update(Ref<Shader> shader, float deltaTime)
 	{
 		//TS_CORE_TRACE("Rendering: {0}", mName);
 
 		RenderCommand::EnableDepthTest(mDepthTestEnabled);
+		RenderCommand::EnableAlphaBlending(mAlphaBlendingEnabled);
 
 		//auto shader = mMaterial->GetShader();
 
@@ -56,10 +57,27 @@ namespace TS_ENGINE {
 			shader->SetBool("u_HasTexture", false);
 		}
 
-		for (auto mesh : mMeshes)
+		for (auto& mesh : mMeshes)
 			mesh->Draw();
 	}
 
+	void GameObject::DeleteMeshes()
+	{
+		for (auto& mesh : mMeshes)
+		{
+			mesh.reset();
+		}
+
+		mMeshes.clear();
+	}
+	
+	void GameObject::Destroy()
+	{
+		//Destroy GameObject
+		for(auto& mesh : mMeshes)
+			mesh->Destroy();
+	}
+	
 	void GameObject::SetColor(Vector3 color)
 	{
 		mColor.r = color.x;
@@ -131,12 +149,6 @@ namespace TS_ENGINE {
 		mTiling = Vector2(x, y);
 	}
 
-	void GameObject::Destroy()
-	{
-		for(auto& mesh : mMeshes)
-			mesh->Destroy();
-	}
-
 	void GameObject::AddMesh(Ref<Mesh> mesh)
 	{
 		mMeshes.push_back(mesh);
@@ -161,6 +173,16 @@ namespace TS_ENGINE {
 	{
 		mDepthTestEnabled = false;
 	}
+
+	void GameObject::EnableAlphaBlending()
+	{
+		mAlphaBlendingEnabled = true;
+	}
+
+	void GameObject::DisableAlphaBlending()
+	{
+		mAlphaBlendingEnabled = false;
+	}
 	
 	void GameObject::ChangeColor(Vector3 color)
 	{
@@ -170,4 +192,5 @@ namespace TS_ENGINE {
 			mMeshes[i]->Create();
 		}
 	}
+
 }

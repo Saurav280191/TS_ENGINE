@@ -10,29 +10,18 @@
 namespace TS_ENGINE {
 
 	class Mesh;
-
+	class Object;
 	class GameObject : public Object
 	{
 	public:
-		enum Type
-		{
-			QUAD,
-			CUBE,
-			SPHERE,
-			CYLINDER,
-			CONE,
-			MODEL,
-			EMPTY
-		};
-
 		GameObject();
 		GameObject(const std::string& name);
 		~GameObject();
 
 		// Inherited via Object
 		virtual void Initialize() override;
-		virtual void SetName(const std::string& name) override;
 		virtual void Update(Ref<Shader> shader, float deltaTime) override;
+		virtual void DeleteMeshes() override;
 
 		void SetColor(Vector3 color);
 
@@ -68,6 +57,10 @@ namespace TS_ENGINE {
 		void EnableDepthTest();
 		void DisableDepthTest();
 
+		void EnableAlphaBlending();
+
+		void DisableAlphaBlending();
+
 		void ChangeColor(Vector3 color);
 	protected:
 		Vector3 mColor;
@@ -75,6 +68,7 @@ namespace TS_ENGINE {
 		Ref<Texture2D> mTexture;
 		bool mHasTexture;
 		bool mDepthTestEnabled;
+		bool mAlphaBlendingEnabled;
 
 		Vector2 mTiling = Vector2(1);
 		std::vector<Ref<Mesh>> mMeshes;

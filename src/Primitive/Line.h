@@ -12,7 +12,7 @@ namespace TS_ENGINE
 		Line(const std::string& name);
 		
 		void Create(const std::vector<Vector3>& points);
-		void Draw(const std::vector<Vector4>& points);
+		//void Draw(const std::vector<Vector4>& points);
 	};
 }
 
