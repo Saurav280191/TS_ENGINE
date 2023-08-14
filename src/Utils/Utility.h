@@ -21,23 +21,23 @@ namespace TS_ENGINE
 {
 	namespace Utility
 	{
-		static Quaternion EulerToQuaternion(double pitchDegrees, double yawDegrees, double rollDegrees)
+		static Quaternion EulerToQuaternion(float pitchDegrees, float yawDegrees, float rollDegrees)
 		{
-			double pitchRadians = pitchDegrees * glm::pi<double>() / 180.0;
-			double yawRadians = yawDegrees * glm::pi<double>() / 180.0;
-			double rollRadians = rollDegrees * glm::pi<double>() / 180.0;
+			float pitchRadians = pitchDegrees * glm::pi<float>() / 180.0f;
+			float yawRadians = yawDegrees * glm::pi<float>() / 180.0f;
+			float rollRadians = rollDegrees * glm::pi<float>() / 180.0f;
 
 			Quaternion q;
-			double halfPitch = pitchRadians * 0.5;
-			double halfYaw = yawRadians * 0.5;
-			double halfRoll = rollRadians * 0.5;
+			float halfPitch = pitchRadians * 0.5f;
+			float halfYaw = yawRadians * 0.5f;
+			float halfRoll = rollRadians * 0.5f;
 
-			double sinHalfPitch = sin(halfPitch);
-			double cosHalfPitch = cos(halfPitch);
-			double sinHalfYaw = sin(halfYaw);
-			double cosHalfYaw = cos(halfYaw);
-			double sinHalfRoll = sin(halfRoll);
-			double cosHalfRoll = cos(halfRoll);
+			float sinHalfPitch = sin(halfPitch);
+			float cosHalfPitch = cos(halfPitch);
+			float sinHalfYaw = sin(halfYaw);
+			float cosHalfYaw = cos(halfYaw);
+			float sinHalfRoll = sin(halfRoll);
+			float cosHalfRoll = cos(halfRoll);
 
 			q.x = sinHalfYaw * cosHalfPitch * cosHalfRoll - cosHalfYaw * sinHalfPitch * sinHalfRoll;
 			q.y = cosHalfYaw * sinHalfPitch * cosHalfRoll + sinHalfYaw * cosHalfPitch * sinHalfRoll;
