@@ -3,13 +3,14 @@
 
 namespace TS_ENGINE
 {
-	Node::Node()
-		: mParentNode(nullptr)
-	{
-		mTransform = CreateRef<Transform>();
+	Node::Node() : 
+		mParentNode(nullptr),
+		mTransform(CreateRef<Transform>()),
 #ifdef TS_ENGINE_EDITOR
-		mIsVisibleInEditor = true;
+		mIsVisibleInEditor(true)
 #endif
+	{
+
 	}
 
 	Node::~Node()
@@ -26,6 +27,8 @@ namespace TS_ENGINE
 		for (auto& node : mChildren)
 			node.reset();
 
+		mParentNode = nullptr;
+
 		mChildren.clear();
 	}
 
@@ -39,28 +42,39 @@ namespace TS_ENGINE
 		mAttachedObject = object;
 	}
 
+	void Node::SetNodeRef(Ref<Node> node)
+	{
+		mNodeRef = node;
+	}
+
+	void Node::SetParent(Ref<Node> parentNode)
+	{
+		SetParent(parentNode.get());
+	}
+
+	void Node::SetParent(Node* parentNode)
+	{
+		TS_CORE_INFO("Setting parent of {0} as {1}", mNodeRef->GetName(), parentNode->GetName());
+
+		if (mNodeRef->mParentNode)
+			mNodeRef->mParentNode->RemoveChild(mNodeRef);
+
+		parentNode->AddChild(mNodeRef);
+	}
+
 	void Node::AddChild(Ref<Node> child)
 	{
 		child->mParentNode = this; 
 		mChildren.push_back(child);
 		TS_CORE_INFO(child->GetName() + " is set as child of " + this->GetName());
+
+		child->UpdateSiblings();
 	}
 
 	void Node::RemoveChild(Ref<Node> child)
 	{
-		/*auto iter = std::find(mChildren.begin(), mChildren.end(), child);
-
-		if (iter != mChildren.end())
-		{
-			mChildren.erase(iter);
-			TS_CORE_INFO("Element " + child->mName + " removed from vector");
-		}
-		else
-		{
-			TS_CORE_ERROR("Element " + child->mName + " not found in vector");
-		}*/
-
 		mChildren.erase(std::remove(mChildren.begin(), mChildren.end(), child), mChildren.end());
+		child->UpdateSiblings();
 	}
 
 	void Node::RemoveAllChildren()
@@ -76,6 +90,11 @@ namespace TS_ENGINE
 		mEntityType = entityType;
 	}
 
+	void Node::LookAt(Ref<Node> targetNode)
+	{
+		mTransform->LookAt(mParentNode, targetNode->GetTransform());
+	}
+
 	const Ref<Node> Node::GetChildAt(uint32_t childIndex) const
 	{
 		try
@@ -88,10 +107,23 @@ namespace TS_ENGINE
 			TS_CORE_ERROR(e.what());
 		}
 	}
-
-	void Node::LookAt(Ref<Node> targetNode)
+	
+	void Node::UpdateSiblings()
 	{
-		mTransform->LookAt(mParentNode, targetNode->GetTransform());
+		if (mParentNode)
+		{
+			mSiblings = {};
+
+			for (auto& child : mParentNode->mChildren)
+			{
+				if (child != this->mNodeRef)
+					mSiblings.push_back(child);
+			}
+		}
+		else
+		{
+			TS_CORE_ERROR("There is not parent for " + this->GetName());
+		}
 	}
 
 	/// <summary>

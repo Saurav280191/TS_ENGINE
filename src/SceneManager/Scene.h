@@ -71,11 +71,11 @@ namespace TS_ENGINE
 		//void OnBatched();
 		//void OnUnBatched();
 
-		const Ref<Node> GetSceneNode() const
+		Ref<Node> GetSceneNode() const
 		{
 			return mSceneNode;
 		}
-		
+
 		void Initialize(Ref<Camera> editorCamera);
 		void Update(Ref<Shader> shader, float deltaTime);
 		Ref<Node> PickNodeByEntityID(int entityID);		

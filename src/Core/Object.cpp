@@ -8,7 +8,8 @@ namespace TS_ENGINE
 		mEntityType(EntityType::DEFAULT),
 		mEntityID(0)
 	{
-		mNode = CreateRef<Node>();		
+		mNode = CreateRef<Node>();
+		mNode->SetNodeRef(mNode);
 	}
 
 	Object::~Object()
