@@ -57,9 +57,12 @@ namespace TS_ENGINE
 		TS_CORE_INFO("Setting parent of {0} as {1}", mNodeRef->GetName(), parentNode->GetName());
 
 		if (mNodeRef->mParentNode)
+		{
 			mNodeRef->mParentNode->RemoveChild(mNodeRef);
+		}
 
 		parentNode->AddChild(mNodeRef);
+		mNodeRef->GetTransform()->ComputeTransformationMatrix(mNodeRef.get(), parentNode);
 	}
 
 	void Node::AddChild(Ref<Node> child)
