@@ -94,7 +94,7 @@ namespace TS_ENGINE
 
 		//SceneCameraGuiQuad
 		{
-			mCameraIcon = TS_ENGINE::Texture2D::Create("Assets\\Textures\\Gui\\Camera.png");
+			mCameraIcon = TS_ENGINE::Texture2D::Create("Resources\\Gui\\Camera.png");
 			mCameraIcon->SetVerticalFlip(false);
 
 			mSceneCameraGui = CreateRef<TS_ENGINE::Quad>("CameraGui");

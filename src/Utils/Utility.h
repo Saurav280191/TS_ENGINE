@@ -184,6 +184,34 @@ namespace TS_ENGINE
 		static const char* resourcePath;
 		static std::filesystem::path path;
 
+		static void GetFilenameAndExtension(const std::string& fullFileName, std::string& name, std::string& extension) 
+		{
+			size_t dotPos = fullFileName.find_last_of('.');
+
+			if (dotPos != std::string::npos) 
+			{
+				name = fullFileName.substr(0, dotPos);
+				extension = fullFileName.substr(dotPos + 1);
+			}
+			else 
+			{
+				name = fullFileName;
+				extension = "";
+			}
+		}
+
+		static std::string GetTruncatedString(const std::string& input, size_t characterLimit) 
+		{
+			std::string truncatedStr = "";
+
+			for (size_t i = 0; i < characterLimit; i ++)
+			{
+				truncatedStr.push_back(input[i]);
+			}
+
+			return truncatedStr;
+		}
+
 		static const char* GetCstr(const wchar_t* wcs)
 		{
 			char* cStr = NULL;
