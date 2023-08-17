@@ -126,7 +126,7 @@ namespace TS_ENGINE
 		//Move Up/Down
 		if (Input::IsKeyPressed(Key::Space))
 			mNode->GetTransform()->MoveUp(mMoveSpeed, deltaTime);
-		if (Input::IsKeyPressed(Key::LeftControl))
+		if (Input::IsKeyPressed(Key::C))
 			mNode->GetTransform()->MoveDown(mMoveSpeed, deltaTime);
 
 		//Yaw - Keyboard
