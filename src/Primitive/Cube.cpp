@@ -11,52 +11,43 @@ namespace TS_ENGINE {
 		Initialize();
 	}
 
-	Cube::Cube(const std::string& name, const Vector3& color)
-	{
-		mPrimitiveType = PrimitiveType::CUBE;
-		mName = name;
-		mColor = color;
-		mMesh = CreateRef<Mesh>();
-		Initialize();
-	}
-
 	void Cube::Create()
 	{
 		//Front
-		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), GetColor(), Vector3(0, 0, -1), Vector2(mTiling.x, mTiling.y)));
-		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), GetColor(), Vector3(0, 0, -1), Vector2(mTiling.x, 0)));
-		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), GetColor(), Vector3(0, 0, -1), Vector2(0, 0)));
-		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), GetColor(), Vector3(0, 0, -1), Vector2(0, mTiling.y)));
+		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), Vector3(0, 0, -1), Vector2(1, 1)));
+		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), Vector3(0, 0, -1), Vector2(1, 0)));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), Vector3(0, 0, -1), Vector2(0, 0)));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), Vector3(0, 0, -1), Vector2(0, 1)));
 
 		//Back
-		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), GetColor(), Vector3(0, 0, 1), Vector2(mTiling.x, mTiling.y)));
-		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), GetColor(), Vector3(0, 0, 1), Vector2(mTiling.x, 0)));
-		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), GetColor(), Vector3(0, 0, 1), Vector2(0, 0)));
-		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), GetColor(), Vector3(0, 0, 1), Vector2(0, mTiling.y)));
+		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), Vector3(0, 0, 1), Vector2(1, 1)));
+		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), Vector3(0, 0, 1), Vector2(1, 0)));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), Vector3(0, 0, 1), Vector2(0, 0)));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), Vector3(0, 0, 1), Vector2(0, 1)));
 
 		//Top
-		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), GetColor(), Vector3(0, 1, 0), Vector2(mTiling.x, mTiling.y)));
-		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), GetColor(), Vector3(0, 1, 0), Vector2(mTiling.x, 0)));
-		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), GetColor(), Vector3(0, 1, 0), Vector2(0, 0)));
-		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), GetColor(), Vector3(0, 1, 0), Vector2(0, mTiling.y)));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), Vector3(0, 1, 0), Vector2(1, 1)));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), Vector3(0, 1, 0), Vector2(1, 0)));
+		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), Vector3(0, 1, 0), Vector2(0, 0)));
+		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), Vector3(0, 1, 0), Vector2(0, 1)));
 
 		//Bottom
-		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), GetColor(), Vector3(0, -1, 0), Vector2(mTiling.x, mTiling.y)));
-		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), GetColor(), Vector3(0, -1, 0), Vector2(mTiling.x, 0)));
-		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), GetColor(), Vector3(0, -1, 0), Vector2(0, 0)));
-		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), GetColor(), Vector3(0, -1, 0), Vector2(0, mTiling.y)));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), Vector3(0, -1, 0), Vector2(1, 1)));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), Vector3(0, -1, 0), Vector2(1, 0)));
+		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), Vector3(0, -1, 0), Vector2(0, 0)));
+		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), Vector3(0, -1, 0), Vector2(0, 1)));
 
 		//Left
-		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), GetColor(), Vector3(-1, 0, 0), Vector2(mTiling.x, mTiling.y)));
-		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), GetColor(), Vector3(-1, 0, 0), Vector2(mTiling.x, 0)));
-		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), GetColor(), Vector3(-1, 0, 0), Vector2(0, 0)));
-		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), GetColor(), Vector3(-1, 0, 0), Vector2(0, mTiling.y)));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), Vector3(-1, 0, 0), Vector2(1, 1)));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), Vector3(-1, 0, 0), Vector2(1, 0)));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), Vector3(-1, 0, 0), Vector2(0, 0)));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), Vector3(-1, 0, 0), Vector2(0, 1)));
 
 		//Right
-		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), GetColor(), Vector3(1, 0, 0), Vector2(mTiling.x, mTiling.y)));
-		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), GetColor(), Vector3(1, 0, 0), Vector2(mTiling.x, 0)));
-		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), GetColor(), Vector3(1, 0, 0), Vector2(0, 0)));
-		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), GetColor(), Vector3(1, 0, 0), Vector2(0, mTiling.y)));
+		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), Vector3(1, 0, 0), Vector2(1, 1)));
+		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), Vector3(1, 0, 0), Vector2(1, 0)));
+		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), Vector3(1, 0, 0), Vector2(0, 0)));
+		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), Vector3(1, 0, 0), Vector2(0, 1)));
 
 		//Front
 		mMesh->AddIndex(0);
@@ -113,40 +104,40 @@ namespace TS_ENGINE {
 	void Cube::Create(const Matrix4& transformationMatrix)
 	{
 		//Front
-		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), GetColor(), Vector3(0, 0, -1), Vector2(mTiling.x, mTiling.y), transformationMatrix));
-		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), GetColor(), Vector3(0, 0, -1), Vector2(mTiling.x, 0), transformationMatrix));
-		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), GetColor(), Vector3(0, 0, -1), Vector2(0, 0), transformationMatrix));
-		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), GetColor(), Vector3(0, 0, -1), Vector2(0, mTiling.y), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), Vector3(0, 0, -1), Vector2(1, 1), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), Vector3(0, 0, -1), Vector2(1, 0), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), Vector3(0, 0, -1), Vector2(0, 0), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), Vector3(0, 0, -1), Vector2(0, 1), transformationMatrix));
 
 		//Back
-		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), GetColor(), Vector3(0, 0, 1), Vector2(mTiling.x, mTiling.y), transformationMatrix));
-		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), GetColor(), Vector3(0, 0, 1), Vector2(mTiling.x, 0), transformationMatrix));
-		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), GetColor(), Vector3(0, 0, 1), Vector2(0, 0), transformationMatrix));
-		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), GetColor(), Vector3(0, 0, 1), Vector2(0, mTiling.y), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), Vector3(0, 0, 1), Vector2(1, 1), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), Vector3(0, 0, 1), Vector2(1, 0), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), Vector3(0, 0, 1), Vector2(0, 0), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), Vector3(0, 0, 1), Vector2(0, 1), transformationMatrix));
 
 		//Top
-		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), GetColor(), Vector3(0, 1, 0), Vector2(mTiling.x, mTiling.y), transformationMatrix));
-		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), GetColor(), Vector3(0, 1, 0), Vector2(mTiling.x, 0), transformationMatrix));
-		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), GetColor(), Vector3(0, 1, 0), Vector2(0, 0), transformationMatrix));
-		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), GetColor(), Vector3(0, 1, 0), Vector2(0, mTiling.y), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), Vector3(0, 1, 0), Vector2(1, 1), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), Vector3(0, 1, 0), Vector2(1, 0), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), Vector3(0, 1, 0), Vector2(0, 0), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), Vector3(0, 1, 0), Vector2(0, 1), transformationMatrix));
 
 		//Bottom
-		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), GetColor(), Vector3(0, -1, 0), Vector2(mTiling.x, mTiling.y), transformationMatrix));
-		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), GetColor(), Vector3(0, -1, 0), Vector2(mTiling.x, 0), transformationMatrix));
-		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), GetColor(), Vector3(0, -1, 0), Vector2(0, 0), transformationMatrix));
-		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), GetColor(), Vector3(0, -1, 0), Vector2(0, mTiling.y), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), Vector3(0, -1, 0), Vector2(1, 1), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), Vector3(0, -1, 0), Vector2(1, 0), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), Vector3(0, -1, 0), Vector2(0, 0), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), Vector3(0, -1, 0), Vector2(0, 1), transformationMatrix));
 
 		//Left
-		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), GetColor(), Vector3(-1, 0, 0), Vector2(mTiling.x, mTiling.y), transformationMatrix));
-		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), GetColor(), Vector3(-1, 0, 0), Vector2(mTiling.x, 0), transformationMatrix));
-		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), GetColor(), Vector3(-1, 0, 0), Vector2(0, 0), transformationMatrix));
-		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), GetColor(), Vector3(-1, 0, 0), Vector2(0, mTiling.y), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), Vector3(-1, 0, 0), Vector2(1, 1), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), Vector3(-1, 0, 0), Vector2(1, 0), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), Vector3(-1, 0, 0), Vector2(0, 0), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), Vector3(-1, 0, 0), Vector2(0, 1), transformationMatrix));
 
 		//Right
-		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), GetColor(), Vector3(1, 0, 0), Vector2(mTiling.x, mTiling.y), transformationMatrix));
-		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), GetColor(), Vector3(1, 0, 0), Vector2(mTiling.x, 0), transformationMatrix));
-		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), GetColor(), Vector3(1, 0, 0), Vector2(0, 0), transformationMatrix));
-		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), GetColor(), Vector3(1, 0, 0), Vector2(0, mTiling.y), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), Vector3(1, 0, 0), Vector2(1, 1), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), Vector3(1, 0, 0), Vector2(1, 0), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), Vector3(1, 0, 0), Vector2(0, 0), transformationMatrix));
+		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), Vector3(1, 0, 0), Vector2(0, 1), transformationMatrix));
 
 		//Front
 		mMesh->AddIndex(0);

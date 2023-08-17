@@ -17,7 +17,7 @@ namespace TS_ENGINE {
 	void Model::CopyFrom(Ref<Model> model)
 	{
 		this->AddMeshes(model->GetMeshes());
-		this->mTexture = model->mTexture;
+		this->mMaterial = model->mMaterial;
 	}
 
 
@@ -75,9 +75,6 @@ namespace TS_ENGINE {
 			vector.z = mesh->mVertices[i].z;
 			vector.w = 1;
 			vertex.position = vector;
-
-			//Color
-			vertex.color = GetColor();
 
 			// Normal
 			vector.x = mesh->mNormals[i].x;
@@ -145,7 +142,7 @@ namespace TS_ENGINE {
 				{
 
 					aiTexture* aiTex = scene->mTextures[i];
-					mTexture = Texture2D::Create(texturefile.C_Str(), reinterpret_cast<unsigned char*>(aiTex->pcData), aiTex->mWidth);
+					mMaterial->SetDiffuseMap(Texture2D::Create(texturefile.C_Str(), reinterpret_cast<unsigned char*>(aiTex->pcData), aiTex->mWidth));
 				}
 				
 			}

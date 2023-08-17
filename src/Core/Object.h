@@ -2,6 +2,7 @@
 #include "EntityManager/Entity.h"
 #include "EntityManager/EntityManager.h"
 #include "SceneManager/Node.h"
+#include "Renderer/Material.h"
 
 namespace TS_ENGINE
 {
@@ -57,6 +58,24 @@ namespace TS_ENGINE
 		EntityType mEntityType;		
 		EntityID mEntityID;
 		PrimitiveType mPrimitiveType;//Only for GameObject EntityType
+
+#pragma region GameObject specific
+	//TODO: Move these properties from Object to GameObject class once ECS is implemneted
+	public:
+		void SetMaterial(Ref<Material> material);
+		Ref<Material> GetMaterial() const;
+
+		void EnableDepthTest();
+		void DisableDepthTest();
+		void EnableAlphaBlending();
+		void DisableAlphaBlending();
+	private:
+
+	protected:
+		Ref<Material> mMaterial;
+		bool mDepthTestEnabled;
+		bool mAlphaBlendingEnabled;		
+#pragma endregion
 	};
 }
 

@@ -17,8 +17,7 @@ namespace TS_ENGINE {
 
 	struct Vertex
 	{
-		Vector4 position;
-		Vector3 color;
+		Vector4 position;		
 		Vector3 normal;
 		Vector2 texCoord;
 
@@ -27,25 +26,22 @@ namespace TS_ENGINE {
 
 		}
 
-		Vertex(Vector3 _position, Vector3 _color)
+		Vertex(Vector3 _position)
 		{
 			position = Vector4(_position, 1);
-			color = _color;
 		}
 
-		Vertex(Vector3 _position, Vector3 _color, Vector3 _normal, Vector2 _texCoord)
+		Vertex(Vector3 _position, Vector3 _normal, Vector2 _texCoord)
 		{
 			position = Vector4(_position, 1);
-			color = _color;
 			normal = _normal;
 			texCoord = _texCoord;
 		}
 
-		Vertex(Vector3 _position, Vector3 _color, Vector3 _normal, Vector2 _texCoord, const Matrix4& transformationMatrix)
+		Vertex(Vector3 _position, Vector3 _normal, Vector2 _texCoord, const Matrix4& transformationMatrix)
 		{
 			Vector4 tranformedVertexPos = transformationMatrix * Vector4(_position.x, _position.y, _position.z, 1);
 			position = Vector4(tranformedVertexPos.x, tranformedVertexPos.y, tranformedVertexPos.z, tranformedVertexPos.w);
-			color = _color;
 			normal = _normal;
 			texCoord = _texCoord;
 		}
@@ -84,8 +80,6 @@ namespace TS_ENGINE {
 		std::vector<Vertex> GetVertices();
 		std::vector<Vertex> GetWorldSpaceVertices(Vector3 position, Vector3 eulerAngles, Vector3 scale);
 		std::vector<uint32_t> GetIndices();
-
-		void ChangeColor(Vector3 color);
 
 	private:
 		std::vector<Vertex> mVertices;

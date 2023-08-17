@@ -37,11 +37,10 @@ namespace TS_ENGINE {
 
 		mVertexArray = VertexArray::Create();
 
-		Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(&mVertices[0], mVertices.size() * sizeof(Vertex));
+		Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(&mVertices[0], (uint32_t)mVertices.size() * sizeof(Vertex));
 
 		vertexBuffer->SetLayout({
 			{ShaderDataType::FLOAT4, "a_Position"},
-			{ShaderDataType::FLOAT3, "a_Color"},
 			{ShaderDataType::FLOAT3, "a_Normal"},
 			{ShaderDataType::FLOAT2, "a_TexCoord"}
 			});
@@ -50,7 +49,7 @@ namespace TS_ENGINE {
 
 		if (mDrawMode == DrawMode::TRIANGLE)
 		{
-			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(&mIndices[0], mIndices.size());
+			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(&mIndices[0], (uint32_t)mIndices.size());
 			mVertexArray->SetIndexBuffer(indexBuffer);
 		}
 
@@ -60,14 +59,14 @@ namespace TS_ENGINE {
 	void Mesh::Draw()
 	{
 		if(mDrawMode == DrawMode::TRIANGLE)
-			RenderCommand::DrawIndexed(mVertexArray, mIndices.size());
+			RenderCommand::DrawIndexed(mVertexArray, (uint32_t)mIndices.size());
 		else if(mDrawMode == DrawMode::LINE)
-			RenderCommand::DrawLines(mVertexArray, mVertices.size());
+			RenderCommand::DrawLines(mVertexArray, (uint32_t)mVertices.size());
 
 #pragma region STATS
 		TS_ENGINE::Application::Get().AddDrawCalls(1);
-		TS_ENGINE::Application::Get().AddVertices(mVertices.size());
-		TS_ENGINE::Application::Get().AddIndices(mIndices.size());
+		TS_ENGINE::Application::Get().AddVertices((uint32_t)mVertices.size());
+		TS_ENGINE::Application::Get().AddIndices((uint32_t)mIndices.size());
 #pragma endregion
 	}
 
@@ -100,12 +99,6 @@ namespace TS_ENGINE {
 	std::vector<uint32_t> Mesh::GetIndices()
 	{
 		return mIndices;
-	}
-
-	void Mesh::ChangeColor(Vector3 color)
-	{
-		for (int i = 0; i < mVertices.size(); i++)
-			mVertices[i].color = color;
 	}
 
 	std::vector<Vertex> Mesh::GetWorldSpaceVertices(Vector3 position = Vector3(0, 0, 0), Vector3 eulerAngles = Vector3(0, 0, 0), Vector3 scale = Vector3(1, 1, 1))

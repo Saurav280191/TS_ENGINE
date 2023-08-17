@@ -9,8 +9,7 @@ namespace TS_ENGINE {
 		Ref<Mesh> mMesh;
 	public:
 		Quad(const std::string& name);
-		Quad(const std::string& name, const Vector3& color);
-		
+
 		void OverrideTexCoords(std::vector<Vector2> texCoords);
 
 		/// <summary>

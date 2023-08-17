@@ -93,6 +93,10 @@ namespace TS_ENGINE
 	
 	void Factory::ChangeMeshForNode(Ref<Node> node, int primitiveIndex)
 	{
+		Ref<Material> lastMaterial = nullptr;
+		if(node->GetAttachedObject())
+			lastMaterial = node->GetAttachedObject()->GetMaterial();
+
 		switch ((PrimitiveType)primitiveIndex)
 		{
 		case PrimitiveType::QUAD:
@@ -107,7 +111,7 @@ namespace TS_ENGINE
 
 			//Create mesh and material
 			quad->Create();
-			//quad->SetMaterial(mDefaultMat);
+			quad->SetMaterial(lastMaterial);
 
 			//Destroy the node for new quad
 			//quad->DestroyNode();
@@ -130,7 +134,7 @@ namespace TS_ENGINE
 
 			//Create mesh and material
 			cube->Create();
-			//cube->SetMaterial(mDefaultMat);
+			cube->SetMaterial(lastMaterial);
 
 			//Destroy the node for new quad
 			//cube->DestroyNode();
@@ -153,7 +157,7 @@ namespace TS_ENGINE
 
 			//Create mesh and material
 			sphere->Create();
-			//sphere->SetMaterial(mDefaultMat);
+			sphere->SetMaterial(lastMaterial);
 
 			//Destroy the node for new quad
 			//sphere->DestroyNode();

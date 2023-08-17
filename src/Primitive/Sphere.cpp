@@ -46,7 +46,7 @@ namespace TS_ENGINE {
 				s = (float)j / mSectorCount;
 				t = (float)i / mStackCount;
 
-				Vertex vertex = Vertex(Vector3(x, y, z), GetColor(), Vector3(nx, ny, nz), Vector2(s, t));
+				Vertex vertex = Vertex(Vector3(x, y, z), Vector3(nx, ny, nz), Vector2(s, t));
 				mMesh->AddVertex(vertex);
 			}
 		}

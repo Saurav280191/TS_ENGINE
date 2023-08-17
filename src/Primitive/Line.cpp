@@ -14,7 +14,7 @@ namespace TS_ENGINE
 	void Line::Create(const std::vector<Vector3>& points)
 	{
 		for(int i = 0; i < points.size(); i++)
-			mMesh->AddVertex(Vertex(points[i], GetColor(), Vector3(0, 0, -1), Vector2(0, 0)));
+			mMesh->AddVertex(Vertex(points[i], Vector3(0, 0, -1), Vector2(0, 0)));
 		
 		mMesh->Create(DrawMode::LINE);
 		AddMesh(mMesh);

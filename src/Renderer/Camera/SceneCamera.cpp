@@ -81,7 +81,6 @@ namespace TS_ENGINE
 
 			mFrustrumLine = CreateRef<TS_ENGINE::Line>("FrustrumLine");
 			//mFrustrumLine->SetMaterial(mDefaultMat);
-			mFrustrumLine->SetColor(1, 1, 1);
 			mFrustrumLine->DisableDepthTest();
 			mFrustrumLine->Create(vertices);
 
@@ -100,8 +99,8 @@ namespace TS_ENGINE
 			mSceneCameraGui = CreateRef<TS_ENGINE::Quad>("CameraGui");
 			mSceneCameraGui->EnableAlphaBlending();//Enable transparency
 			//mSceneCameraGui->SetMaterial(mDefaultMat);
-			mSceneCameraGui->SetColor(1, 1, 1);
-			mSceneCameraGui->SetTexture(mCameraIcon);
+			//mSceneCameraGui->SetColor(1, 1, 1);
+			mSceneCameraGui->GetMaterial()->SetDiffuseMap(mCameraIcon);
 			mSceneCameraGui->Create();
 
 			mSceneCameraGui->GetNode()->AttachObject(mSceneCameraGui);
