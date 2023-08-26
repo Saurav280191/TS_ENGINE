@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 //GameObject and primitives
-#include "GameObject.h"
 #include "Primitive/Cube.h"
 #include "Primitive/Sphere.h"
 #include "Primitive/Quad.h"
@@ -22,11 +21,12 @@ namespace TS_ENGINE
 	public:
 	private:
 		static Factory* mInstance;
-		std::vector<Ref<Object>> mInstantiatedObjects;
+		//std::vector<Ref<Object>> mInstantiatedObjects;
 	public:
 		static Factory* GetInstance();
 
-		Ref<GameObject> CreateGameObject(PrimitiveType type);
+		//Ref<GameObject> CreateGameObject(PrimitiveType type);
+		Ref<Model> LoadModel(std::string& modelPath);
 		void ChangeMeshForNode(Ref<Node> node, int primitiveIndex);
 		
 #ifdef TS_ENGINE_EDITOR

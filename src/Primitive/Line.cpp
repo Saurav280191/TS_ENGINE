@@ -3,31 +3,27 @@
 
 namespace TS_ENGINE
 {
-	Line::Line(const std::string& name)
+	Line::Line()
 	{
-		//mPrimitiveType = PrimitiveType::LINE;
-		mName = name;
-		mMesh = CreateRef<Mesh>();
-		Initialize();		
+				
 	}
 
-	void Line::Create(const std::vector<Vector3>& points)
+	Line::~Line()
 	{
-		for(int i = 0; i < points.size(); i++)
-			mMesh->AddVertex(Vertex(points[i], Vector3(0, 0, -1), Vector2(0, 0)));
-		
-		mMesh->Create(DrawMode::LINE);
-		AddMesh(mMesh);
+
 	}
 
-	/*void Line::Draw(const std::vector<Vector4>& points)
+	Ref<Mesh> Line::GetMesh(const std::vector<Vector3>& points)
 	{
-		mMesh->GetVertices().clear();
+		Ref<Mesh> mesh = CreateRef<Mesh>();
 
 		for (int i = 0; i < points.size(); i++)
-			mMesh->AddVertex(Vertex((Vector3)points[i], GetColor(), Vector3(0, 0, -1), Vector2(0, 0)));
+		{
+			mesh->AddVertex(Vertex(points[i]));
+		}
 
-		mMesh->Create(DrawMode::LINE);
-		AddMesh(mMesh);
-	}*/
+		mesh->Create(DrawMode::LINE);
+
+		return mesh;
+	}
 }

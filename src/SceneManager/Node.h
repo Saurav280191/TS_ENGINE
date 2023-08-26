@@ -3,124 +3,104 @@
 #include <memory>
 #include "Core/Transform.h"
 #include "Renderer/Shader.h"
-#include "Core/Object.h"
+#include "Primitive/Mesh.h"
+#include "EntityManager/Entity.h"
+#include "EntityManager/EntityManager.h"
 
 namespace TS_ENGINE
 {
-	class Object;
+	/*enum class PrimitiveType
+	{
+		QUAD,
+		CUBE,
+		SPHERE,
+		CYLINDER,
+		CONE,
+		EMPTY
+	};*/
+
 	class Transform;
 	class Node
 	{
 	public:
-		Node();
+		Node(const std::string& name);
 		~Node();
 
 		void Destroy();
 
-		void SetEntityType(EntityType entityType);
-		void SetName(std::string name);
+		//void SetEntityType(EntityType entityType); 
+		void SetName(const std::string& name);
 
-		void AttachObject(Ref<Object> object);
-
-		//This is inportant to keep a reference of the smart pointer create in Object class
-		void SetNodeRef(Ref<Node> node);
-		void SetParent(Ref<Node> parentNode);
+		//This is important to keep a reference of the smart pointer create in Object class
+		//void SetNodeRef(Ref<Node> node);
+		//void SetParent(Ref<Node> parentNode);
 		void SetParent(Node* parentNode);
-		void AddChild(Ref<Node> child);
-		void RemoveChild(Ref<Node> child);
+		void SetPosition(float* pos);
+		void SetPosition(const Vector3& pos);
+		void SetEulerAngles(float* eulerAngles);
+		void SetEulerAngles(const Vector3& eulerAngles);
+		void SetScale(float* scale);
+
+		void SetScale(const Vector3& scale);
+
+		void AddChild(Node* child);
+		void RemoveChild(Node* child);
 		void RemoveAllChildren();
 		void UpdateSiblings();
 
+		/// <summary>
+		/// Updates Model matrix for it's self and for children
+		/// </summary>
 		void InitializeTransformMatrices();
-		
-		void SetPosition(float* pos);
-		void SetEulerAngles(float* eulerAngles);
-		void SetScale(float* scale);
 
 		void UpdateTransformationMatrices(Matrix4 transformationMatrix);
 		void Update(Ref<Shader> shader, float deltaTime);
-		
+
 		void LookAt(Ref<Node> targetNode);
 
+		void AddMesh(Ref<Mesh> mesh) { mMeshes.push_back(mesh); }
+		void AddMeshes(std::vector<Ref<Mesh>> _meshes) { mMeshes = _meshes; }
+
 #pragma region Getters
-		Ref<Node> GetNodeRef() const
-		{
-			return mNodeRef;
-		}
-		const EntityType GetEntityType() const
-		{
-			return mEntityType;
-		}
-		const std::string& GetName() const
-		{
-			return mName;
-		}
-		const Ref<Node> GetChildAt(uint32_t childIndex) const;
-		Node* GetParentNode() const
-		{
-			return mParentNode;
-		}
-		const std::vector<Ref<Node>> GetChildren() const
-		{
-			return mChildren;
-		}		
-		const std::vector<Ref<Node>> GetSiblings() const
-		{
-			return mSiblings;
-		}
-		const Ref<Transform> GetTransform() const
-		{
-			return mTransform;
-		}
-		const bool HasAttachedObject() const
-		{
-			if (mAttachedObject)
-				return true;
-			else
-				return false;
-		}
-		const Ref<Object> GetAttachedObject() const
-		{
-			if (mAttachedObject)
-				return mAttachedObject;
-			else
-			{
-				TS_CORE_ERROR("There is no object attached to node: {0}", mName);
-				return nullptr;
-			}
-		}
-		const size_t GetChildCount() const
-		{
-			return mChildren.size();
-		}
+		Node* GetNode() { return this; }		
+		const Ref<Entity> GetEntity() const { return mEntity; }
+		//const EntityType GetEntityType() const { return mEntityType; }
+		const std::string& GetName() const { return mName; }
+		Node* GetChildAt(uint32_t childIndex) const;
+		const Node* GetParentNode() const { return mParentNode; }
+		std::vector<Node*> GetChildren() const { return mChildren; }
+		const std::vector<Node*> GetSiblings() const { return mSiblings; }
+		const Ref<Transform> GetTransform() const { return mTransform; }
+		const size_t GetChildCount() const { return mChildren.size(); }
+		const std::vector<Ref<Mesh>> GetMeshes() const { return mMeshes; }
+		//const PrimitiveType GetPrimitiveType() const { return mPrimitiveType; }
 #pragma endregion
 
-		//For IMGUI
-		bool m_Enabled = false;
+
 #ifdef TS_ENGINE_EDITOR
-		const bool IsVisibleInEditor()
-		{
-			return mIsVisibleInEditor;
-		}
-		void HideInEditor()
-		{
-			mIsVisibleInEditor = false;
-		}
+		const bool IsVisibleInEditor() { return mIsVisibleInEditor; }
+		void HideInEditor() { mIsVisibleInEditor = false; }
 #endif
 
+	public:
+		bool m_Enabled = false;//For IMGUI
 	private:
-		Ref<Node> mNodeRef;
-		EntityType mEntityType;
-		std::string mName;		
+		Ref<Entity> mEntity;//Entity
+		//Ref<Node> mNodeRef;
+		//EntityType mEntityType;
+		std::string mName;
 		Node* mParentNode;//This is not a smart pointer. Handle the cleaning manually.
-		std::vector<Ref<Node>> mChildren;
+		std::vector<Node*> mChildren;
 		Ref<Transform> mTransform;
-		Ref<Object> mAttachedObject;		
-		std::vector<Ref<Node>> mSiblings = {};
 
+		std::vector<Node*> mSiblings = {};
+		std::vector<Ref<Mesh>> mMeshes;
 #ifdef TS_ENGINE_EDITOR
 		bool mIsVisibleInEditor;
 #endif
+	protected:
+		//PrimitiveType mPrimitiveType;//Only for GameObject EntityType
+
 	};
 }
 

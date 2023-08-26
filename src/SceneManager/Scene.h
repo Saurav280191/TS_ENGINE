@@ -3,9 +3,16 @@
 //#include "Renderer/Batcher.h"
 //#include "Renderer/Renderer.h"
 #include "Renderer/Camera/Camera.h"
+#include <Renderer/Camera/EditorCamera.h>
+#include <Renderer/Camera/SceneCamera.h>
 
-namespace TS_ENGINE
-{
+#include <imgui.h>
+//#define IMGUI_DEFINE_MATH_OPERATORS // Already set in preprocessors
+#include "imgui_internal.h"
+#define IMAPP_IMPL
+#include "ImGuizmo.h"
+
+namespace TS_ENGINE {
 
 #pragma region Batching classes
 
@@ -58,37 +65,33 @@ namespace TS_ENGINE
 	//};
 
 #pragma endregion
+	class Camera;
+	class SceneCamera;
 
 	class Scene
 	{
 	public:
-		Scene(std::string name);		
+		Scene(std::string name, Ref<Camera> editorCamera);
 		~Scene();
-	
+
 		//BatchButton m_BatchButton;
 		//bool m_BatchingEnabled;
-		
 		//void OnBatched();
 		//void OnUnBatched();
 
-		Ref<Node> GetSceneNode() const
-		{
-			return mSceneNode;
-		}
-
-		void Initialize(Ref<Camera> editorCamera);
-		void Update(Ref<Shader> shader, float deltaTime);
-		Ref<Node> PickNodeByEntityID(int entityID);		
-	private:		
-		Ref<Node> mSceneNode;
-		void PickNode(Ref<Node> node, int entityID);		
-
-		Ref<Node> mMatchingNode = nullptr;
+		void Render(Ref<Shader> shader, float deltaTime);
+		Node* GetSceneNode() const { return mSceneNode; }
+		Ref<SceneCamera> GetCurrentSceneCamera() { return mCurrentSceneCamera; }
+		void UpdateCameraRT(Ref<Camera> camera, Ref<Shader> shader, float deltaTime, bool isEditorCamera);			
+	private:
+		Node* mSceneNode;		
 		Ref<Camera> mEditorCamera = nullptr;
 		std::vector<Ref<Camera>> mSceneCameras = {};
-
+		Ref<SceneCamera> mCurrentSceneCamera;
 		//ButtonHandler mBatchButtonHandler;
+		Ref<TS_ENGINE::Node> mGroundNode;
+		Ref<TS_ENGINE::Node> mCubeNode;
+		Ref<TS_ENGINE::Node> mCube1Node;
+		Ref<TS_ENGINE::Node> mModelNode;
 	};
 }
-
-

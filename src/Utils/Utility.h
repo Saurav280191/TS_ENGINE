@@ -200,6 +200,33 @@ namespace TS_ENGINE
 			}
 		}
 
+		static void GetDirectoryFilenameAndExtension(const std::string& fullFileName, std::string& directory, std::string& fileName, std::string& extension)
+		{
+			// Find the last directory separator
+			size_t lastSeparator = fullFileName.find_last_of("/\\");
+
+			// Extract the directory
+			directory = fullFileName.substr(0, lastSeparator);
+
+			// Extract the file name
+			fileName = fullFileName.substr(lastSeparator + 1);
+
+			// Find the last dot (for the extension)
+			size_t lastDot = fileName.find_last_of(".");
+
+			// Extract the extension
+			extension = fileName.substr(lastDot + 1);
+		}
+
+		static void GetDirectory(const std::string& fullFileName, std::string& directory)
+		{
+			// Find the last directory separator
+			size_t lastSeparator = fullFileName.find_last_of("/\\");
+
+			// Extract the directory
+			directory = fullFileName.substr(0, lastSeparator);
+		}
+
 		static std::string GetTruncatedString(const std::string& input, size_t characterLimit) 
 		{
 			std::string truncatedStr = "";

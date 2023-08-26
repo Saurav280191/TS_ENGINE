@@ -1,5 +1,6 @@
 #pragma once
 #include "tspch.h"
+#include "SceneManager/Node.h"
 
 namespace TS_ENGINE
 {
@@ -19,11 +20,11 @@ namespace TS_ENGINE
 		Vector3 m_Up;
 		Vector3 m_Forward;
 		Matrix4 m_TransformationMatrix;
-		
+
 		void Follow(Ref<Node> targetNode);
 		void LookAt(Node* parentNode, const Ref<Transform> target);
-	
-		void ComputeTransformationMatrix(TS_ENGINE::Node* node, TS_ENGINE::Node* parentNode);
+
+		void ComputeTransformationMatrix(const Node* parentNode);
 		void SetTransformationMatrix(Matrix4 transformationMatrix);
 
 		void SetLocalPosition(const Vector3& newPosition);
@@ -48,10 +49,7 @@ namespace TS_ENGINE
 		//const Vector3& GetGlobalEulerAngles(Vector3 parentEulerAngles) const;
 		//const Vector3& GetGlobalScale() const;
 
-		const Matrix4 GetTransformationMatrix() const
-		{
-			return m_TransformationMatrix;
-		}
+		const Matrix4 GetTransformationMatrix() const { return m_TransformationMatrix; }
 
 		Vector3 GetRight() const;
 		Vector3 GetUp() const;

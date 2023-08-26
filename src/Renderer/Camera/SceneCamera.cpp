@@ -3,34 +3,26 @@
 #include "Input.h"
 #include <GLM/gtx/quaternion.hpp>
 
-namespace TS_ENGINE
-{
+namespace TS_ENGINE {
+
 #ifdef TS_ENGINE_EDITOR
-	SceneCamera::SceneCamera(const std::string& name, Ref<Camera> editorCamera)
+	SceneCamera::SceneCamera(const std::string& name, Ref<Camera> editorCamera) : 
+		Camera(name)
 	{
-		mName = name;
-		mNode->SetName(name);
+		mCameraNode = CreateRef<Node>(name);
 		mCameraType = Type::SCENECAMERA;
 		mEditorCamera = editorCamera;
 	}
 #else
-	SceneCamera::SceneCamera(const std::string& name) 
-		: Camera(name)
+	SceneCamera::SceneCamera(const std::string& name) : 
+		Camera(name)
 	{
-		mName = name;
 		mCameraType = Type::SCENECAMERA;
-
-		//mSkyboxShader = TS_ENGINE::Shader::Create("HDRLighting", "HDRLighting.vert", "HDRLighting.frag");
-		//mSkyboxMat = CreateRef<TS_ENGINE::Material>("SkyboxMaterial", mSkyboxShader);//Create default material
-
-		//mCurrentShader = mSkyboxShader;
 	}
 #endif
 
 	void SceneCamera::Initialize()
 	{
-		mEntityID = EntityManager::GetInstance()->Instantiate(mName, mEntityType);
-
 #ifdef TS_ENGINE_EDITOR
 		//Create camera's frustrum
 		{
@@ -79,16 +71,12 @@ namespace TS_ENGINE
 			for (int i = 0; i < frustrumPoints.size(); i++)
 				vertices[i] = Vector3(frustrumPoints[i]) / frustrumPoints[i].w;
 
-			mFrustrumLine = CreateRef<TS_ENGINE::Line>("FrustrumLine");
-			//mFrustrumLine->SetMaterial(mDefaultMat);
-			mFrustrumLine->DisableDepthTest();
-			mFrustrumLine->Create(vertices);
-
-			mFrustrumLine->GetNode()->AttachObject(mFrustrumLine);
-			mFrustrumLine->GetNode()->SetName("FrustrumLine");
-
-			//mFrustrumLine->GetNode()->HideInEditor();//Hides the node in hierarchy			
-			//mNode->AddChild(mFrustrumLine->GetNode());
+			mFrustrumLineNode = CreateRef<Node>("SceneCameraFrustrumLine");
+			mFrustrumLine = CreateRef<TS_ENGINE::Line>();
+			mLineMesh = mFrustrumLine->GetMesh(vertices);
+			mLineMesh->GetMaterial()->DisableDepthTest();
+			mFrustrumLineNode->AddMesh(mLineMesh);
+			mFrustrumLineNode->InitializeTransformMatrices();
 		}
 
 		//SceneCameraGuiQuad
@@ -96,20 +84,15 @@ namespace TS_ENGINE
 			mCameraIcon = TS_ENGINE::Texture2D::Create("Resources\\Gui\\Camera.png");
 			mCameraIcon->SetVerticalFlip(false);
 
-			mSceneCameraGui = CreateRef<TS_ENGINE::Quad>("CameraGui");
-			mSceneCameraGui->EnableAlphaBlending();//Enable transparency
-			//mSceneCameraGui->SetMaterial(mDefaultMat);
-			//mSceneCameraGui->SetColor(1, 1, 1);
-			mSceneCameraGui->GetMaterial()->SetDiffuseMap(mCameraIcon);
-			mSceneCameraGui->Create();
-
-			mSceneCameraGui->GetNode()->AttachObject(mSceneCameraGui);
-			mSceneCameraGui->GetNode()->SetName("CameraGuiNode");
-			mSceneCameraGui->GetNode()->GetTransform()->SetLocalEulerAngles(0.0, 90.0f, 0.0f);
-			mSceneCameraGui->GetNode()->GetTransform()->SetLocalScale(-1.0f, 1.0f, 1.0f);
-
-			//mSceneCameraGui->GetNode()->HideInEditor();//Hides the node in hierarchy
-			//mNode->AddChild(mSceneCameraGui->GetNode());
+			mSceneCameraGuiNode = CreateRef<Node>("SceneCameraGuiNode");
+			
+			Ref<Mesh> sceneCameraGuiMesh = CreateRef<TS_ENGINE::Quad>()->GetMesh();
+			sceneCameraGuiMesh->GetMaterial()->EnableAlphaBlending();//Enable transparency
+			sceneCameraGuiMesh->GetMaterial()->SetDiffuseMap(mCameraIcon);
+			mSceneCameraGuiNode->AddMesh(sceneCameraGuiMesh);
+			mSceneCameraGuiNode->GetTransform()->SetLocalEulerAngles(0.0, 90.0f, 0.0f);
+			mSceneCameraGuiNode->GetTransform()->SetLocalScale(-1.0f, 1.0f, 1.0f);
+			mSceneCameraGuiNode->InitializeTransformMatrices();
 		}
 #endif
 	}
@@ -119,22 +102,22 @@ namespace TS_ENGINE
 #ifdef TS_ENGINE_EDITOR
 		if (mEditorCamera)
 		{
-			mSceneCameraGui->GetNode()->GetTransform()->LookAt(mNode.get(), mEditorCamera->GetNode()->GetTransform());
-			mFrustrumLine->GetNode()->GetTransform()->Follow(mNode);
+			mSceneCameraGuiNode->GetTransform()->LookAt(mCameraNode.get(), mEditorCamera->GetNode()->GetTransform());
+			mFrustrumLineNode->GetTransform()->Follow(mCameraNode);
 		}
 #endif
 
-		mViewMatrix = mNode->GetTransform()->GetTransformationMatrix();
+		mViewMatrix = mCameraNode->GetTransform()->GetTransformationMatrix();
 		mViewMatrix = glm::inverse(mViewMatrix);
 
-		shader->SetVec3("u_ViewPos", mNode->GetTransform()->GetLocalPosition());
+		shader->SetVec3("u_ViewPos", mCameraNode->GetTransform()->GetLocalPosition());
 		shader->SetMat4("u_View", mViewMatrix);
 		shader->SetMat4("u_Projection", mProjectionMatrix);
 	}
 
 	bool SceneCamera::IsSceneCameraGuiSelected(int entityID)
 	{
-		if (entityID == mSceneCameraGui->GetEntityID())
+		if (entityID == mSceneCameraGuiNode->GetEntity()->GetEntityID())
 			return true;
 		else
 			return false;
@@ -146,16 +129,7 @@ namespace TS_ENGINE
 
 	void SceneCamera::RenderGui(Ref<Shader> shader, float deltaTime)
 	{
-		mFrustrumLine->GetNode()->Update(shader, deltaTime);
-		mSceneCameraGui->GetNode()->Update(shader, deltaTime);
+		mFrustrumLineNode->Update(shader, deltaTime);
+		mSceneCameraGuiNode->Update(shader, deltaTime);
 	}
-
-	//void SceneCamera::CheckIfSelected(Ref<TS_ENGINE::Node>& hoveredOnNode)
-	//{
-	//	if (hoveredOnNode == mSceneCameraGui->GetNode()//Don't select mSceneCameraGui 
-	//		|| hoveredOnNode == mFrustrumLine->GetNode())//or mFrustrumLine
-	//	{
-	//		hoveredOnNode = this->mNode;//Select it's parent node instead
-	//	}
-	//}
 }

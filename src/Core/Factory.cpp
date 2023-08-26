@@ -1,5 +1,6 @@
 #include "tspch.h"
 #include "Factory.h"
+#include "Utils/Utility.h"
 
 namespace TS_ENGINE
 {
@@ -11,90 +12,93 @@ namespace TS_ENGINE
 		return mInstance;
 	}
 
-	Ref<GameObject> Factory::CreateGameObject(PrimitiveType type)
+	//Ref<GameObject> Factory::CreateGameObject(PrimitiveType type)
+	//{
+	//	switch (type)
+	//	{
+	//	case PrimitiveType::QUAD:
+	//	{
+	//		Ref<TS_ENGINE::Quad> quad = CreateRef<TS_ENGINE::Quad>("New Quad");
+	//		//quad->SetMaterial(mDefaultMat);
+	//		quad->Create();
+	//		quad->SetName("New Quad");
+	//		quad->GetNode()->AttachObject(quad);
+	//		//quad->GetNode()->AttachGameObject(quad);
+	//		SceneManager::GetInstance()->GetCurrentScene()->GetSceneNode()->AddChild(quad->GetNode());
+	//		return quad;
+	//	}
+	//	break;
+
+	//	case PrimitiveType::CUBE:
+	//	{
+	//		Ref<TS_ENGINE::Cube> cube = CreateRef<TS_ENGINE::Cube>("New Cube");
+	//		//cube->SetMaterial(mDefaultMat);
+	//		cube->Create();
+	//		cube->SetName("New Cube");
+	//		cube->GetNode()->AttachObject(cube);
+	//		//cube->GetNode()->AttachGameObject(cube);
+	//		SceneManager::GetInstance()->GetCurrentScene()->GetSceneNode()->AddChild(cube->GetNode());
+	//		return cube;
+	//	}
+	//	break;
+
+	//	case PrimitiveType::SPHERE:
+	//	{
+	//		Ref<TS_ENGINE::Sphere> sphere = CreateRef<TS_ENGINE::Sphere>("New Sphere");
+	//		//sphere->SetMaterial(mDefaultMat);
+	//		sphere->Create();
+	//		sphere->SetName("New Sphere");
+	//		sphere->GetNode()->AttachObject(sphere);
+	//		//sphere->GetNode()->AttachGameObject(sphere);
+	//		SceneManager::GetInstance()->GetCurrentScene()->GetSceneNode()->AddChild(sphere->GetNode());
+	//		return sphere;
+	//	}
+	//	break;
+
+	//	case PrimitiveType::CONE:
+	//	{
+	//		//Ref<TS_ENGINE::Cone> cone = CreateRef<TS_ENGINE::Cone>("New Cone");
+	//		//cone->SetMaterial(mDefaultMat);
+	//		//cone->Create();
+	//		//cone->GetNode()->AttachObject(cone);
+	//		//cone->GetNode()->AttachGameObject(cone);
+	//		//return cone;
+	//	}
+	//	break;
+
+	//	case PrimitiveType::CYLINDER:
+	//	{
+	//		//Ref<TS_ENGINE::Cylinder> cylinder = CreateRef<TS_ENGINE::Cylinder>("New Cylinder");
+	//		//cylinder->SetMaterial(mDefaultMat);
+	//		//cylinder->Create();
+	//		//cylinder->GetNode()->AttachObject(cylinder);
+	//		//cylinder->GetNode()->AttachGameObject(cylinder);
+	//		//return cylinder;
+	//	}
+	//	break;
+	//	}
+
+	//	return nullptr;
+	//}
+
+	Ref<Model> Factory::LoadModel(std::string& modelPath)
 	{
-		switch (type)
-		{
-		case PrimitiveType::QUAD:		
-		{
-			Ref<TS_ENGINE::Quad> quad = CreateRef<TS_ENGINE::Quad>("New Quad");
-			//quad->SetMaterial(mDefaultMat);
-			quad->Create();
-			quad->SetName("New Quad");
-			quad->GetNode()->AttachObject(quad);
-			//quad->GetNode()->AttachGameObject(quad);
-			SceneManager::GetInstance()->GetCurrentScene()->GetSceneNode()->AddChild(quad->GetNode());
-			return quad;
-		}
-		break;
+		std::string directory;
+		std::string fileName;
+		std::string extension;
 
-		case PrimitiveType::CUBE:
-		{
-			Ref<TS_ENGINE::Cube> cube = CreateRef<TS_ENGINE::Cube>("New Cube");
-			//cube->SetMaterial(mDefaultMat);
-			cube->Create();
-			cube->SetName("New Cube");
-			cube->GetNode()->AttachObject(cube);
-			//cube->GetNode()->AttachGameObject(cube);
-			SceneManager::GetInstance()->GetCurrentScene()->GetSceneNode()->AddChild(cube->GetNode());
-			return cube;
-		}
-		break;
+		Utility::GetDirectoryFilenameAndExtension(modelPath, directory, fileName, extension);
 
-		case PrimitiveType::SPHERE:
-		{
-			Ref<TS_ENGINE::Sphere> sphere = CreateRef<TS_ENGINE::Sphere>("New Sphere");
-			//sphere->SetMaterial(mDefaultMat);
-			sphere->Create();
-			sphere->SetName("New Sphere");
-			sphere->GetNode()->AttachObject(sphere);
-			//sphere->GetNode()->AttachGameObject(sphere);
-			SceneManager::GetInstance()->GetCurrentScene()->GetSceneNode()->AddChild(sphere->GetNode());
-			return sphere;
-		}
-		break;
-
-		case PrimitiveType::CONE:
-		{
-			//Ref<TS_ENGINE::Cone> cone = CreateRef<TS_ENGINE::Cone>("New Cone");
-			//cone->SetMaterial(mDefaultMat);
-			//cone->Create();
-			//cone->GetNode()->AttachObject(cone);
-			//cone->GetNode()->AttachGameObject(cone);
-			//return cone;
-		}
-		break;
-
-		case PrimitiveType::CYLINDER:
-		{
-			//Ref<TS_ENGINE::Cylinder> cylinder = CreateRef<TS_ENGINE::Cylinder>("New Cylinder");
-			//cylinder->SetMaterial(mDefaultMat);
-			//cylinder->Create();
-			//cylinder->GetNode()->AttachObject(cylinder);
-			//cylinder->GetNode()->AttachGameObject(cylinder);
-			//return cylinder;
-		}
-		break;
-
-		case PrimitiveType::MODEL:
-		{
-			auto model = TS_ENGINE::ModelLoader::GetInstance()->LoadModel("Assets\\Models", "monk_character.glb");
-			model->SetName("monk_character");
-			model->GetNode()->AttachObject(model);
-			//model->GetNode()->AttachGameObject(model);
-			SceneManager::GetInstance()->GetCurrentScene()->GetSceneNode()->AddChild(model->GetNode());
-			return model;
-		}
-		break;
-		}
-
-		return nullptr;
+		auto model = TS_ENGINE::ModelLoader::GetInstance()->LoadModel(modelPath);
+		model->SetName(fileName);
+		model->GetNode()->AttachObject(model);		
+		return model;
 	}
-	
+
 	void Factory::ChangeMeshForNode(Ref<Node> node, int primitiveIndex)
 	{
 		Ref<Material> lastMaterial = nullptr;
-		if(node->GetAttachedObject())
+		if (node->GetAttachedObject())
 			lastMaterial = node->GetAttachedObject()->GetMaterial();
 
 		switch ((PrimitiveType)primitiveIndex)
@@ -182,12 +186,12 @@ namespace TS_ENGINE
 		}
 		break;
 
-		case PrimitiveType::MODEL:
-		{
-			//Only destroy GameObject
-			node->GetAttachedObject()->DeleteMeshes();
-		}
-		break;
+		//case PrimitiveType::MODEL:
+		//{
+		//	//Only destroy GameObject
+		//	node->GetAttachedObject()->DeleteMeshes();
+		//}
+		//break;
 
 		case PrimitiveType::EMPTY:
 		{
@@ -202,9 +206,9 @@ namespace TS_ENGINE
 #ifdef TS_ENGINE_EDITOR
 	Ref<SceneCamera> Factory::CreateSceneCamera(Ref<Camera> editorCamera)
 	{
-		Ref<TS_ENGINE::SceneCamera> sceneCamera = CreateRef<TS_ENGINE::SceneCamera>("New SceneCamera", editorCamera);	
+		Ref<TS_ENGINE::SceneCamera> sceneCamera = CreateRef<TS_ENGINE::SceneCamera>("New SceneCamera", editorCamera);
 		//sceneCamera->GetNode()->AttachCamera(sceneCamera);
-		return sceneCamera;		
+		return sceneCamera;
 	}
 #else
 	Ref<SceneCamera> Factory::CreateSceneCamera()
@@ -220,7 +224,7 @@ namespace TS_ENGINE
 	{
 		switch (type)
 		{
-		case Light::Type::DIRECTIONAL:		
+		case Light::Type::DIRECTIONAL:
 			//mDirectionalLight = CreateRef<TS_ENGINE::Light>();
 			//mDirectionalLight->GetNode()->GetTransform()->SetLocalPosition(0.0f, 3.0f, 0.0f);
 			//mDirectionalLight->GetNode()->GetTransform()->SetLocalEulerAngles(45.0f, 0.0f, 0.0f);
@@ -239,5 +243,4 @@ namespace TS_ENGINE
 
 		return nullptr;
 	}
-
 }

@@ -1,74 +1,92 @@
 #pragma once
 #include "Core/tspch.h"
 #include "Core/Base.h"
-#include <Renderer/Shader.h>
-#include <Renderer/Texture.h>
+#include "Renderer/Shader.h"
+#include "Renderer/Texture.h"
 
 namespace TS_ENGINE {
 
 	class Material
 	{
 	public:
-		Material(const std::string& name, Ref<Shader> shader);
+		Material(const std::string& name, Ref<Shader> shader);		
 		virtual ~Material() = default;
 
+		const std::string& GetName() const { return mName;  }
+
 		// Ambient
-		void SetAmbientColor(const Vector4& ambientColor);		
-		Vector4 GetAmbientColor() const;
+		void SetAmbientColor(const Vector4& ambientColor) { mAmbientColor = ambientColor; }
+		Vector4 GetAmbientColor() const { return mAmbientColor; }
+
 		// Diffuse
-		void SetDiffuseColor(const Vector4& diffuseColor);
-		void SetDiffuseMap(const Ref<Texture2D> diffuseMap);
-		void SetDiffuseMapOffset(Vector2 offset);
-		void SetDiffuseMapTiling(Vector2 tiling);
-		Vector4 GetDiffuseColor() const;
-		Ref<Texture2D> GetDiffuseMap() const;
-		Vector2 GetDiffuseMapOffset() const;
-		Vector2 GetDiffuseMapTiling() const;
+		void SetDiffuseColor(const Vector4& diffuseColor) { mDiffuseColor = diffuseColor; }
+		void SetDiffuseMap(const Ref<Texture2D> diffuseMap) { mDiffuseMap = diffuseMap; }
+		void SetDiffuseMapOffset(Vector2 offset) { mDiffuseMapOffset = offset; }
+		void SetDiffuseMapTiling(Vector2 tiling) { mDiffuseMapTiling = tiling; }
+		Vector4 GetDiffuseColor() const { return mDiffuseColor; }
+		Ref<Texture2D> GetDiffuseMap() const { return mDiffuseMap; }
+		Vector2 GetDiffuseMapOffset() const { return mDiffuseMapOffset; }
+		Vector2 GetDiffuseMapTiling() const { return mDiffuseMapTiling; }
+
 		// Specular
-		void SetSpecularColor(const Vector4& specularColor);
-		void SetSpecularMap(const Ref<Texture2D> specularMap);
-		void SetSpecularMapOffset(Vector2 offset);
-		void SetSpecularMapTiling(Vector2 tiling);
-		void SetShininess(float shininess);		
-		Vector4 GetSpecularColor() const;
-		Ref<Texture2D> GetSpecularMap() const;
-		Vector2 GetSpecularMapOffset() const;
-		Vector2 GetSpecularMapTiling() const;
-		float GetShininess() const;
+		void SetSpecularColor(const Vector4& specularColor) { mSpecularColor = specularColor; }
+		void SetSpecularMap(const Ref<Texture2D> specularMap) { mSpecularMap = specularMap; }
+		void SetSpecularMapOffset(Vector2 offset) { mSpecularMapOffset = offset; }
+		void SetSpecularMapTiling(Vector2 tiling) { mSpecularMapTiling = tiling; }
+		void SetShininess(float shininess) { mShininess = shininess; }
+		Vector4 GetSpecularColor() const { return mSpecularColor; }
+		Ref<Texture2D> GetSpecularMap() const { return mSpecularMap; }
+		Vector2 GetSpecularMapOffset() const { return mSpecularMapOffset; }
+		Vector2 GetSpecularMapTiling() const { return mSpecularMapTiling; }
+		float GetShininess() const { return mShininess; }
+
 		// Bump
-		void SetNormalMap(const Ref<Texture2D> normalMap);
-		void SetNormalMapOffset(Vector2 offset);
-		void SetNormalMapTiling(Vector2 tiling);
-		void SetBumpValue(const float bumpValue);
-		Ref<Texture2D> GetNormalMap() const;
-		Vector2 GetNormalMapOffset() const;
-		Vector2 GetNormalMapTiling() const;
-		float GetBumpValue() const;		
+		void SetNormalMap(const Ref<Texture2D> normalMap) { mNormalMap = normalMap; }
+		void SetNormalMapOffset(Vector2 offset) { mNormalMapOffset = offset; }
+		void SetNormalMapTiling(Vector2 tiling) { mNormalMapTiling = tiling; }
+		void SetBumpValue(const float bumpValue) { mBumpValue = bumpValue; }
+		Ref<Texture2D> GetNormalMap() const { return mNormalMap; }
+		Vector2 GetNormalMapOffset() const { return mNormalMapOffset; }
+		Vector2 GetNormalMapTiling() const { return mNormalMapTiling; }
+		float GetBumpValue() const { return mBumpValue; }
+
 		//Shader
-		const Ref<Shader>& GetShader();
-		
+		const Ref<Shader>& GetShader() { return mShader; }
+
+		//Other material properties
+		void EnableDepthTest() { mDepthTestEnabled = true; }
+		void DisableDepthTest() { mDepthTestEnabled = false; }
+		void EnableAlphaBlending() { mAlphaBlendingEnabled = true; }
+		void DisableAlphaBlending() { mAlphaBlendingEnabled = false; }
+
+		//Material Render
+		void Render(int entityID);
 	private:
 		std::string mName;
 		Ref<Shader> mShader;
-		
+
 		// Ambient
-		Vector4 mAmbientColor;
+		Vector4 mAmbientColor = Vector4(1, 1, 1, 1);
 		// Diffuse
-		Vector4 mDiffuseColor;
-		Ref<Texture2D> mDiffuseMap;
-		Vector2 mDiffuseMapOffset;
-		Vector2 mDiffuseMapTiling;
+		Vector4 mDiffuseColor = Vector4(1, 1, 1, 1);
+		Ref<Texture2D> mDiffuseMap = nullptr;
+		Vector2 mDiffuseMapOffset = Vector2(0, 0);
+		Vector2 mDiffuseMapTiling = Vector2(1, 1);
 		// Specular
-		Vector4 mSpecularColor;
-		Ref<Texture2D> mSpecularMap;
-		Vector2 mSpecularMapOffset;
-		Vector2 mSpecularMapTiling;
-		float mShininess;
+		Vector4 mSpecularColor = Vector4(1, 1, 1, 1);
+		Ref<Texture2D> mSpecularMap = nullptr;
+		Vector2 mSpecularMapOffset = Vector2(0, 0);
+		Vector2 mSpecularMapTiling = Vector2(1, 1);
+		float mShininess = 0.0f;
 		// Normal
-		Ref<Texture2D> mNormalMap;
-		Vector2 mNormalMapOffset;
-		Vector2 mNormalMapTiling;
-		float mBumpValue;
+		Ref<Texture2D> mNormalMap = nullptr;
+		Vector2 mNormalMapOffset = Vector2(0, 0);
+		Vector2 mNormalMapTiling = Vector2(1, 1);
+		float mBumpValue = 0.0f;
+
+		//Other material properties
+		bool mDepthTestEnabled;
+		bool mAlphaBlendingEnabled;
 	};
 }
 

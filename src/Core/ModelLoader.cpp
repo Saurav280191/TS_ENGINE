@@ -15,16 +15,16 @@ namespace TS_ENGINE {
 	
 	ModelLoader::~ModelLoader()
 	{
-		for (auto& loadedModelPair : mLoadedModelMap)
-			loadedModelPair.second->Destroy();
+		//for (auto& loadedModelPair : mLoadedModelMap)
+		//	loadedModelPair.second->Destroy();
 
 		mLastLoadedModel = nullptr;
 		mLoadedModelMap.clear();
 	}
 
-	Ref<Model> ModelLoader::LoadModel(const std::string& directory, const std::string& modelName)
+	Ref<Model> ModelLoader::LoadModel(const std::string& modelPath)
 	{
-		std::string fullModelPath = directory + "\\" + modelName;
+		std::string fullModelPath = modelPath;
 
 		if (!IsModelLoaded(fullModelPath))
 		{

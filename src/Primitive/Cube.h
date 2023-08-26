@@ -1,18 +1,17 @@
 #pragma once
-#include "GameObject.h"
+#include "tspch.h"
+#include "Primitive/Mesh.h"
 
 namespace TS_ENGINE {
 
-	class Cube : public GameObject
+	class Cube
 	{
-	private:
-		Ref<Mesh> mMesh;
 	public:
-		Cube(const std::string& name);		
-		
-		void Create();
-		void Create(const Matrix4& transformationMatrix);
-		void Create(std::vector<Vertex> vertices, std::vector<uint32_t> indices);
+		Cube();		
+		~Cube();
+
+		Ref<Mesh> GetMesh();
+		Ref<Mesh> GetMesh(const Matrix4& transformationMatrix);
 	};
 }
 

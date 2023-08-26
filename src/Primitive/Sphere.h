@@ -1,10 +1,19 @@
 #pragma once
-#include "GameObject.h"
+#include "tspch.h"
+#include "Primitive/Mesh.h"
 
 namespace TS_ENGINE {
 
-	class Sphere : public GameObject
+	class Sphere
 	{
+	public:
+		Sphere();
+		~Sphere();
+
+		void CreateVertices();
+		void CreateIndices();
+		Ref<Mesh> GetMesh();
+
 	private:
 		float mPI = 3.141f;
 		float mRadius = 0.01f;
@@ -12,11 +21,5 @@ namespace TS_ENGINE {
 		int mSectorCount = 20;
 
 		Ref<Mesh> mMesh;
-	public:
-		Sphere(const std::string& name);
-
-		void CreateVertices();
-		void CreateIndices();
-		void Create();
 	};
 }

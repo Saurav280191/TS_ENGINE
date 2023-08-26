@@ -13,20 +13,20 @@ namespace TS_ENGINE
 		return mInstance;
 	}
 
-	EntityID EntityManager::Instantiate(const std::string& name, EntityType entityType)
+	Ref<Entity> EntityManager::Initialize(const std::string& name)// , EntityType entityType)
 	{
-		std::shared_ptr<Entity> e = std::make_shared<Entity>(name, entityType);
-		mEntityLookUp.insert({e->GetEntityID(), mEntities.size() });
-		mEntities.push_back(e);
+		Ref<Entity> entity = CreateRef<Entity>(name);// , entityType);
+		mEntityLookUp.insert({ entity->GetEntityID(), mEntities.size() });
+		mEntities.push_back(entity);
 
 		std::stringstream ss;
 		ss << "Added new object named: " << name
-		<< " of type: " << Entity::GetEntityTypeStr(entityType)
-		<< " to EntityManager with ID: " << e->GetEntityID();
+			//<< " of type: " << Entity::GetEntityTypeStr(entityType)
+			<< " to EntityManager with ID: " << entity->GetEntityID();
 
 		TS_CORE_INFO(ss.str());
 
-		return e->GetEntityID();
+		return entity;
 	}
 
 	Ref<Entity> EntityManager::Get(EntityID id)
@@ -42,7 +42,7 @@ namespace TS_ENGINE
 	void EntityManager::Remove(EntityID id)
 	{
 		auto it = mEntityLookUp.find(id);
-		
+
 		if (it != mEntityLookUp.end())
 		{
 			EntityCollectionIndex i = it->second;

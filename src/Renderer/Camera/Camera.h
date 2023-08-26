@@ -1,18 +1,12 @@
 #pragma once
 #include "Core/tspch.h"
-#include "Core/Object.h"
 #include "Renderer/Shader.h"
-
-#include <imgui.h>
-#define IMGUI_DEFINE_MATH_OPERATORS
-#include "imgui_internal.h"
-#define IMAPP_IMPL
-#include "ImGuizmo.h"
 #include "Renderer/Framebuffer.h"
+#include "SceneManager/Node.h"
 
 namespace TS_ENGINE
 {
-	class Camera : public Object
+	class Camera
 	{
 	public:
 		struct Orthographic
@@ -40,7 +34,6 @@ namespace TS_ENGINE
 				this->zFar = zFar;
 			}
 		};
-
 		struct Perspective
 		{
 		public:
@@ -74,36 +67,34 @@ namespace TS_ENGINE
 			PERSPECTIVE
 		};
 
-		Camera();
 		Camera(const std::string& name);
 		~Camera();
-		
+
+		virtual void Initialize() = 0;
+		virtual void Update(Ref<TS_ENGINE::Shader> shader, float deltaTime) = 0;
 		virtual void RenderGui(Ref<Shader> shader, float deltaTime) = 0;
+		virtual void DeleteMeshes() = 0;
 
 		void CreateFramebuffer(uint32_t _width, uint32_t _height);
 
-		Camera::ProjectionType GetProjectionType();
-		const Camera::Orthographic& GetOrthographic();
-		const Camera::Perspective& GetPerspective();
-
 		void SetOrthographic(float left, float right, float top, float bottom, float zNear, float zFar);
-
 		void SetOrthographic(Orthographic orthographic);
-
 		void SetPerspective(float fov, float aspectRatio, float zNear, float zFar);
-
 		void SetPerspective(Perspective perspective);
 
-		const Matrix4 GetProjectionMatrix() const;
-		const Matrix4 GetViewMatrix() const;
+		//Getters
+		const ProjectionType Camera::GetProjectionType() const { return mProjectionType; }
+		const Orthographic& Camera::GetOrthographic() const { return mOrthographic; }
+		const Perspective& Camera::GetPerspective()	const { return mPerspective; }
+		const Matrix4 GetProjectionMatrix() const { return mProjectionMatrix; }
+		const Matrix4 GetViewMatrix() const { return mViewMatrix; }
 		const Matrix4 GetProjectionViewMatrix() const;
 
-		//void SetCurrentShader(Ref<Shader>& currentShader);
-		void Controls(float deltaTime);
-
-		Ref<Framebuffer> GetFramebuffer();		
+		const Ref<Framebuffer> GetFramebuffer() const { return mFramebuffer; }
+		virtual Ref<Node> GetNode() = 0;
 	protected:
-		//Ref<Shader> mCurrentShader;
+		Ref<Node> mCameraNode;
+
 		glm::vec2 mInitialMousePosition;
 
 		Vector3 mDefaultPos;
@@ -120,8 +111,5 @@ namespace TS_ENGINE
 		Orthographic mOrthographic;
 		Perspective mPerspective;
 		Ref<Framebuffer> mFramebuffer;
-
-		void Reset();
-
-};
+	};
 }

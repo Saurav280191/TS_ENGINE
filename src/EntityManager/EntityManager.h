@@ -17,7 +17,7 @@ namespace TS_ENGINE
 	public:
 		static Ref<EntityManager> GetInstance();
 
-		EntityID Instantiate(const std::string& name, EntityType entityType);
+		Ref<Entity> Initialize(const std::string& name);// , EntityType entityType);
 		Ref<Entity> Get(EntityID id);
 
 		void Remove(EntityID id);

@@ -71,7 +71,7 @@ namespace TS_ENGINE
 		m_Forward = GetForward();
 	}
 
-	void Transform::ComputeTransformationMatrix(TS_ENGINE::Node* node, TS_ENGINE::Node* parentNode)
+	void Transform::ComputeTransformationMatrix(const Node* parentNode)
 	{
 		Matrix4 modelMatrix = Matrix4(1);
 

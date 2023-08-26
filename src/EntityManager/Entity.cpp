@@ -6,9 +6,9 @@ namespace TS_ENGINE
 	EntityID Entity::mIdCount = 0;
 	std::queue<EntityID> Entity::mIdRemoved;
 
-	Entity::Entity(const std::string& name, EntityType entityType) :
-		mName(name),
-		mEntityType(entityType)
+	Entity::Entity(const std::string& name) : // , EntityType entityType) :
+		mName(name)//,
+		//mEntityType(entityType)
 	{
 		if (!mIdRemoved.empty())
 		{
@@ -31,7 +31,7 @@ namespace TS_ENGINE
 		return mId;
 	}
 
-	const char* Entity::GetEntityTypeStr(EntityType type)
+	/*const char* Entity::GetEntityTypeStr(EntityType type)
 	{
 		const char* typeStr = "";
 
@@ -66,5 +66,5 @@ namespace TS_ENGINE
 			return DEFAULT;
 
 		return DEFAULT;
-	}
+	}*/
 }

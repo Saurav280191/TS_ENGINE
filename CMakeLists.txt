@@ -39,16 +39,16 @@ src/Core/tcpch.h
 src/Core/tcpch.cpp
 src/Core/Window.h
 src/Core/Window.cpp
-src/Core/Object.h
-src/Core/Object.cpp
-src/Core/GameObject.h
-src/Core/GameObject.cpp
+#src/Core/Object.h
+#src/Core/Object.cpp
+#src/Core/GameObject.h
+#src/Core/GameObject.cpp
 src/Core/ModelLoader.h
 src/Core/ModelLoader.cpp
 src/Core/Transform.h
 src/Core/Transform.cpp
-src/Core/Factory.h
-src/Core/Factory.cpp
+#src/Core/Factory.h
+#src/Core/Factory.cpp
 )
 source_group("Core" FILES ${CoreSrc})
 
@@ -163,6 +163,8 @@ source_group("Renderer/Lighting" FILES ${LightingSrc})
 file(GLOB CameraSrc
 src/Renderer/Camera/Camera.h
 src/Renderer/Camera/Camera.cpp
+src/Renderer/Camera/EditorCamera.h
+src/Renderer/Camera/EditorCamera.cpp
 src/Renderer/Camera/SceneCamera.h
 src/Renderer/Camera/SceneCamera.cpp
 )
@@ -176,8 +178,8 @@ src/SceneManager/Scene.h
 src/SceneManager/Scene.cpp
 src/SceneManager/SceneManager.h
 src/SceneManager/SceneManager.cpp
-src/SceneManager/SceneSerializer.h
-src/SceneManager/SceneSerializer.cpp
+#src/SceneManager/SceneSerializer.h
+#src/SceneManager/SceneSerializer.cpp
 )
 source_group("SceneManager" FILES ${SceneManagerSrc})
 

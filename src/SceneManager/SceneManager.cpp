@@ -41,7 +41,7 @@ namespace TS_ENGINE
 		return mCurrentScene;
 	}
 
-	Ref<Node> SceneManager::GetCurrentSceneNode()
+	Node* SceneManager::GetCurrentSceneNode()
 	{
 		if (mCurrentScene)
 			return mCurrentScene->GetSceneNode();
@@ -88,9 +88,9 @@ namespace TS_ENGINE
 
 	void SceneManager::SaveCurrentScene()
 	{
-		if (mCurrentScene)		
+		/*if (mCurrentScene)		
 			mSceneSerializer->Save(mCurrentScene);		
 		else		
-			TS_CORE_ERROR("Current scene is not set!");		
+			TS_CORE_ERROR("Current scene is not set!");	*/	
 	}
 }

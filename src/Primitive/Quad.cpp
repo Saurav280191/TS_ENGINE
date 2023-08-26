@@ -3,15 +3,16 @@
 
 namespace TS_ENGINE {
 
-	Quad::Quad(const std::string& name)
+	Quad::Quad()
 	{
-		mPrimitiveType = PrimitiveType::QUAD;
-		mName = name;
-		mMesh = CreateRef<Mesh>();
-		Initialize();
+		
 	}
 
-	void Quad::OverrideTexCoords(std::vector<Vector2> texCoords)
+	Quad::~Quad()
+	{
+	}
+
+	/*void Quad::OverrideTexCoords(std::vector<Vector2> texCoords)
 	{
 		for (auto mesh : mMeshes)
 			mesh->~Mesh();
@@ -32,43 +33,48 @@ namespace TS_ENGINE {
 		mMesh->AddIndex(2);
 		mMesh->AddIndex(3);
 
-		mMesh->Create();
-		AddMesh(mMesh);
+		mMesh->Create();		
+	}*/
+
+	Ref<Mesh> Quad::GetMesh()
+	{
+		Ref<Mesh> mesh = CreateRef<Mesh>();
+
+		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.0f), Vector3(0, 1, 0), Vector2(0, 0)));
+		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.0f), Vector3(0, 1, 0), Vector2(0, 1)));
+		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.0f), Vector3(0, 1, 0), Vector2(1, 1)));
+		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.0f), Vector3(0, 1, 0), Vector2(1, 0)));
+
+		mesh->AddIndex(0);
+		mesh->AddIndex(1);
+		mesh->AddIndex(3);
+		mesh->AddIndex(1);
+		mesh->AddIndex(2);
+		mesh->AddIndex(3);
+
+		mesh->Create();
+		
+		return mesh;
 	}
 
-	void Quad::Create()
+	Ref<Mesh> Quad::GetMesh(const Matrix4& transformationMatrix)
 	{
-		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.0f), Vector3(0, 1, 0), Vector2(0, 0)));
-		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.0f), Vector3(0, 1, 0), Vector2(0, 1)));
-		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.0f), Vector3(0, 1, 0), Vector2(1, 1)));
-		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.0f), Vector3(0, 1, 0), Vector2(1, 0)));
+		Ref<Mesh> mesh = CreateRef<Mesh>();
 
-		mMesh->AddIndex(0);
-		mMesh->AddIndex(1);
-		mMesh->AddIndex(3);
-		mMesh->AddIndex(1);
-		mMesh->AddIndex(2);
-		mMesh->AddIndex(3);
+		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.0f), Vector3(0, 1, 0), Vector2(0, 0), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.0f), Vector3(0, 1, 0), Vector2(0, 1), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.0f), Vector3(0, 1, 0), Vector2(1, 1), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.0f), Vector3(0, 1, 0), Vector2(1, 0), transformationMatrix));
 
-		mMesh->Create();
-		AddMesh(mMesh);
-	}
+		mesh->AddIndex(0);
+		mesh->AddIndex(1);
+		mesh->AddIndex(3);
+		mesh->AddIndex(1);
+		mesh->AddIndex(2);
+		mesh->AddIndex(3);
 
-	void Quad::Create(const Matrix4& transformationMatrix)
-	{
-		mMesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.0f), Vector3(0, 1, 0), Vector2(0, 0), transformationMatrix));
-		mMesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.0f), Vector3(0, 1, 0), Vector2(0, 1), transformationMatrix));
-		mMesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.0f), Vector3(0, 1, 0), Vector2(1, 1), transformationMatrix));
-		mMesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.0f), Vector3(0, 1, 0), Vector2(1, 0), transformationMatrix));
-
-		mMesh->AddIndex(0);
-		mMesh->AddIndex(1);
-		mMesh->AddIndex(3);
-		mMesh->AddIndex(1);
-		mMesh->AddIndex(2);
-		mMesh->AddIndex(3);
-
-		mMesh->Create();
-		AddMesh(mMesh);
+		mesh->Create();
+		
+		return mesh;
 	}
 }

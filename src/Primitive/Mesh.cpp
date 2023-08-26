@@ -8,7 +8,37 @@ namespace TS_ENGINE {
 	Mesh::Mesh() :
 		mStatsRegistered(false)
 	{
+		Ref<Shader> shader = TS_ENGINE::Shader::Create("DefaultShader", "HDRLighting.vert", "HDRLighting.frag");
+		mMaterial = CreateRef<Material>("DefaultMaterial", shader);
+	}
 
+	Mesh::~Mesh()
+	{
+		mVertices.clear();
+		mIndices.clear();
+		mVertexArray = nullptr;
+		mStatsRegistered = false;
+		mDrawMode = DrawMode::TRIANGLE;
+	}
+
+	void Mesh::SetName(const std::string& name)
+	{
+		mName = name;
+	}
+
+	void Mesh::SetMaterial(Ref<Material> material)
+	{
+		mMaterial = material;
+	}
+
+	void Mesh::SetVertices(std::vector<Vertex> vertices) 
+	{ 
+		mVertices = vertices;
+	}
+
+	void Mesh::SetIndices(std::vector<uint32_t> indices) 
+	{ 
+		mIndices = indices;
 	}
 
 	void Mesh::AddVertex(Vertex vertex)
@@ -19,16 +49,6 @@ namespace TS_ENGINE {
 	void Mesh::AddIndex(uint32_t index)
 	{
 		mIndices.push_back(index);
-	}
-
-	void Mesh::SetVertices(std::vector<Vertex> _vertices)
-	{
-		mVertices = _vertices;
-	}
-
-	void Mesh::SetIndices(std::vector<uint32_t> _indices)
-	{
-		mIndices = _indices;
 	}
 
 	void Mesh::Create(DrawMode drawMode)//Default is Triangle
@@ -56,11 +76,14 @@ namespace TS_ENGINE {
 		mVertexArray->Unbind();
 	}
 
-	void Mesh::Draw()
+	void Mesh::Render(int entityID)
 	{
-		if(mDrawMode == DrawMode::TRIANGLE)
+		//To Fragment Shader
+		mMaterial->Render(entityID);
+
+		if (mDrawMode == DrawMode::TRIANGLE)
 			RenderCommand::DrawIndexed(mVertexArray, (uint32_t)mIndices.size());
-		else if(mDrawMode == DrawMode::LINE)
+		else if (mDrawMode == DrawMode::LINE)
 			RenderCommand::DrawLines(mVertexArray, (uint32_t)mVertices.size());
 
 #pragma region STATS
@@ -89,16 +112,6 @@ namespace TS_ENGINE {
 		mVertices.clear();
 		mIndices.clear();
 		mStatsRegistered = false;
-	}
-
-	std::vector<Vertex> Mesh::GetVertices()
-	{
-		return mVertices;
-	}
-
-	std::vector<uint32_t> Mesh::GetIndices()
-	{
-		return mIndices;
 	}
 
 	std::vector<Vertex> Mesh::GetWorldSpaceVertices(Vector3 position = Vector3(0, 0, 0), Vector3 eulerAngles = Vector3(0, 0, 0), Vector3 scale = Vector3(1, 1, 1))

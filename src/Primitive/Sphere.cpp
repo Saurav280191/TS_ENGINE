@@ -3,12 +3,14 @@
 
 namespace TS_ENGINE {
 
-	Sphere::Sphere(const std::string& name)
+	Sphere::Sphere()
 	{
-		mPrimitiveType = PrimitiveType::SPHERE;
-		mName = name;
-		mMesh = CreateRef<Mesh>();
-		Initialize();
+		
+	}
+
+	Sphere::~Sphere()
+	{
+
 	}
 
 	void Sphere::CreateVertices()
@@ -100,12 +102,12 @@ namespace TS_ENGINE {
 		}
 	}
 
-	void Sphere::Create()
+	Ref<Mesh> Sphere::GetMesh()
 	{
 		CreateVertices();
 		CreateIndices();
 
 		mMesh->Create();
-		AddMesh(mMesh);
+		return mMesh;
 	}
 }
