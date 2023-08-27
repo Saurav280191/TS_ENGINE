@@ -13,7 +13,7 @@ namespace TS_ENGINE
 		return mInstance;
 	}
 
-	Ref<Entity> EntityManager::Initialize(const std::string& name)// , EntityType entityType)
+	Ref<Entity> EntityManager::Register(const std::string& name)// , EntityType entityType)
 	{
 		Ref<Entity> entity = CreateRef<Entity>(name);// , entityType);
 		mEntityLookUp.insert({ entity->GetEntityID(), mEntities.size() });
@@ -54,6 +54,16 @@ namespace TS_ENGINE
 
 			mEntityLookUp[back] = i;
 			mEntityLookUp.erase(id);
+		}
+	}
+	
+	void EntityManager::PrintEntities()
+	{
+		TS_CORE_TRACE("Following entities are registered: ");
+
+		for (auto& entity : mEntities)
+		{
+			TS_CORE_TRACE(entity->GetName().c_str());
 		}
 	}
 }

@@ -11,63 +11,18 @@
 #include "Core/KeyCodes.h"
 
 #include "Renderer/RenderCommand.h"
+#include "Core/Factory.h"
 
 namespace TS_ENGINE
 {
-	Scene::Scene(std::string name, Ref<Camera> editorCamera)
+	Scene::Scene(std::string name, Ref<EditorCamera> editorCamera)
 		//: m_BatchingEnabled(false)
 	{
-		//mSceneNode = CreateRef<Node>(name);
-		mSceneNode = new Node(name);
+		mSceneNode = CreateRef<Node>(name);
 		mEditorCamera = editorCamera;
-		//mSceneNode->SetName(name);
 		//m_BatchButton.RegisterClickHandler(std::bind(&ButtonHandler::OnButtonClicked, &mBatchButtonHandler, std::placeholders::_1, std::placeholders::_2));
 		
-#pragma region DummyScene	
-		//Scene Camera
-		Ref<TS_ENGINE::SceneCamera> defaultSceneCamera = CreateRef<TS_ENGINE::SceneCamera>("SceneCamera", mEditorCamera);
-		defaultSceneCamera->GetNode()->GetTransform()->SetLocalPosition(7.156f, 2.951f, 8.770f);
-		defaultSceneCamera->GetNode()->GetTransform()->SetLocalEulerAngles(-13.235f, 38.064f, 0.0f);
-		defaultSceneCamera->SetPerspective(TS_ENGINE::Camera::Perspective(45.0f, 1.77f, 1.0f, 20.0f));
-		defaultSceneCamera->CreateFramebuffer(800, 600);//Create framebuffer for sceneCamera
-		defaultSceneCamera->Initialize();
-		mSceneNode->AddChild(defaultSceneCamera->GetNode().get());		
-
-		//Default ground
-		mGroundNode = CreateRef<TS_ENGINE::Node>("Ground");
-		mGroundNode->GetTransform()->SetLocalEulerAngles(-90.0f, 0.0f, 0.0f);
-		mGroundNode->GetTransform()->SetLocalScale(10.0f, 10.0f, 10.0f);
-		mGroundNode->AddMesh(CreateRef<TS_ENGINE::Quad>()->GetMesh());
-		Ref<Mesh> mesh = mGroundNode->GetMeshes()[0];
-		mesh->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\raw_plank_wall_diff_4k.jpg"));
-		mesh->GetMaterial()->SetDiffuseMapTiling(Vector2(2, 2));
-		mSceneNode->AddChild(mGroundNode.get());
-		
-		//Cube
-		mCubeNode = CreateRef<TS_ENGINE::Node>("Cube");
-		mCubeNode->AddMesh(CreateRef<TS_ENGINE::Cube>()->GetMesh());
-		mCubeNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\crate.png"));	
-		mCubeNode->SetParent(mSceneNode);
-		mCubeNode->GetTransform()->SetLocalPosition(2.75f, 0.312f, 0.0f);		
-		mCubeNode->GetTransform()->SetLocalScale(0.62f, 0.62f, 0.62f);
-		
-		//Cube1
-		mCube1Node = CreateRef<TS_ENGINE::Node>("Cube1");
-		mCube1Node->AddMesh(CreateRef<TS_ENGINE::Cube>()->GetMesh());
-		mCube1Node->GetMeshes()[0]->GetMaterial()->SetAmbientColor(Vector4(1, 0, 0, 1));
-		mCube1Node->SetParent(mCubeNode.get());
-		mCube1Node->GetTransform()->SetLocalPosition(1.0f, 1.0f, -1.0f);
-		mCube1Node->GetTransform()->SetLocalScale(0.3f, 0.3f, 0.3f);
-		mCube1Node->GetTransform()->SetLocalEulerAngles(30.0f, 60.0f, 10.0f);
-
-		//Ref<Model> model = ModelLoader::GetInstance()->LoadModel("D:/Documents/ThinkSideways/WorkInProgress/TS_ENGINE Related/TS_ENGINE_Editor/Assets/Models/LamborginiAventador/Chassis.obj");
-		//Ref<Model> model = ModelLoader::GetInstance()->LoadModel("D:/Documents/ThinkSideways/WorkInProgress/TS_ENGINE Related/TS_ENGINE_Editor/Assets/Models/buster_drone.glb");
-		Ref<Model> model = ModelLoader::GetInstance()->LoadModel("D:/Downloads/Ely By K.Atienza.fbx");
-		mModelNode = model->GetRootNode();
-		mModelNode->AddChild(model->GetRootNode().get());
-		mModelNode->SetParent(mSceneNode);
-		mModelNode->GetTransform()->SetLocalScale(0.01f, 0.01f, 0.01f);
-
+#pragma region DummyScene		
 		// Skybox
 		{
 			mSkyboxNode = CreateRef<TS_ENGINE::Node>("Skybox");
@@ -78,17 +33,47 @@ namespace TS_ENGINE
 			mSkyboxNode->InitializeTransformMatrices();
 		}
 
-		mCurrentSceneCamera = defaultSceneCamera;//Current Scene Camera		
+		auto sceneCamera1 = Factory::GetInstance()->InstantitateSceneCamera("SceneCamera1", this);
+		sceneCamera1->GetNode()->GetTransform()->SetLocalPosition(7.156f, 2.951f, 8.770f);
+		sceneCamera1->GetNode()->GetTransform()->SetLocalEulerAngles(-13.235f, 38.064f, 0.0f);
+
+		//Default ground
+		auto groundNode = Factory::GetInstance()->InstantiateQuad("Ground", mSceneNode.get());
+		groundNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\raw_plank_wall_diff_4k.jpg"));
+		groundNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMapTiling(Vector2(2, 2));
+		groundNode->GetTransform()->SetLocalEulerAngles(-90.0f, 0.0f, 0.0f);
+		groundNode->GetTransform()->SetLocalScale(10.0f, 10.0f, 10.0f);
+		
+		//Cube
+		auto cubeNode = Factory::GetInstance()->InstantiateCube("Cube", mSceneNode.get());		
+		cubeNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\crate.png"));	
+		cubeNode->GetTransform()->SetLocalPosition(2.75f, 0.312f, 0.0f);		
+		cubeNode->GetTransform()->SetLocalScale(0.62f, 0.62f, 0.62f);
+		
+		//Cube1
+		auto cube1Node = Factory::GetInstance()->InstantiateCube("Cube1", cubeNode);
+		cube1Node->GetMeshes()[0]->GetMaterial()->SetAmbientColor(Vector4(1, 0, 0, 1));
+		cube1Node->GetTransform()->SetLocalPosition(1.0f, 1.0f, -1.0f);
+		cube1Node->GetTransform()->SetLocalScale(0.3f, 0.3f, 0.3f);
+		cube1Node->GetTransform()->SetLocalEulerAngles(30.0f, 60.0f, 10.0f);
+
+		//Model
+		//auto modelNode = Factory::GetInstance()->InstantiateModel("D:/Documents/ThinkSideways/WorkInProgress/TS_ENGINE Related/TS_ENGINE_Editor/Assets/Models/LamborginiAventador/Chassis.obj", mSceneNode.get());
+		//auto modelNode = Factory::GetInstance()->InstantiateModel("D:/Documents/ThinkSideways/WorkInProgress/TS_ENGINE Related/TS_ENGINE_Editor/Assets/Models/buster_drone.glb", mSceneNode.get());
+		auto modelNode = Factory::GetInstance()->InstantiateModel("D:/Downloads/Ely By K.Atienza.fbx", mSceneNode.get());
+		modelNode->GetTransform()->SetLocalScale(0.01f, 0.01f, 0.01f);
+
+		mCurrentSceneCamera = sceneCamera1;//Current Scene Camera		
 		mSceneNode->InitializeTransformMatrices();//Needs to be done at the end to initialize the hierarchy once
 #pragma endregion 
 	}
 
 	Scene::~Scene()
 	{
-		mSceneNode->Destroy();
-		//mSceneNode.reset();
-		mSceneNode = nullptr;
-		delete mSceneNode;
+		mSceneNode.reset();
+		//mSceneNode->Destroy();
+		//mSceneNode = nullptr;
+		//delete mSceneNode;
 	}
 
 	/*void Scene::OnBatched()

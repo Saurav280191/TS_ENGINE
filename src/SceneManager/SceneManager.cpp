@@ -41,7 +41,7 @@ namespace TS_ENGINE
 		return mCurrentScene;
 	}
 
-	Node* SceneManager::GetCurrentSceneNode()
+	Ref<Node> SceneManager::GetCurrentSceneNode()
 	{
 		if (mCurrentScene)
 			return mCurrentScene->GetSceneNode();

@@ -24,7 +24,7 @@ namespace TS_ENGINE
 		~SceneManager();
 
 		//Ref<SceneSerializer> mSceneSerializer;
-		Node* GetCurrentSceneNode();
+		Ref<Node> GetCurrentSceneNode();
 	};
 }
 

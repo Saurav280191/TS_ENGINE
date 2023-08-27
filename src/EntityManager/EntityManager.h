@@ -12,15 +12,14 @@ namespace TS_ENGINE
 	private:
 		EntityCollection mEntities;
 		std::unordered_map<EntityID, EntityCollectionIndex> mEntityLookUp;
-		
 		static Ref<EntityManager> mInstance;
 	public:
 		static Ref<EntityManager> GetInstance();
-
-		Ref<Entity> Initialize(const std::string& name);// , EntityType entityType);
+		Ref<Entity> Register(const std::string& name);
 		Ref<Entity> Get(EntityID id);
-
 		void Remove(EntityID id);
+
+		void PrintEntities();//Only for testing
 	};
 }
 

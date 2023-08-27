@@ -71,7 +71,7 @@ namespace TS_ENGINE {
 	class Scene
 	{
 	public:
-		Scene(std::string name, Ref<Camera> editorCamera);
+		Scene(std::string name, Ref<EditorCamera> editorCamera);
 		~Scene();
 
 		//BatchButton m_BatchButton;
@@ -80,21 +80,26 @@ namespace TS_ENGINE {
 		//void OnUnBatched();
 
 		void Render(Ref<Shader> shader, float deltaTime);
-		Node* GetSceneNode() const { return mSceneNode; }
+		Ref<Node> GetSceneNode() const { return mSceneNode; }
 		Ref<SceneCamera> GetCurrentSceneCamera() { return mCurrentSceneCamera; }
-		void UpdateCameraRT(Ref<Camera> camera, Ref<Shader> shader, float deltaTime, bool isEditorCamera);	
+		void UpdateCameraRT(Ref<Camera> camera, Ref<Shader> shader, float deltaTime, bool isEditorCamera);
 
 		int GetSkyboxEntityID() { return mSkyboxNode->GetEntity()->GetEntityID(); }
+
+#ifdef TS_ENGINE_EDITOR
+		Ref<EditorCamera> GetEditorCamera() { return mEditorCamera; }
+#endif
+
 	private:
-		Node* mSceneNode;		
-		Ref<Camera> mEditorCamera = nullptr;
+		Ref<Node> mSceneNode;
+
+#ifdef TS_ENGINE_EDITOR
+		Ref<EditorCamera> mEditorCamera = nullptr;
+#endif
+
 		std::vector<Ref<Camera>> mSceneCameras = {};
 		Ref<SceneCamera> mCurrentSceneCamera;
-		//ButtonHandler mBatchButtonHandler;
-		Ref<TS_ENGINE::Node> mGroundNode;
-		Ref<TS_ENGINE::Node> mCubeNode;
-		Ref<TS_ENGINE::Node> mCube1Node;
+		//ButtonHandler mBatchButtonHandler;		
 		Ref<TS_ENGINE::Node> mSkyboxNode;
-		Ref<TS_ENGINE::Node> mModelNode;
 	};
 }

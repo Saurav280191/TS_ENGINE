@@ -31,6 +31,12 @@ namespace TS_ENGINE
 		return mId;
 	}
 
+	void Entity::UpdateName(const std::string& name)
+	{
+		TS_CORE_TRACE("Renamed Entity with entityID {0} to {1}", mId, name);
+		mName = name;
+	}
+
 	/*const char* Entity::GetEntityTypeStr(EntityType type)
 	{
 		const char* typeStr = "";

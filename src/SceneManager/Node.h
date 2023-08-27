@@ -23,6 +23,7 @@ namespace TS_ENGINE
 	class Node
 	{
 	public:
+		Node();
 		Node(const std::string& name);
 		~Node();
 
@@ -60,6 +61,8 @@ namespace TS_ENGINE
 
 		void AddMesh(Ref<Mesh> mesh);
 		void AddMeshes(std::vector<Ref<Mesh>> _meshes);
+
+		void PrintChildrenName();//Only for testing
 
 #pragma region Getters
 		Node* GetNode() { return this; }		

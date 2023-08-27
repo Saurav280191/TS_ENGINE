@@ -12,7 +12,7 @@ namespace TS_ENGINE
 	{
 		mMeshes = {};
 		mName = name;
-		mEntity = EntityManager::GetInstance()->Initialize(name);// , EntityType::NODE);
+		mEntity = EntityManager::GetInstance()->Register(name);
 	}
 
 	Node::~Node()
@@ -72,7 +72,9 @@ namespace TS_ENGINE
 
 	void Node::SetName(const std::string& name) 
 	{ 
+		TS_CORE_TRACE("Renamed Node with entityID {0} to {1}", mEntity->GetEntityID(), name);
 		mName = name; 
+		mEntity->UpdateName(name);
 	}
 
 	void Node::SetParent(Node* parentNode)
@@ -257,5 +259,16 @@ namespace TS_ENGINE
 	void Node::AddMeshes(std::vector<Ref<Mesh>> _meshes)
 	{
 		mMeshes = _meshes;
+	}
+	
+	void Node::PrintChildrenName()
+	{
+		TS_CORE_TRACE("Node {0} has children named: ", mName.c_str());
+
+		for (auto& child : mChildren)
+		{
+			TS_CORE_TRACE("{0} ", child->mName.c_str());
+			child->PrintChildrenName();
+		}
 	}
 }

@@ -92,8 +92,7 @@ namespace TS_ENGINE {
 			mSceneCameraGuiNode->GetTransform()->SetLocalEulerAngles(0.0, 90.0f, 0.0f);
 			mSceneCameraGuiNode->GetTransform()->SetLocalScale(-1.0f, 1.0f, 1.0f);
 			mSceneCameraGuiNode->InitializeTransformMatrices();
-		}
-		
+		}		
 #endif
 	}
 

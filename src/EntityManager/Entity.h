@@ -7,6 +7,7 @@ namespace TS_ENGINE
 	{
 		NODE,
 		GAMEOBJECT,
+		Skybox,
 		LIGHT,
 		CAMERA,
 		DEFAULT
@@ -29,6 +30,8 @@ namespace TS_ENGINE
 
 		EntityID GetEntityID() const;
 
+		void UpdateName(const std::string& name);
+		const std::string& GetName() { return mName; }
 		//static const char* GetEntityTypeStr(EntityType type);
 		//static const EntityType GetEntityTypeFromStr(std::string str);
 	};

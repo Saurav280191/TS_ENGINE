@@ -47,8 +47,8 @@ src/Core/ModelLoader.h
 src/Core/ModelLoader.cpp
 src/Core/Transform.h
 src/Core/Transform.cpp
-#src/Core/Factory.h
-#src/Core/Factory.cpp
+src/Core/Factory.h
+src/Core/Factory.cpp
 )
 source_group("Core" FILES ${CoreSrc})
 

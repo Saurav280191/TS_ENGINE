@@ -58,7 +58,7 @@ namespace TS_ENGINE {
 
 	void Model::ProcessEmbeddedTextures()
 	{
-		for (int i = 0; i < mAssimpScene->mNumTextures; i++)
+		for (unsigned int i = 0; i < mAssimpScene->mNumTextures; i++)
 		{
 			aiTexture* aiTex = mAssimpScene->mTextures[i];
 			TS_CORE_INFO("Processing embedded aiTex named : {0}", aiTex->mFilename.C_Str());

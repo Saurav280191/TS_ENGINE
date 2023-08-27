@@ -19,21 +19,31 @@ namespace TS_ENGINE
 	class Factory
 	{
 	public:
-	private:
-		static Factory* mInstance;
-		//std::vector<Ref<Object>> mInstantiatedObjects;
-	public:
 		static Factory* GetInstance();
 
-		//Ref<GameObject> CreateGameObject(PrimitiveType type);
-		Ref<Model> LoadModel(std::string& modelPath);
-		void ChangeMeshForNode(Ref<Node> node, int primitiveIndex);
+		Ref<SceneCamera> InstantitateSceneCamera(const std::string& name, Scene* scene);
 		
-#ifdef TS_ENGINE_EDITOR
-		Ref<SceneCamera> CreateSceneCamera(Ref<Camera> editorCamera);
-#else
-		Ref<SceneCamera> CreateSceneCamera();
-#endif
-		Ref<Light> CreateLight(Light::Type lightType);
+		Node* InstantiateQuad(const std::string& name, Node* parentNode);
+
+		Node* InstantiateCube(const std::string& name, Node* parentNode);
+
+		Node* InstantiateSphere(const std::string& name, Node* parentNode);
+
+		Node* InstantiateModel(const std::string& modelPath, Node* parentNode);
+
+		//Ref<GameObject> CreateGameObject(PrimitiveType type);
+		//Ref<Model> LoadModel(std::string& modelPath);
+		//void ChangeMeshForNode(Ref<Node> node, int primitiveIndex);
+		
+//#ifdef TS_ENGINE_EDITOR
+		//Ref<SceneCamera> CreateSceneCamera(Ref<Camera> editorCamera);
+//#else
+		//Ref<SceneCamera> CreateSceneCamera();
+//#endif
+		//Ref<Light> CreateLight(Light::Type lightType);
+	public:
+		//std::vector<Ref<Object>> mInstantiatedObjects;
+	private:
+		static Factory* mInstance;
 	};
 }
