@@ -20,8 +20,9 @@ namespace TS_ENGINE {
 		// Inherited via Camera
 		virtual void Initialize() override;
 		virtual void Update(Ref<Shader> shader, float deltaTime) override;
-		virtual void RenderGui(Ref<Shader> shader, float deltaTime) override;
 		virtual void DeleteMeshes() override;
+
+		void RenderGui(Ref<Shader> shader, float deltaTime);
 
 		bool IsSceneCameraGuiSelected(int entityID);
 

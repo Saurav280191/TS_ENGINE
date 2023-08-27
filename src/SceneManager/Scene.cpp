@@ -144,7 +144,6 @@ namespace TS_ENGINE
 		//mDirectionalLight->SetCommonParams(mCurrentShader, mDirectionalLight->GetNode()->GetTransform()->GetLocalPosition(),
 		//	mDirectionalLight->GetNode()->GetTransform()->GetForward(), Vector3(0.5f), Vector3(0.5f), Vector3(0.5f));
 
-		
 		// Camera And Skybox Render		
 		camera->SetIsDistanceIndependent(true);
 		camera->Update(shader, deltaTime);				

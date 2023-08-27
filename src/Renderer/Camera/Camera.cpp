@@ -7,7 +7,7 @@ namespace TS_ENGINE {
 	Camera::Camera(const std::string& name) : 
 		mDefaultPos(0, 0, 0),
 		mDefaultEulerAngles(0, 0, 0),
-		mMoveSpeed(0.02f),
+		mMoveSpeed(0.005f),
 		mRotateSpeed(0.02f),
 		mCameraType(Camera::Type::EDITORCAMERA),
 		mProjectionType(ProjectionType::PERSPECTIVE)

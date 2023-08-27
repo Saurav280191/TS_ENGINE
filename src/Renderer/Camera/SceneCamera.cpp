@@ -111,13 +111,16 @@ namespace TS_ENGINE {
 		mViewMatrix = glm::inverse(mViewMatrix);
 
 		shader->SetVec3("u_ViewPos", mCameraNode->GetTransform()->GetLocalPosition());
-		
-		if (mIsDistanceIndependent)
-			shader->SetMat4("u_View", (Matrix4)((Matrix3)mViewMatrix));
-		else
-			shader->SetMat4("u_View", mViewMatrix);
 
-		shader->SetMat4("u_Projection", mProjectionMatrix);
+		if (mIsDistanceIndependent)
+		{
+			shader->SetMat4("u_View", (Matrix4)((Matrix3)mViewMatrix));
+		}
+		else
+		{
+			shader->SetMat4("u_View", mViewMatrix);
+			shader->SetMat4("u_Projection", mProjectionMatrix);
+		}
 	}
 
 	bool SceneCamera::IsSceneCameraGuiSelected(int entityID)
@@ -130,6 +133,7 @@ namespace TS_ENGINE {
 
 	void SceneCamera::DeleteMeshes()
 	{
+
 	}
 
 	void SceneCamera::RenderGui(Ref<Shader> shader, float deltaTime)

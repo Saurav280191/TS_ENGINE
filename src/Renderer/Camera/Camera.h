@@ -72,7 +72,6 @@ namespace TS_ENGINE
 
 		virtual void Initialize() = 0;
 		virtual void Update(Ref<TS_ENGINE::Shader> shader, float deltaTime) = 0;
-		virtual void RenderGui(Ref<Shader> shader, float deltaTime) = 0;
 		virtual void DeleteMeshes() = 0;
 
 		void CreateFramebuffer(uint32_t _width, uint32_t _height);

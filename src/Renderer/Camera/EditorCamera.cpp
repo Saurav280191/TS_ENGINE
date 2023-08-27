@@ -37,18 +37,17 @@ namespace TS_ENGINE {
 		Controls(deltaTime);
 
 		shader->SetVec3("u_ViewPos", mCameraNode->GetTransform()->GetLocalPosition());
-		
-		if(mIsDistanceIndependent)
+
+		if (mIsDistanceIndependent) // ProjectionMatrix is send to shader in both the cases of this if condition. 						
+		{							// This difference from scene camera in this case. 
 			shader->SetMat4("u_View", Matrix4((Matrix3)mViewMatrix));
+		}
 		else
+		{
 			shader->SetMat4("u_View", mViewMatrix);
-			
+		}
+
 		shader->SetMat4("u_Projection", mProjectionMatrix);
-	}
-
-	void EditorCamera::RenderGui(Ref<TS_ENGINE::Shader> shader, float deltaTime)
-	{
-
 	}
 
 	void EditorCamera::DeleteMeshes()

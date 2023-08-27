@@ -16,7 +16,6 @@ namespace TS_ENGINE {
 		// Inherited via Camera	
 		virtual void Initialize() override;
 		virtual void Update(Ref<TS_ENGINE::Shader> shader, float deltaTime) override;
-		virtual void RenderGui(Ref<TS_ENGINE::Shader> shader, float deltaTime) override;
 		virtual void DeleteMeshes() override;
 		
 		virtual Ref<Node> GetNode() override { return mCameraNode; }
