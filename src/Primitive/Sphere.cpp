@@ -13,7 +13,7 @@ namespace TS_ENGINE {
 
 	}
 
-	void Sphere::CreateVertices()
+	void Sphere::CreateVertices(Ref<Mesh> mesh)
 	{
 		float x, y, z, xy;                              // vertex position
 		float nx, ny, nz, lengthInv = 1.0f / mRadius;    // vertex normal
@@ -49,12 +49,12 @@ namespace TS_ENGINE {
 				t = (float)i / mStackCount;
 
 				Vertex vertex = Vertex(Vector3(x, y, z), Vector3(nx, ny, nz), Vector2(s, t));
-				mMesh->AddVertex(vertex);
+				mesh->AddVertex(vertex);
 			}
 		}
 	}
 
-	void Sphere::CreateIndices()
+	void Sphere::CreateIndices(Ref<Mesh> mesh)
 	{
 		// generate CCW index list of sphere triangles
 	// k1--k1+1
@@ -75,17 +75,17 @@ namespace TS_ENGINE {
 				// k1 => k2 => k1+1
 				if (i != 0)
 				{
-					mMesh->AddIndex(k1);
-					mMesh->AddIndex(k2);
-					mMesh->AddIndex(k1 + 1);
+					mesh->AddIndex(k1);
+					mesh->AddIndex(k2);
+					mesh->AddIndex(k1 + 1);
 				}
 
 				// k1+1 => k2 => k2+1
 				if (i != (mStackCount - 1))
 				{
-					mMesh->AddIndex(k1 + 1);
-					mMesh->AddIndex(k2);
-					mMesh->AddIndex(k2 + 1);
+					mesh->AddIndex(k1 + 1);
+					mesh->AddIndex(k2);
+					mesh->AddIndex(k2 + 1);
 				}
 
 				// store indices for lines
@@ -104,10 +104,12 @@ namespace TS_ENGINE {
 
 	Ref<Mesh> Sphere::GetMesh()
 	{
-		CreateVertices();
-		CreateIndices();
+		Ref<Mesh> mesh = CreateRef<Mesh>();
 
-		mMesh->Create();
-		return mMesh;
+		CreateVertices(mesh);
+		CreateIndices(mesh);
+
+		mesh->Create();
+		return mesh;
 	}
 }

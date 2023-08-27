@@ -8,9 +8,11 @@ namespace TS_ENGINE {
 		mDefaultPos(0, 0, 0),
 		mDefaultEulerAngles(0, 0, 0),
 		mMoveSpeed(0.02f),
-		mRotateSpeed(0.02f)
+		mRotateSpeed(0.02f),
+		mCameraType(Camera::Type::EDITORCAMERA),
+		mProjectionType(ProjectionType::PERSPECTIVE)
 	{
-		mProjectionType = ProjectionType::PERSPECTIVE;
+
 	}
 
 	Camera::~Camera()
@@ -56,6 +58,11 @@ namespace TS_ENGINE {
 		mProjectionType = ProjectionType::PERSPECTIVE;
 		mPerspective = Perspective(fov, aspectRatio, zNear, zFar);
 		mProjectionMatrix = glm::perspective(fov, aspectRatio, zNear, zFar);
+	}
+	
+	void Camera::SetIsDistanceIndependent(bool distanceIndependent)
+	{
+		mIsDistanceIndependent = distanceIndependent;
 	}
 
 	const Matrix4 Camera::GetProjectionViewMatrix() const 

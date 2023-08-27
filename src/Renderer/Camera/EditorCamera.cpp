@@ -37,7 +37,12 @@ namespace TS_ENGINE {
 		Controls(deltaTime);
 
 		shader->SetVec3("u_ViewPos", mCameraNode->GetTransform()->GetLocalPosition());
-		shader->SetMat4("u_View", mViewMatrix);
+		
+		if(mIsDistanceIndependent)
+			shader->SetMat4("u_View", Matrix4((Matrix3)mViewMatrix));
+		else
+			shader->SetMat4("u_View", mViewMatrix);
+			
 		shader->SetMat4("u_Projection", mProjectionMatrix);
 	}
 

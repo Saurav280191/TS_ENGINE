@@ -248,4 +248,14 @@ namespace TS_ENGINE
 	{
 		mTransform->LookAt(mParentNode, targetNode->GetTransform());
 	}
+
+	void Node::AddMesh(Ref<Mesh> mesh)
+	{
+		mMeshes.push_back(mesh); 
+	}
+	
+	void Node::AddMeshes(std::vector<Ref<Mesh>> _meshes)
+	{
+		mMeshes = _meshes;
+	}
 }

@@ -81,6 +81,7 @@ namespace TS_ENGINE
 		void SetOrthographic(Orthographic orthographic);
 		void SetPerspective(float fov, float aspectRatio, float zNear, float zFar);
 		void SetPerspective(Perspective perspective);
+		void SetIsDistanceIndependent(bool distanceIndependent);
 
 		//Getters
 		const ProjectionType Camera::GetProjectionType() const { return mProjectionType; }
@@ -89,10 +90,11 @@ namespace TS_ENGINE
 		const Matrix4 GetProjectionMatrix() const { return mProjectionMatrix; }
 		const Matrix4 GetViewMatrix() const { return mViewMatrix; }
 		const Matrix4 GetProjectionViewMatrix() const;
-
+		
 		const Ref<Framebuffer> GetFramebuffer() const { return mFramebuffer; }
 		virtual Ref<Node> GetNode() = 0;
 	protected:
+		bool mIsDistanceIndependent = false;
 		Ref<Node> mCameraNode;
 
 		glm::vec2 mInitialMousePosition;

@@ -82,7 +82,9 @@ namespace TS_ENGINE {
 		void Render(Ref<Shader> shader, float deltaTime);
 		Node* GetSceneNode() const { return mSceneNode; }
 		Ref<SceneCamera> GetCurrentSceneCamera() { return mCurrentSceneCamera; }
-		void UpdateCameraRT(Ref<Camera> camera, Ref<Shader> shader, float deltaTime, bool isEditorCamera);			
+		void UpdateCameraRT(Ref<Camera> camera, Ref<Shader> shader, float deltaTime, bool isEditorCamera);	
+
+		int GetSkyboxEntityID() { return mSkyboxNode->GetEntity()->GetEntityID(); }
 	private:
 		Node* mSceneNode;		
 		Ref<Camera> mEditorCamera = nullptr;
@@ -92,6 +94,7 @@ namespace TS_ENGINE {
 		Ref<TS_ENGINE::Node> mGroundNode;
 		Ref<TS_ENGINE::Node> mCubeNode;
 		Ref<TS_ENGINE::Node> mCube1Node;
+		Ref<TS_ENGINE::Node> mSkyboxNode;
 		Ref<TS_ENGINE::Node> mModelNode;
 	};
 }

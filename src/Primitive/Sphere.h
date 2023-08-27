@@ -10,8 +10,8 @@ namespace TS_ENGINE {
 		Sphere();
 		~Sphere();
 
-		void CreateVertices();
-		void CreateIndices();
+		void CreateVertices(Ref<Mesh> mesh);
+		void CreateIndices(Ref<Mesh> mesh);
 		Ref<Mesh> GetMesh();
 
 	private:
@@ -19,7 +19,5 @@ namespace TS_ENGINE {
 		float mRadius = 0.01f;
 		int mStackCount = 20;
 		int mSectorCount = 20;
-
-		Ref<Mesh> mMesh;
 	};
 }

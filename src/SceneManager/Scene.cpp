@@ -48,7 +48,8 @@ namespace TS_ENGINE
 		mCubeNode->AddMesh(CreateRef<TS_ENGINE::Cube>()->GetMesh());
 		mCubeNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\crate.png"));	
 		mCubeNode->SetParent(mSceneNode);
-		mCubeNode->GetTransform()->SetLocalPosition(0.0f, 0.5f, 0.0f);		
+		mCubeNode->GetTransform()->SetLocalPosition(2.75f, 0.312f, 0.0f);		
+		mCubeNode->GetTransform()->SetLocalScale(0.62f, 0.62f, 0.62f);
 		
 		//Cube1
 		mCube1Node = CreateRef<TS_ENGINE::Node>("Cube1");
@@ -65,6 +66,17 @@ namespace TS_ENGINE
 		mModelNode = model->GetRootNode();
 		mModelNode->AddChild(model->GetRootNode().get());
 		mModelNode->SetParent(mSceneNode);
+		mModelNode->GetTransform()->SetLocalScale(0.01f, 0.01f, 0.01f);
+
+		// Skybox
+		{
+			mSkyboxNode = CreateRef<TS_ENGINE::Node>("Skybox");
+			mSkyboxNode->AddMesh(CreateRef<TS_ENGINE::Sphere>()->GetMesh());
+			mSkyboxNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\industrial_sunset_puresky.jpg"));
+			mSkyboxNode->GetTransform()->SetLocalScale(80000.0f, 80000.0f, 80000.0f);
+			mSkyboxNode->GetTransform()->SetLocalEulerAngles(90.0f, 235.0f, 0.0f);
+			mSkyboxNode->InitializeTransformMatrices();
+		}
 
 		mCurrentSceneCamera = defaultSceneCamera;//Current Scene Camera		
 		mSceneNode->InitializeTransformMatrices();//Needs to be done at the end to initialize the hierarchy once
@@ -132,7 +144,14 @@ namespace TS_ENGINE
 		//mDirectionalLight->SetCommonParams(mCurrentShader, mDirectionalLight->GetNode()->GetTransform()->GetLocalPosition(),
 		//	mDirectionalLight->GetNode()->GetTransform()->GetForward(), Vector3(0.5f), Vector3(0.5f), Vector3(0.5f));
 
-		// Camera Render
+		
+		// Camera And Skybox Render		
+		camera->SetIsDistanceIndependent(true);
+		camera->Update(shader, deltaTime);				
+		mSkyboxNode->Update(shader, deltaTime);
+
+		// Camera And Scene Render		
+		camera->SetIsDistanceIndependent(false);
 		camera->Update(shader, deltaTime);
 
 		// Scene-Tree Render
@@ -140,6 +159,6 @@ namespace TS_ENGINE
 			mSceneNode->Update(shader, deltaTime);
 		else
 			TS_CORE_ERROR("Scene node not set");
-	}
 
+	}
 }

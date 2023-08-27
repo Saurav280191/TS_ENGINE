@@ -58,8 +58,8 @@ namespace TS_ENGINE
 
 		void LookAt(Ref<Node> targetNode);
 
-		void AddMesh(Ref<Mesh> mesh) { mMeshes.push_back(mesh); }
-		void AddMeshes(std::vector<Ref<Mesh>> _meshes) { mMeshes = _meshes; }
+		void AddMesh(Ref<Mesh> mesh);
+		void AddMeshes(std::vector<Ref<Mesh>> _meshes);
 
 #pragma region Getters
 		Node* GetNode() { return this; }		
@@ -100,7 +100,6 @@ namespace TS_ENGINE
 #endif
 	protected:
 		//PrimitiveType mPrimitiveType;//Only for GameObject EntityType
-
 	};
 }
 

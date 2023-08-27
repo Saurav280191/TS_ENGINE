@@ -86,14 +86,14 @@ namespace TS_ENGINE {
 
 			mSceneCameraGuiNode = CreateRef<Node>("SceneCameraGuiNode");
 			
-			Ref<Mesh> sceneCameraGuiMesh = CreateRef<TS_ENGINE::Quad>()->GetMesh();
-			sceneCameraGuiMesh->GetMaterial()->EnableAlphaBlending();//Enable transparency
-			sceneCameraGuiMesh->GetMaterial()->SetDiffuseMap(mCameraIcon);
-			mSceneCameraGuiNode->AddMesh(sceneCameraGuiMesh);
+			mSceneCameraGuiNode->AddMesh(CreateRef<TS_ENGINE::Quad>()->GetMesh());
+			mSceneCameraGuiNode->GetMeshes()[0]->GetMaterial()->EnableAlphaBlending();//Enable transparency
+			mSceneCameraGuiNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(mCameraIcon);
 			mSceneCameraGuiNode->GetTransform()->SetLocalEulerAngles(0.0, 90.0f, 0.0f);
 			mSceneCameraGuiNode->GetTransform()->SetLocalScale(-1.0f, 1.0f, 1.0f);
 			mSceneCameraGuiNode->InitializeTransformMatrices();
 		}
+		
 #endif
 	}
 
@@ -111,7 +111,12 @@ namespace TS_ENGINE {
 		mViewMatrix = glm::inverse(mViewMatrix);
 
 		shader->SetVec3("u_ViewPos", mCameraNode->GetTransform()->GetLocalPosition());
-		shader->SetMat4("u_View", mViewMatrix);
+		
+		if (mIsDistanceIndependent)
+			shader->SetMat4("u_View", (Matrix4)((Matrix3)mViewMatrix));
+		else
+			shader->SetMat4("u_View", mViewMatrix);
+
 		shader->SetMat4("u_Projection", mProjectionMatrix);
 	}
 
@@ -130,6 +135,6 @@ namespace TS_ENGINE {
 	void SceneCamera::RenderGui(Ref<Shader> shader, float deltaTime)
 	{
 		mFrustrumLineNode->Update(shader, deltaTime);
-		mSceneCameraGuiNode->Update(shader, deltaTime);
+		mSceneCameraGuiNode->Update(shader, deltaTime);		
 	}
 }
