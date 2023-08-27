@@ -219,21 +219,33 @@ namespace TS_ENGINE {
 
 		for (uint32_t i = 0; i < numDiffuseMaps; i++)
 		{
-			aiString textureFile;
+			aiString texturePath;
 
-			if (aiMat->GetTexture(aiTextureType_DIFFUSE, i, &textureFile) == aiReturn_SUCCESS)
+			if (aiMat->GetTexture(aiTextureType_DIFFUSE, i, &texturePath) == aiReturn_SUCCESS)
 			{
 				mTexture = nullptr;
 
-				if (Ref<Texture2D> embeddedTex = mProcessedEmbeddedTextures[textureFile.C_Str()])
+				if (Ref<Texture2D> embeddedTex = mProcessedEmbeddedTextures[texturePath.C_Str()])
 				{
-					TS_CORE_INFO("Found diffuse map named {0} from already processed embedded textures", textureFile.C_Str());
+					TS_CORE_INFO("Found diffuse map named {0} from already processed embedded textures", texturePath.C_Str());
 					mTexture = embeddedTex;
 				}
 				else
 				{
-					TS_CORE_INFO("No embedded diffuse map named {0} found", textureFile.C_Str());
-					mTexture = Texture2D::Create(mModelDirectory + "\\" + textureFile.C_Str());
+					const aiTexture* aiTex = mAssimpScene->GetEmbeddedTexture(texturePath.C_Str());
+					
+					if (aiTex)
+					{
+						TS_CORE_INFO("Processing embedded aiTex named : {0}", aiTex->mFilename.C_Str());
+						Ref<Texture2D> embeddedTex = Texture2D::Create(aiTex->mFilename.C_Str(), reinterpret_cast<unsigned char*>(aiTex->pcData), aiTex->mWidth);
+						mProcessedEmbeddedTextures.insert(std::pair<std::string, Ref<Texture2D>>(aiTex->mFilename.C_Str(), embeddedTex));
+						mTexture = embeddedTex;
+					}
+					else
+					{
+						TS_CORE_INFO("No embedded diffuse map named {0} found", texturePath.C_Str());
+						mTexture = Texture2D::Create(mModelDirectory + "\\" + texturePath.C_Str());
+					}
 				}
 
 				mTsMaterial->SetDiffuseMap(mTexture);//Diffuse map
@@ -242,21 +254,33 @@ namespace TS_ENGINE {
 
 		for (uint32_t i = 0; i < numSpecularMaps; i++)
 		{
-			aiString textureFile;
+			aiString texturePath;
 
-			if (aiMat->GetTexture(aiTextureType_SPECULAR, i, &textureFile) == aiReturn_SUCCESS)
+			if (aiMat->GetTexture(aiTextureType_SPECULAR, i, &texturePath) == aiReturn_SUCCESS)
 			{
 				mTexture = nullptr;
 
-				if (Ref<Texture2D> embeddedTex = mProcessedEmbeddedTextures[textureFile.C_Str()])
+				if (Ref<Texture2D> embeddedTex = mProcessedEmbeddedTextures[texturePath.C_Str()])
 				{
-					TS_CORE_INFO("Found specular map named {0} from already processed embedded textures", textureFile.C_Str());
+					TS_CORE_INFO("Found specular map named {0} from already processed embedded textures", texturePath.C_Str());
 					mTexture = embeddedTex;
 				}
 				else
 				{
-					TS_CORE_INFO("No embedded specular map named {0} found", textureFile.C_Str());
-					mTexture = Texture2D::Create(mModelDirectory + "\\" + textureFile.C_Str());
+					const aiTexture* aiTex = mAssimpScene->GetEmbeddedTexture(texturePath.C_Str());
+
+					if (aiTex)
+					{
+						TS_CORE_INFO("Processing embedded aiTex named : {0}", aiTex->mFilename.C_Str());
+						Ref<Texture2D> embeddedTex = Texture2D::Create(aiTex->mFilename.C_Str(), reinterpret_cast<unsigned char*>(aiTex->pcData), aiTex->mWidth);
+						mProcessedEmbeddedTextures.insert(std::pair<std::string, Ref<Texture2D>>(aiTex->mFilename.C_Str(), embeddedTex));
+						mTexture = embeddedTex;
+					}
+					else
+					{
+						TS_CORE_INFO("No embedded specular map named {0} found", texturePath.C_Str());
+						mTexture = Texture2D::Create(mModelDirectory + "\\" + texturePath.C_Str());
+					}
 				}
 
 				mTsMaterial->SetSpecularMap(mTexture);//Specular map
@@ -265,21 +289,33 @@ namespace TS_ENGINE {
 
 		for (uint32_t i = 0; i < numNormalMaps; i++)
 		{
-			aiString textureFile;
+			aiString texturePath;
 			
-			if (aiMat->GetTexture(aiTextureType_NORMALS, i, &textureFile) == aiReturn_SUCCESS)
+			if (aiMat->GetTexture(aiTextureType_NORMALS, i, &texturePath) == aiReturn_SUCCESS)
 			{
 				mTexture = nullptr;
 
-				if (Ref<Texture2D> embeddedTex = mProcessedEmbeddedTextures[textureFile.C_Str()])
+				if (Ref<Texture2D> embeddedTex = mProcessedEmbeddedTextures[texturePath.C_Str()])
 				{
-					TS_CORE_INFO("Found normal map named {0} from already processed embedded textures", textureFile.C_Str());
+					TS_CORE_INFO("Found normal map named {0} from already processed embedded textures", texturePath.C_Str());
 					mTexture = embeddedTex;
 				}
 				else
 				{
-					TS_CORE_INFO("No embedded normal map named {0} found", textureFile.C_Str());
-					mTexture = Texture2D::Create(mModelDirectory + "\\" + textureFile.C_Str());
+					const aiTexture* aiTex = mAssimpScene->GetEmbeddedTexture(texturePath.C_Str());
+
+					if (aiTex)
+					{
+						TS_CORE_INFO("Processing embedded aiTex named : {0}", aiTex->mFilename.C_Str());
+						Ref<Texture2D> embeddedTex = Texture2D::Create(aiTex->mFilename.C_Str(), reinterpret_cast<unsigned char*>(aiTex->pcData), aiTex->mWidth);
+						mProcessedEmbeddedTextures.insert(std::pair<std::string, Ref<Texture2D>>(aiTex->mFilename.C_Str(), embeddedTex));
+						mTexture = embeddedTex;
+					}
+					else
+					{
+						TS_CORE_INFO("No embedded normal map named {0} found", texturePath.C_Str());
+						mTexture = Texture2D::Create(mModelDirectory + "\\" + texturePath.C_Str());
+					}
 				}
 
 				mTsMaterial->SetNormalMap(mTexture);//Normal map
@@ -287,21 +323,33 @@ namespace TS_ENGINE {
 		}
 		for (uint32_t i = 0; i < numMetallicMaps; i++)
 		{
-			aiString textureFile;
+			aiString texturePath;
 
-			if (aiMat->GetTexture(aiTextureType_METALNESS, i, &textureFile) == aiReturn_SUCCESS)
+			if (aiMat->GetTexture(aiTextureType_METALNESS, i, &texturePath) == aiReturn_SUCCESS)
 			{
 				mTexture = nullptr;
 
-				if (Ref<Texture2D> embeddedTex = mProcessedEmbeddedTextures[textureFile.C_Str()])
+				if (Ref<Texture2D> embeddedTex = mProcessedEmbeddedTextures[texturePath.C_Str()])
 				{
-					TS_CORE_INFO("Found metallic map named {0} from already processed embedded textures", textureFile.C_Str());
+					TS_CORE_INFO("Found metallic map named {0} from already processed embedded textures", texturePath.C_Str());
 					mTexture = embeddedTex;
 				}
 				else
 				{
-					TS_CORE_INFO("No metallic normal map named {0} found", textureFile.C_Str());
-					mTexture = Texture2D::Create(mModelDirectory + "\\" + textureFile.C_Str());
+					const aiTexture* aiTex = mAssimpScene->GetEmbeddedTexture(texturePath.C_Str());
+
+					if (aiTex)
+					{
+						TS_CORE_INFO("Processing embedded aiTex named : {0}", aiTex->mFilename.C_Str());
+						Ref<Texture2D> embeddedTex = Texture2D::Create(aiTex->mFilename.C_Str(), reinterpret_cast<unsigned char*>(aiTex->pcData), aiTex->mWidth);
+						mProcessedEmbeddedTextures.insert(std::pair<std::string, Ref<Texture2D>>(aiTex->mFilename.C_Str(), embeddedTex));
+						mTexture = embeddedTex;
+					}
+					else
+					{
+						TS_CORE_INFO("No embedded metallic map named {0} found", texturePath.C_Str());
+						mTexture = Texture2D::Create(mModelDirectory + "\\" + texturePath.C_Str());
+					}
 				}
 
 				//mTsMaterial->SetMetallicMap(mTexture);// TODO: Add support for metallic map
@@ -309,21 +357,33 @@ namespace TS_ENGINE {
 		}
 		for (uint32_t i = 0; i < numEmissiveMaps; i++)
 		{
-			aiString textureFile;
+			aiString texturePath;
 
-			if (aiMat->GetTexture(aiTextureType_EMISSIVE, i, &textureFile) == aiReturn_SUCCESS)
+			if (aiMat->GetTexture(aiTextureType_EMISSIVE, i, &texturePath) == aiReturn_SUCCESS)
 			{
 				mTexture = nullptr;
 
-				if (Ref<Texture2D> embeddedTex = mProcessedEmbeddedTextures[textureFile.C_Str()])
+				if (Ref<Texture2D> embeddedTex = mProcessedEmbeddedTextures[texturePath.C_Str()])
 				{
-					TS_CORE_INFO("Found emissive map named {0} from already embedded textures", textureFile.C_Str());
+					TS_CORE_INFO("Found emissive map named {0} from already embedded textures", texturePath.C_Str());
 					mTexture = embeddedTex;
 				}
 				else
 				{
-					TS_CORE_INFO("No emissive normal map named {0} found", textureFile.C_Str());
-					mTexture = Texture2D::Create(mModelDirectory + "\\" + textureFile.C_Str());
+					const aiTexture* aiTex = mAssimpScene->GetEmbeddedTexture(texturePath.C_Str());
+
+					if (aiTex)
+					{
+						TS_CORE_INFO("Processing embedded aiTex named : {0}", aiTex->mFilename.C_Str());
+						Ref<Texture2D> embeddedTex = Texture2D::Create(aiTex->mFilename.C_Str(), reinterpret_cast<unsigned char*>(aiTex->pcData), aiTex->mWidth);
+						mProcessedEmbeddedTextures.insert(std::pair<std::string, Ref<Texture2D>>(aiTex->mFilename.C_Str(), embeddedTex));
+						mTexture = embeddedTex;
+					}
+					else
+					{
+						TS_CORE_INFO("No embedded emissive map named {0} found", texturePath.C_Str());
+						mTexture = Texture2D::Create(mModelDirectory + "\\" + texturePath.C_Str());
+					}
 				}
 
 				//mTsMaterial->SetEmmisiveMap(mTexture);// TODO: Add support for emmisive map
