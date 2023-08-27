@@ -23,13 +23,10 @@ namespace TS_ENGINE
 
 		Ref<SceneCamera> InstantitateSceneCamera(const std::string& name, Scene* scene);
 		
-		Node* InstantiateQuad(const std::string& name, Node* parentNode);
-
-		Node* InstantiateCube(const std::string& name, Node* parentNode);
-
-		Node* InstantiateSphere(const std::string& name, Node* parentNode);
-
-		Node* InstantiateModel(const std::string& modelPath, Node* parentNode);
+		Ref<Node> InstantiateQuad(const std::string& name, Ref<Node> parentNode);
+		Ref<Node> InstantiateCube(const std::string& name, Ref<Node> parentNode);
+		Ref<Node> InstantiateSphere(const std::string& name, Ref<Node> parentNode);
+		Ref<Node> InstantiateModel(const std::string& modelPath, Ref<Node> parentNode);
 
 		//Ref<GameObject> CreateGameObject(PrimitiveType type);
 		//Ref<Model> LoadModel(std::string& modelPath);

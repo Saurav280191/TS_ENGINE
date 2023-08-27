@@ -40,7 +40,7 @@ namespace TS_ENGINE
 		m_TransformationMatrix = targetNode->GetTransform()->GetTransformationMatrix();
 	}
 
-	void Transform::LookAt(Node* parentNode, const Ref<Transform> target)
+	void Transform::LookAt(Ref<Node> parentNode, const Ref<Transform> target)
 	{
 		mLookAtTarget = target;
 		mLookAtEnabled = true;
@@ -71,7 +71,7 @@ namespace TS_ENGINE
 		m_Forward = GetForward();
 	}
 
-	void Transform::ComputeTransformationMatrix(const Node* parentNode)
+	void Transform::ComputeTransformationMatrix(Ref<Node> parentNode)
 	{
 		Matrix4 modelMatrix = Matrix4(1);
 

@@ -3,16 +3,15 @@
 
 namespace TS_ENGINE
 {
-	Node::Node(const std::string& name) :
-		mParentNode(nullptr),
-		mTransform(CreateRef<Transform>()),
-#ifdef TS_ENGINE_EDITOR
-		mIsVisibleInEditor(true)
-#endif
+	Node::Node() 
 	{
-		mMeshes = {};
-		mName = name;
-		mEntity = EntityManager::GetInstance()->Register(name);
+		this->mName = "";
+		this->mTransform = CreateRef<Transform>();
+		this->mParentNode = nullptr;
+		this->mMeshes = {}; 
+#ifdef TS_ENGINE_EDITOR
+		this->mIsVisibleInEditor = true;
+#endif
 	}
 
 	Node::~Node()
@@ -30,14 +29,12 @@ namespace TS_ENGINE
 		mName = "";
 		mTransform.reset();
 
-		//for (auto& node : mChildren)
-		//{
-		//	//node.reset();
-		//	delete &node;
-		//}
+		for (auto& node : mChildren)
+		{
+			node.reset();
+		}
 
-		mParentNode = nullptr;
-		delete mParentNode;
+		mParentNode.reset();
 
 		mChildren.clear();
 	}
@@ -69,25 +66,31 @@ namespace TS_ENGINE
 	{ 
 		mEntityType = entityType;
 	}*/
+	
+	void Node::SetNodeRef(Ref<Node> node)
+	{
+		mNodeRef = node;
+	}
 
 	void Node::SetName(const std::string& name) 
 	{ 
-		TS_CORE_TRACE("Renamed Node with entityID {0} to {1}", mEntity->GetEntityID(), name);
-		mName = name; 
-		mEntity->UpdateName(name);
+		//TS_CORE_TRACE("Renamed Node with entityID {0} to {1}", mEntity->GetEntityID(), name);
+		mName = name;
+		mNodeRef->mEntity = EntityManager::GetInstance()->Register(name);
+		//mEntity->UpdateName(name);
 	}
 
-	void Node::SetParent(Node* parentNode)
+	void Node::SetParent(Ref<Node> parentNode)
 	{
 		TS_CORE_INFO("Setting parent of {0} as {1}", mName.c_str(), parentNode->GetName());
 
-		if (this->mParentNode)
+		if (mNodeRef->mParentNode)
 		{
-			this->mParentNode->RemoveChild(this);
+			mNodeRef->mParentNode->RemoveChild(mNodeRef);
 		}
 
-		parentNode->AddChild(this);
-		this->GetTransform()->ComputeTransformationMatrix(parentNode);
+		parentNode->AddChild(mNodeRef);
+		mNodeRef->GetTransform()->ComputeTransformationMatrix(parentNode);
 	}
 
 	void Node::SetPosition(float* pos)
@@ -150,16 +153,16 @@ namespace TS_ENGINE
 			child->InitializeTransformMatrices();
 	}
 
-	void Node::AddChild(Node* child)
+	void Node::AddChild(Ref<Node> child)
 	{
-		child->mParentNode = this; 
+		child->mParentNode = mNodeRef; 
 		mChildren.push_back(child);
-		TS_CORE_INFO(child->GetName() + " is set as child of " + this->GetName());
+		TS_CORE_INFO(child->GetName() + " is set as child of " + mNodeRef->GetName());
 
 		child->UpdateSiblings();
 	}
 
-	void Node::RemoveChild(Node* child)
+	void Node::RemoveChild(Ref<Node> child)
 	{
 		mChildren.erase(std::remove(mChildren.begin(), mChildren.end(), child), mChildren.end());
 		child->UpdateSiblings();
@@ -176,11 +179,11 @@ namespace TS_ENGINE
 		mChildren.clear();
 	}
 
-	Node* Node::GetChildAt(uint32_t childIndex) const
+	Ref<Node> Node::GetChildAt(uint32_t childIndex) const
 	{
 		try
 		{
-			Node* child = mChildren[childIndex];
+			Ref<Node> child = mChildren[childIndex];
 			return child;
 		}
 		catch (std::out_of_range& e)
@@ -195,15 +198,15 @@ namespace TS_ENGINE
 		{
 			mSiblings = {};
 
-			for (auto child : mParentNode->mChildren)
+			for (auto& child : mParentNode->mChildren)
 			{
-				if (child != this)
+				if (child != mNodeRef)
 					mSiblings.push_back(child);
 			}
 		}
 		else
 		{
-			TS_CORE_ERROR("There is not parent for " + this->GetName());
+			TS_CORE_ERROR("There is not parent for " + mNodeRef->GetName());
 		}
 	}
 
@@ -270,5 +273,10 @@ namespace TS_ENGINE
 			TS_CORE_TRACE("{0} ", child->mName.c_str());
 			child->PrintChildrenName();
 		}
+	}
+	
+	void Node::HideInEditor()
+	{
+		mIsVisibleInEditor = false;
 	}
 }

@@ -9,7 +9,9 @@ namespace TS_ENGINE {
 	SceneCamera::SceneCamera(const std::string& name, Ref<Camera> editorCamera) : 
 		Camera(name)
 	{
-		mCameraNode = CreateRef<Node>(name);
+		mCameraNode = CreateRef<Node>();
+		mCameraNode->SetNodeRef(mCameraNode);
+		mCameraNode->SetName(name);
 		mCameraType = Type::SCENECAMERA;
 		mEditorCamera = editorCamera;
 	}
@@ -71,7 +73,9 @@ namespace TS_ENGINE {
 			for (int i = 0; i < frustrumPoints.size(); i++)
 				vertices[i] = Vector3(frustrumPoints[i]) / frustrumPoints[i].w;
 
-			mFrustrumLineNode = CreateRef<Node>("SceneCameraFrustrumLine");
+			mFrustrumLineNode = CreateRef<Node>();
+			mFrustrumLineNode->SetNodeRef(mFrustrumLineNode);
+			mFrustrumLineNode->SetName("SceneCameraFrustrumLine");
 			mFrustrumLine = CreateRef<TS_ENGINE::Line>();
 			mLineMesh = mFrustrumLine->GetMesh(vertices);
 			mLineMesh->GetMaterial()->DisableDepthTest();
@@ -84,8 +88,9 @@ namespace TS_ENGINE {
 			mCameraIcon = TS_ENGINE::Texture2D::Create("Resources\\Gui\\Camera.png");
 			mCameraIcon->SetVerticalFlip(false);
 
-			mSceneCameraGuiNode = CreateRef<Node>("SceneCameraGuiNode");
-			
+			mSceneCameraGuiNode = CreateRef<Node>();
+			mSceneCameraGuiNode->SetNodeRef(mSceneCameraGuiNode);
+			mSceneCameraGuiNode->SetName("SceneCameraGuiNode");
 			mSceneCameraGuiNode->AddMesh(CreateRef<TS_ENGINE::Quad>()->GetMesh());
 			mSceneCameraGuiNode->GetMeshes()[0]->GetMaterial()->EnableAlphaBlending();//Enable transparency
 			mSceneCameraGuiNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(mCameraIcon);
@@ -101,7 +106,7 @@ namespace TS_ENGINE {
 #ifdef TS_ENGINE_EDITOR
 		if (mEditorCamera)
 		{
-			mSceneCameraGuiNode->GetTransform()->LookAt(mCameraNode.get(), mEditorCamera->GetNode()->GetTransform());
+			mSceneCameraGuiNode->GetTransform()->LookAt(mCameraNode, mEditorCamera->GetNode()->GetTransform());
 			mFrustrumLineNode->GetTransform()->Follow(mCameraNode);
 		}
 #endif

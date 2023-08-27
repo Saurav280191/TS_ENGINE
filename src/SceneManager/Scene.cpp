@@ -18,14 +18,18 @@ namespace TS_ENGINE
 	Scene::Scene(std::string name, Ref<EditorCamera> editorCamera)
 		//: m_BatchingEnabled(false)
 	{
-		mSceneNode = CreateRef<Node>(name);
+		mSceneNode = CreateRef<Node>();
+		mSceneNode->SetNodeRef(mSceneNode);
+		mSceneNode->SetName(name);
 		mEditorCamera = editorCamera;
 		//m_BatchButton.RegisterClickHandler(std::bind(&ButtonHandler::OnButtonClicked, &mBatchButtonHandler, std::placeholders::_1, std::placeholders::_2));
 		
 #pragma region DummyScene		
 		// Skybox
 		{
-			mSkyboxNode = CreateRef<TS_ENGINE::Node>("Skybox");
+			mSkyboxNode = CreateRef<TS_ENGINE::Node>();
+			mSkyboxNode->SetNodeRef(mSkyboxNode);
+			mSkyboxNode->SetName("Skybox");
 			mSkyboxNode->AddMesh(CreateRef<TS_ENGINE::Sphere>()->GetMesh());
 			mSkyboxNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\industrial_sunset_puresky.jpg"));
 			mSkyboxNode->GetTransform()->SetLocalScale(80000.0f, 80000.0f, 80000.0f);
@@ -38,14 +42,14 @@ namespace TS_ENGINE
 		sceneCamera1->GetNode()->GetTransform()->SetLocalEulerAngles(-13.235f, 38.064f, 0.0f);
 
 		//Default ground
-		auto groundNode = Factory::GetInstance()->InstantiateQuad("Ground", mSceneNode.get());
+		auto groundNode = Factory::GetInstance()->InstantiateQuad("Ground", mSceneNode);
 		groundNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\raw_plank_wall_diff_4k.jpg"));
 		groundNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMapTiling(Vector2(2, 2));
 		groundNode->GetTransform()->SetLocalEulerAngles(-90.0f, 0.0f, 0.0f);
 		groundNode->GetTransform()->SetLocalScale(10.0f, 10.0f, 10.0f);
 		
 		//Cube
-		auto cubeNode = Factory::GetInstance()->InstantiateCube("Cube", mSceneNode.get());		
+		auto cubeNode = Factory::GetInstance()->InstantiateCube("Cube", mSceneNode);		
 		cubeNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\crate.png"));	
 		cubeNode->GetTransform()->SetLocalPosition(2.75f, 0.312f, 0.0f);		
 		cubeNode->GetTransform()->SetLocalScale(0.62f, 0.62f, 0.62f);
@@ -58,9 +62,10 @@ namespace TS_ENGINE
 		cube1Node->GetTransform()->SetLocalEulerAngles(30.0f, 60.0f, 10.0f);
 
 		//Model
-		//auto modelNode = Factory::GetInstance()->InstantiateModel("D:/Documents/ThinkSideways/WorkInProgress/TS_ENGINE Related/TS_ENGINE_Editor/Assets/Models/LamborginiAventador/Chassis.obj", mSceneNode.get());
-		//auto modelNode = Factory::GetInstance()->InstantiateModel("D:/Documents/ThinkSideways/WorkInProgress/TS_ENGINE Related/TS_ENGINE_Editor/Assets/Models/buster_drone.glb", mSceneNode.get());
-		auto modelNode = Factory::GetInstance()->InstantiateModel("D:/Downloads/Ely By K.Atienza.fbx", mSceneNode.get());
+		//auto modelNode = Factory::GetInstance()->InstantiateModel("D:/Documents/ThinkSideways/WorkInProgress/TS_ENGINE Related/TS_ENGINE_Editor/Assets/Models/LamborginiAventador/Chassis.obj", mSceneNode));
+		auto modelNode = Factory::GetInstance()->InstantiateModel("D:/Documents/ThinkSideways/WorkInProgress/TS_ENGINE Related/TS_ENGINE_Editor/Assets/Models/buster_drone.glb", mSceneNode);
+		//auto modelNode = Factory::GetInstance()->InstantiateModel("D:/Documents/ThinkSideways/WorkInProgress/TS_ENGINE Related/TS_ENGINE_Editor/Assets/Models/monk_character.glb", mSceneNode);
+		//auto modelNode = Factory::GetInstance()->InstantiateModel("D:/Downloads/Ely By K.Atienza.fbx", mSceneNode);
 		modelNode->GetTransform()->SetLocalScale(0.01f, 0.01f, 0.01f);
 
 		mCurrentSceneCamera = sceneCamera1;//Current Scene Camera		

@@ -70,7 +70,8 @@ namespace TS_ENGINE {
 
 	Ref<Node> Model::ProcessNode(aiNode* aiNode, const aiScene* scene)
 	{	
-		Ref<Node> node = CreateRef<Node>(aiNode->mName.C_Str());
+		Ref<Node> node = CreateRef<Node>();
+		node->SetNodeRef(node);
 		node->SetName(aiNode->mName.C_Str());
 		
 		aiVector3D pos;
@@ -92,7 +93,7 @@ namespace TS_ENGINE {
 		
 		for (GLuint i = 0; i < aiNode->mNumChildren; i++)
 		{
-			node->AddChild(ProcessNode(aiNode->mChildren[i], scene).get());
+			node->AddChild(ProcessNode(aiNode->mChildren[i], scene));
 		}
 
 		mProcessedNodes.push_back(node);

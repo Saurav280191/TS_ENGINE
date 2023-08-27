@@ -24,7 +24,6 @@ namespace TS_ENGINE
 	{
 	public:
 		Node();
-		Node(const std::string& name);
 		~Node();
 
 		void Destroy();
@@ -33,9 +32,8 @@ namespace TS_ENGINE
 		void SetName(const std::string& name);
 
 		//This is important to keep a reference of the smart pointer create in Object class
-		//void SetNodeRef(Ref<Node> node);
-		//void SetParent(Ref<Node> parentNode);
-		void SetParent(Node* parentNode);
+		void SetNodeRef(Ref<Node> node);
+		void SetParent(Ref<Node> parentNode);		
 		void SetPosition(float* pos);
 		void SetPosition(const Vector3& pos);
 		void SetEulerAngles(float* eulerAngles);
@@ -44,8 +42,8 @@ namespace TS_ENGINE
 
 		void SetScale(const Vector3& scale);
 
-		void AddChild(Node* child);
-		void RemoveChild(Node* child);
+		void AddChild(Ref<Node> child);
+		void RemoveChild(Ref<Node> child);
 		void RemoveAllChildren();
 		void UpdateSiblings();
 
@@ -64,43 +62,41 @@ namespace TS_ENGINE
 
 		void PrintChildrenName();//Only for testing
 
+#ifdef TS_ENGINE_EDITOR
+		const bool IsVisibleInEditor() const { return mIsVisibleInEditor; }
+		void HideInEditor();
+#endif
+
 #pragma region Getters
-		Node* GetNode() { return this; }		
+		Ref<Node> GetNode() const { return mNodeRef; }		
 		const Ref<Entity> GetEntity() const { return mEntity; }
 		//const EntityType GetEntityType() const { return mEntityType; }
 		const std::string& GetName() const { return mName; }
-		Node* GetChildAt(uint32_t childIndex) const;
-		const Node* GetParentNode() const { return mParentNode; }
-		std::vector<Node*> GetChildren() const { return mChildren; }
-		const std::vector<Node*> GetSiblings() const { return mSiblings; }
+		Ref<Node> GetChildAt(uint32_t childIndex) const;
+		Ref<Node> GetParentNode() const { return mParentNode; }
+		std::vector<Ref<Node>> GetChildren() const { return mChildren; }
+		const std::vector<Ref<Node>> GetSiblings() const { return mSiblings; }
 		const Ref<Transform> GetTransform() const { return mTransform; }
 		const size_t GetChildCount() const { return mChildren.size(); }
 		const std::vector<Ref<Mesh>> GetMeshes() const { return mMeshes; }
 		//const PrimitiveType GetPrimitiveType() const { return mPrimitiveType; }
 #pragma endregion
 
-
-#ifdef TS_ENGINE_EDITOR
-		const bool IsVisibleInEditor() { return mIsVisibleInEditor; }
-		void HideInEditor() { mIsVisibleInEditor = false; }
-#endif
-
 	public:
 		bool m_Enabled = false;//For IMGUI
 	private:
-		Ref<Entity> mEntity;//Entity
-		//Ref<Node> mNodeRef;
+		Ref<Node> mNodeRef;// This will be used for referencing everywhere instead of Node*
+		Ref<Entity> mEntity;// Entity
 		//EntityType mEntityType;
 		std::string mName;
-		Node* mParentNode;//This is not a smart pointer. Handle the cleaning manually.
-		std::vector<Node*> mChildren;
+		Ref<Node> mParentNode;
+		std::vector<Ref<Node>> mChildren;
 		Ref<Transform> mTransform;
 
-		std::vector<Node*> mSiblings = {};
+		std::vector<Ref<Node>> mSiblings = {};
 		std::vector<Ref<Mesh>> mMeshes;
-#ifdef TS_ENGINE_EDITOR
-		bool mIsVisibleInEditor;
-#endif
+		
+		bool mIsVisibleInEditor = true;
 	protected:
 		//PrimitiveType mPrimitiveType;//Only for GameObject EntityType
 	};

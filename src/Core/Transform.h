@@ -22,9 +22,9 @@ namespace TS_ENGINE
 		Matrix4 m_TransformationMatrix;
 
 		void Follow(Ref<Node> targetNode);
-		void LookAt(Node* parentNode, const Ref<Transform> target);
+		void LookAt(Ref<Node> parentNode, const Ref<Transform> target);
 
-		void ComputeTransformationMatrix(const Node* parentNode);
+		void ComputeTransformationMatrix(Ref<Node> parentNode);
 		void SetTransformationMatrix(Matrix4 transformationMatrix);
 
 		void SetLocalPosition(const Vector3& newPosition);

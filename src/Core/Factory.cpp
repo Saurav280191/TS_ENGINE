@@ -27,31 +27,37 @@ namespace TS_ENGINE
 		sceneCamera->CreateFramebuffer(800, 600);
 		sceneCamera->Initialize();
 		sceneCamera->GetNode()->SetName(name);
-		sceneCamera->GetNode()->SetParent(scene->GetSceneNode().get());
+		sceneCamera->GetNode()->SetParent(scene->GetSceneNode());
 		return sceneCamera;
 	}
 
-	Node* Factory::InstantiateQuad(const std::string& name, Node* parentNode)
+	Ref<Node> Factory::InstantiateQuad(const std::string& name, Ref<Node> parentNode)
 	{
-		Node* quadNode = new Node(name);
+		Ref<Node> quadNode = CreateRef<Node>();
+		quadNode->SetNodeRef(quadNode);
+		quadNode->SetName(name);
 		quadNode->AddMesh(CreateRef<TS_ENGINE::Quad>()->GetMesh());
 		Ref<Mesh> mesh = quadNode->GetMeshes()[0];
 		quadNode->SetParent(parentNode);
 		return quadNode;
 	}
 
-	Node* Factory::InstantiateCube(const std::string& name, Node* parentNode)
+	Ref<Node> Factory::InstantiateCube(const std::string& name, Ref<Node> parentNode)
 	{
-		Node* cubeNode = new Node(name);
+		Ref<Node> cubeNode = CreateRef<Node>();
+		cubeNode->SetNodeRef(cubeNode);
+		cubeNode->SetName(name);
 		cubeNode->AddMesh(CreateRef<TS_ENGINE::Cube>()->GetMesh());
 		Ref<Mesh> mesh = cubeNode->GetMeshes()[0];
 		cubeNode->SetParent(parentNode);
 		return cubeNode;
 	}
 
-	Node* Factory::InstantiateSphere(const std::string& name, Node* parentNode)
+	Ref<Node> Factory::InstantiateSphere(const std::string& name, Ref<Node> parentNode)
 	{
-		Node* sphereNode = new Node(name);
+		Ref<Node> sphereNode = CreateRef<Node>();
+		sphereNode->SetNodeRef(sphereNode);
+		sphereNode->SetName(name);
 		sphereNode->AddMesh(CreateRef<TS_ENGINE::Sphere>()->GetMesh());
 		Ref<Mesh> mesh = sphereNode->GetMeshes()[0];
 		sphereNode->SetParent(parentNode);
@@ -60,10 +66,10 @@ namespace TS_ENGINE
 
 	// TODO: Add code for Cylinder and Cone generation
 
-	Node* Factory::InstantiateModel(const std::string& modelPath, Node* parentNode)
+	Ref<Node> Factory::InstantiateModel(const std::string& modelPath, Ref<Node> parentNode)
 	{
 		Ref<Model> model = ModelLoader::GetInstance()->LoadModel(modelPath);
-		Node* mModelNode = model->GetRootNode().get();		
+		Ref<Node> mModelNode = model->GetRootNode();
 		mModelNode->SetParent(parentNode);
 		return mModelNode;
 	}

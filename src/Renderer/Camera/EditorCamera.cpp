@@ -9,7 +9,9 @@ namespace TS_ENGINE {
 	EditorCamera::EditorCamera(const std::string& name) : 
 		Camera(name)
 	{
-		mCameraNode = CreateRef<Node>(name);
+		mCameraNode = CreateRef<Node>();
+		mCameraNode->SetNodeRef(mCameraNode);
+		mCameraNode->SetName(name);
 		mCameraType = TS_ENGINE::Camera::Type::EDITORCAMERA;
 
 		mDefaultPos = Vector3(8.56551170f, 3.30869126f, 9.40866184f);
