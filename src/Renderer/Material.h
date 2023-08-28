@@ -9,6 +9,34 @@ namespace TS_ENGINE {
 	class Material
 	{
 	public:
+#ifdef TS_ENGINE_EDITOR
+		struct MaterialGui
+		{
+			Vector4 mAmbientColor = Vector4(1, 1, 1, 1);
+			Vector4 mDiffuseColor = Vector4(1, 1, 1, 1);
+			Ref<Texture2D> mDiffuseMap = nullptr;
+			float testFloat = 0.0f;
+			float testFloat1 = 0.0f;
+			float* mDiffuseMapOffset = nullptr;
+			float* mDiffuseMapTiling = nullptr;
+			Vector4 mSpecularColor = Vector4(1, 1, 1, 1);
+			Ref<Texture2D> mSpecularMap = nullptr;
+			float* mSpecularMapOffset = nullptr;
+			float* mSpecularMapTiling = nullptr;
+			float mShininess = 0.0f;
+			Ref<Texture2D> mNormalMap = nullptr;
+			float* mNormalMapOffset = nullptr;
+			float* mNormalMapTiling = nullptr;
+			float mBumpValue = 0.0f;
+		};	
+#endif
+		enum TextureType
+		{
+			DIFFUSE,
+			SPECULAR,
+			NORMAL
+		};
+
 		Material(const std::string& name, Ref<Shader> shader);		
 		virtual ~Material() = default;
 
@@ -61,7 +89,16 @@ namespace TS_ENGINE {
 
 		//Material Render
 		void Render(int entityID);
+
+#ifdef TS_ENGINE_EDITOR
+		void SetMaterialGui(MaterialGui materialGui);		
+		void ShowMaterialUI(int meshIndex);
+		void DropContentBrowserTexture(TextureType textureType, Material::MaterialGui& materialGui, int meshIndex);
+#endif
 	private:
+#ifdef TS_ENGINE_EDITOR
+		MaterialGui mMaterialGui;
+#endif
 		std::string mName;
 		Ref<Shader> mShader;
 

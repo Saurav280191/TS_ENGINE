@@ -230,6 +230,7 @@ add_compile_definitions(
      _CRT_SECURE_NO_WARNINGS
      _CRT_SECURE_NO_DEPRECATE
      _SCL_SECURE_NO_WARNINGS
+	 IMGUI_DEFINE_MATH_OPERATORS
      )
 
  #Include directories
