@@ -1,14 +1,18 @@
 #include "tspch.h"
 #include "SceneManager/Node.h"
 
+#ifdef TS_ENGINE_EDITOR
+#include <imgui.h>
+#endif // TS_ENGINE_EDITOR
+
 namespace TS_ENGINE
 {
-	Node::Node() 
+	Node::Node()
 	{
 		this->mName = "";
 		this->mTransform = CreateRef<Transform>();
 		this->mParentNode = nullptr;
-		this->mMeshes = {}; 
+		this->mMeshes = {};
 #ifdef TS_ENGINE_EDITOR
 		this->mIsVisibleInEditor = true;
 #endif
@@ -21,8 +25,8 @@ namespace TS_ENGINE
 
 	void Node::Destroy()
 	{
-		for (auto& mesh : mMeshes)
-			mesh->Destroy();
+		m_Enabled = false;
+		mParentNode->RemoveChild(mNodeRef);
 
 		mMeshes.clear();
 
@@ -34,14 +38,42 @@ namespace TS_ENGINE
 			node.reset();
 		}
 
+
 		mParentNode.reset();
 
 		mChildren.clear();
 	}
 
-	/*void Node::SetNodeRef(Ref<Node> node) 
-	{ 
-		mNodeRef = node; 
+	Ref<Node> Node::Duplicate()
+	{
+		Ref<Node> duplicateNode = CreateRef<Node>();	
+		duplicateNode->mNodeRef = duplicateNode;
+		duplicateNode->mNodeRef->SetName(mNodeRef->mName);
+		duplicateNode->mNodeRef->mMeshes = mNodeRef->mMeshes;
+		
+		duplicateNode->mNodeRef->mTransform = CreateRef<Transform>();
+		duplicateNode->mNodeRef->mTransform->m_Pos = mNodeRef->mTransform->m_Pos;
+		duplicateNode->mNodeRef->mTransform->m_EulerAngles = mNodeRef->mTransform->m_EulerAngles;
+		duplicateNode->mNodeRef->mTransform->m_Scale = mNodeRef->mTransform->m_Scale;
+		
+#ifdef TS_ENGINE_EDITOR
+		duplicateNode->mNodeRef->mIsVisibleInEditor = mNodeRef->mIsVisibleInEditor;
+#endif
+		//duplicateNode->mNodeRef->SetParent(mNodeRef->mParentNode);		
+		duplicateNode->mNodeRef->UpdateSiblings();
+
+		for (auto& child : mNodeRef->mChildren)
+		{
+			duplicateNode->AddChild(child->Duplicate());
+		}
+
+		duplicateNode->mNodeRef->InitializeTransformMatrices();
+		return duplicateNode;
+	}
+
+	/*void Node::SetNodeRef(Ref<Node> node)
+	{
+		mNodeRef = node;
 	}*/
 
 	/*void Node::SetParent(Ref<Node> parentNode)
@@ -62,18 +94,18 @@ namespace TS_ENGINE
 		mNodeRef->GetTransform()->ComputeTransformationMatrix(mNodeRef.get(), parentNode);
 	}*/
 
-	/*void Node::SetEntityType(EntityType entityType) 
-	{ 
+	/*void Node::SetEntityType(EntityType entityType)
+	{
 		mEntityType = entityType;
 	}*/
-	
+
 	void Node::SetNodeRef(Ref<Node> node)
 	{
 		mNodeRef = node;
 	}
 
-	void Node::SetName(const std::string& name) 
-	{ 
+	void Node::SetName(const std::string& name)
+	{
 		//TS_CORE_TRACE("Renamed Node with entityID {0} to {1}", mEntity->GetEntityID(), name);
 		mName = name;
 		mNodeRef->mEntity = EntityManager::GetInstance()->Register(name);
@@ -155,7 +187,7 @@ namespace TS_ENGINE
 
 	void Node::AddChild(Ref<Node> child)
 	{
-		child->mParentNode = mNodeRef; 
+		child->mParentNode = mNodeRef;
 		mChildren.push_back(child);
 		TS_CORE_INFO(child->GetName() + " is set as child of " + mNodeRef->GetName());
 
@@ -173,7 +205,7 @@ namespace TS_ENGINE
 		for (auto& child : mChildren)
 		{
 			//child.reset();
-			delete &child;
+			delete& child;
 		}
 
 		mChildren.clear();
@@ -191,7 +223,7 @@ namespace TS_ENGINE
 			TS_CORE_ERROR(e.what());
 		}
 	}
-	
+
 	void Node::UpdateSiblings()
 	{
 		if (mParentNode)
@@ -236,16 +268,19 @@ namespace TS_ENGINE
 		//Send modelMatrix to shader
 		shader->SetMat4("u_Model", mTransform->GetTransformationMatrix());
 
-		//Draw Meshes
-		for (auto& mesh : mMeshes)
+		if (m_Enabled)
 		{
-			mesh->Render(mEntity->GetEntityID());
-		}
+			//Draw Meshes
+			for (auto& mesh : mMeshes)
+			{
+				mesh->Render(mEntity->GetEntityID());
+			}
 
-		//Send children modelMatrix to shader and draw gameobject with attached to child
-		for (auto& child : mChildren)
-		{
-			child->Update(shader, deltaTime);
+			//Send children modelMatrix to shader and draw gameobject with attached to child
+			for (auto& child : mChildren)
+			{
+				child->Update(shader, deltaTime);
+			}
 		}
 	}
 
@@ -256,14 +291,14 @@ namespace TS_ENGINE
 
 	void Node::AddMesh(Ref<Mesh> mesh)
 	{
-		mMeshes.push_back(mesh); 
+		mMeshes.push_back(mesh);
 	}
-	
+
 	void Node::AddMeshes(std::vector<Ref<Mesh>> _meshes)
 	{
 		mMeshes = _meshes;
 	}
-	
+
 	void Node::PrintChildrenName()
 	{
 		TS_CORE_TRACE("Node {0} has children named: ", mName.c_str());
@@ -274,9 +309,11 @@ namespace TS_ENGINE
 			child->PrintChildrenName();
 		}
 	}
-	
+
+#ifdef TS_ENGINE_EDITOR
 	void Node::HideInEditor()
 	{
 		mIsVisibleInEditor = false;
 	}
+#endif
 }

@@ -36,8 +36,6 @@ namespace TS_ENGINE {
 		mViewMatrix = mCameraNode->GetTransform()->GetTransformationMatrix();;
 		mViewMatrix = glm::inverse(mViewMatrix);
 
-		Controls(deltaTime);
-
 		shader->SetVec3("u_ViewPos", mCameraNode->GetTransform()->GetLocalPosition());
 
 		if (mIsDistanceIndependent) // ProjectionMatrix is send to shader in both the cases of this if condition. 						

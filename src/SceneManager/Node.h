@@ -27,6 +27,7 @@ namespace TS_ENGINE
 		~Node();
 
 		void Destroy();
+		Ref<Node> Duplicate();
 
 		//void SetEntityType(EntityType entityType); 
 		void SetName(const std::string& name);
@@ -64,7 +65,7 @@ namespace TS_ENGINE
 
 #ifdef TS_ENGINE_EDITOR
 		const bool IsVisibleInEditor() const { return mIsVisibleInEditor; }
-		void HideInEditor();
+		void HideInEditor();					
 #endif
 
 #pragma region Getters
@@ -83,7 +84,9 @@ namespace TS_ENGINE
 #pragma endregion
 
 	public:
-		bool m_Enabled = false;//For IMGUI
+#ifdef TS_ENGINE_EDITOR
+		bool m_Enabled = true;//For IMGUI
+#endif
 	private:
 		Ref<Node> mNodeRef;// This will be used for referencing everywhere instead of Node*
 		Ref<Entity> mEntity;// Entity
@@ -95,8 +98,9 @@ namespace TS_ENGINE
 
 		std::vector<Ref<Node>> mSiblings = {};
 		std::vector<Ref<Mesh>> mMeshes;
-		
+#ifdef TS_ENGINE_EDITOR
 		bool mIsVisibleInEditor = true;
+#endif
 	protected:
 		//PrimitiveType mPrimitiveType;//Only for GameObject EntityType
 	};

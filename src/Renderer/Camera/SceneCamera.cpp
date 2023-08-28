@@ -79,6 +79,7 @@ namespace TS_ENGINE {
 			mFrustrumLine = CreateRef<TS_ENGINE::Line>();
 			mLineMesh = mFrustrumLine->GetMesh(vertices);
 			mLineMesh->GetMaterial()->DisableDepthTest();
+			mLineMesh->SetName("LineMesh");
 			mFrustrumLineNode->AddMesh(mLineMesh);
 			mFrustrumLineNode->InitializeTransformMatrices();
 		}
@@ -92,6 +93,7 @@ namespace TS_ENGINE {
 			mSceneCameraGuiNode->SetNodeRef(mSceneCameraGuiNode);
 			mSceneCameraGuiNode->SetName("SceneCameraGuiNode");
 			mSceneCameraGuiNode->AddMesh(CreateRef<TS_ENGINE::Quad>()->GetMesh());
+			mSceneCameraGuiNode->GetMeshes()[0]->SetName("SceneCameraGuiNode");
 			mSceneCameraGuiNode->GetMeshes()[0]->GetMaterial()->EnableAlphaBlending();//Enable transparency
 			mSceneCameraGuiNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(mCameraIcon);
 			mSceneCameraGuiNode->GetTransform()->SetLocalEulerAngles(0.0, 90.0f, 0.0f);
