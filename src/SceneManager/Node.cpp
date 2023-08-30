@@ -27,22 +27,22 @@ namespace TS_ENGINE
 
 	void Node::Destroy()
 	{
+		TS_CORE_INFO("Deleting node named: {0}", mNodeRef->GetEntity()->GetName().c_str());
+		EntityManager::GetInstance()->Remove(mNodeRef->GetEntity()->GetEntityID());
+
 		m_Enabled = false;
 		mParentNode->RemoveChild(mNodeRef);
 
 		mMeshes.clear();
 
-		//mName = "";
 		mTransform.reset();
 
-		for (auto& node : mChildren)
+		for (auto& child : mChildren)
 		{
-			node.reset();
+			child.reset();
 		}
 
-
 		mParentNode.reset();
-
 		mChildren.clear();
 	}
 

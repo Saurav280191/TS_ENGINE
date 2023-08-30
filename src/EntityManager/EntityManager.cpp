@@ -29,13 +29,19 @@ namespace TS_ENGINE
 		auto it = mEntityLookUp.find(id);
 
 		if (it != mEntityLookUp.end())
+		{
 			return Ref<Entity>(mEntities[it->second]);
+		}
 		else
-			return Ref<Entity>();
+		{
+			TS_CORE_ERROR("Could not find an entity with ID: {0}", id);
+			return nullptr;
+		}
 	}
 
 	void EntityManager::Remove(EntityID id)
 	{
+		TS_CORE_INFO("Removed entity with name: {0}, id: {1} from registry", Get(id)->GetName().c_str(), id);
 		auto it = mEntityLookUp.find(id);
 
 		if (it != mEntityLookUp.end())
@@ -49,6 +55,10 @@ namespace TS_ENGINE
 
 			mEntityLookUp[back] = i;
 			mEntityLookUp.erase(id);
+		}
+		else
+		{
+			TS_CORE_ERROR("Could not find an entity with ID: {0}", id);
 		}
 	}
 	
