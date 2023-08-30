@@ -5,6 +5,16 @@
 
 namespace TS_ENGINE {
 
+	enum class PrimitiveType
+	{
+		LINE,
+		QUAD,
+		CUBE,
+		SPHERE,
+		CYLINDER,
+		CONE
+	};
+
 	struct AssimpMaterial
 	{
 		aiString name;

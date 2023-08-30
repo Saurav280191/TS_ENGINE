@@ -13,18 +13,13 @@ namespace TS_ENGINE
 		return mInstance;
 	}
 
-	Ref<Entity> EntityManager::Register(const std::string& name)// , EntityType entityType)
+	Ref<Entity> EntityManager::Register(const std::string& name, const EntityType& entityType)
 	{
-		Ref<Entity> entity = CreateRef<Entity>(name);// , entityType);
+		Ref<Entity> entity = CreateRef<Entity>(name, entityType);
 		mEntityLookUp.insert({ entity->GetEntityID(), mEntities.size() });
 		mEntities.push_back(entity);
 
-		std::stringstream ss;
-		ss << "Added new object named: " << name
-			//<< " of type: " << Entity::GetEntityTypeStr(entityType)
-			<< " to EntityManager with ID: " << entity->GetEntityID();
-
-		TS_CORE_INFO(ss.str());
+		TS_CORE_TRACE("New entity registered with Name: {0}, Type: {1}, EntityID: {2}", name.c_str(), Entity::GetEntityTypeStr(entityType), entity->GetEntityID());
 
 		return entity;
 	}

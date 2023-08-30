@@ -20,22 +20,17 @@ namespace TS_ENGINE
 	{
 		mSceneNode = CreateRef<Node>();
 		mSceneNode->SetNodeRef(mSceneNode);
-		mSceneNode->SetName(name);
+		//mSceneNode->SetName(name);
 		mEditorCamera = editorCamera;
 		//m_BatchButton.RegisterClickHandler(std::bind(&ButtonHandler::OnButtonClicked, &mBatchButtonHandler, std::placeholders::_1, std::placeholders::_2));
 		
 #pragma region DummyScene		
-		// Skybox
-		{
-			mSkyboxNode = CreateRef<TS_ENGINE::Node>();
-			mSkyboxNode->SetNodeRef(mSkyboxNode);
-			mSkyboxNode->SetName("Skybox");
-			mSkyboxNode->AddMesh(CreateRef<TS_ENGINE::Sphere>()->GetMesh());
-			mSkyboxNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\industrial_sunset_puresky.jpg"));
-			mSkyboxNode->GetTransform()->SetLocalScale(80000.0f, 80000.0f, 80000.0f);
-			mSkyboxNode->GetTransform()->SetLocalEulerAngles(90.0f, 235.0f, 0.0f);
-			mSkyboxNode->InitializeTransformMatrices();
-		}
+		// Skybox		
+		mSkyboxNode = Factory::GetInstance()->InstantiateSphere("SkyboxSphere", nullptr);
+		mSkyboxNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\industrial_sunset_puresky.jpg"));
+		mSkyboxNode->GetTransform()->SetLocalScale(80000.0f, 80000.0f, 80000.0f);
+		mSkyboxNode->GetTransform()->SetLocalEulerAngles(90.0f, 235.0f, 0.0f);		
+		mSkyboxNode->InitializeTransformMatrices();
 
 		auto sceneCamera1 = Factory::GetInstance()->InstantitateSceneCamera("SceneCamera1", this);
 		sceneCamera1->GetNode()->GetTransform()->SetLocalPosition(7.156f, 2.951f, 8.770f);
@@ -50,7 +45,7 @@ namespace TS_ENGINE
 		
 		//Cube
 		auto cubeNode = Factory::GetInstance()->InstantiateCube("Cube", mSceneNode);		
-		cubeNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\crate.png"));	
+		cubeNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\crate.png"));
 		cubeNode->GetTransform()->SetLocalPosition(2.75f, 0.312f, 0.0f);		
 		cubeNode->GetTransform()->SetLocalScale(0.62f, 0.62f, 0.62f);
 		
@@ -63,13 +58,13 @@ namespace TS_ENGINE
 
 		//Model
 		//auto modelNode = Factory::GetInstance()->InstantiateModel("D:/Documents/ThinkSideways/WorkInProgress/TS_ENGINE Related/TS_ENGINE_Editor/Assets/Models/LamborginiAventador/Chassis.obj", mSceneNode));
-		auto modelNode = Factory::GetInstance()->InstantiateModel("D:/Documents/ThinkSideways/WorkInProgress/TS_ENGINE Related/TS_ENGINE_Editor/Assets/Models/buster_drone.glb", mSceneNode);
+		//auto modelNode = Factory::GetInstance()->InstantiateModel("D:/Documents/ThinkSideways/WorkInProgress/TS_ENGINE Related/TS_ENGINE_Editor/Assets/Models/buster_drone.glb", mSceneNode);
 		//auto modelNode = Factory::GetInstance()->InstantiateModel("D:/Documents/ThinkSideways/WorkInProgress/TS_ENGINE Related/TS_ENGINE_Editor/Assets/Models/monk_character.glb", mSceneNode);
 		//auto modelNode = Factory::GetInstance()->InstantiateModel("D:/Downloads/Ely By K.Atienza.fbx", mSceneNode);
-		modelNode->GetTransform()->SetLocalScale(0.01f, 0.01f, 0.01f);
+		//modelNode->GetTransform()->SetLocalScale(0.01f, 0.01f, 0.01f);
 
 		mCurrentSceneCamera = sceneCamera1;//Current Scene Camera		
-		mSceneNode->InitializeTransformMatrices();//Needs to be done at the end to initialize the hierarchy once
+		mSceneNode->Initialize("Scene1", EntityType::SCENE);//Needs to be done at the end to initialize the hierarchy once
 #pragma endregion 
 	}
 

@@ -26,19 +26,32 @@ namespace TS_ENGINE
 		sceneCamera->SetPerspective(Camera::Perspective(45.0f, 1.77f, 1.0f, 20.0f));
 		sceneCamera->CreateFramebuffer(800, 600);
 		sceneCamera->Initialize();
-		sceneCamera->GetNode()->SetName(name);
 		sceneCamera->GetNode()->SetParent(scene->GetSceneNode());
+		sceneCamera->GetNode()->Initialize(name, EntityType::CAMERA);
 		return sceneCamera;
+	}
+
+	Ref<Node> Factory::InstantiateLine(const std::string& name, Ref<Node> parentNode, const std::vector<Vector3>& points)
+	{
+		Ref<Node> lineNode = CreateRef<Node>();
+		lineNode->SetNodeRef(lineNode);
+		Ref<Mesh> mesh = CreateRef<Line>()->GetMesh(points);
+		mesh->SetName(name);
+		lineNode->AddMesh(mesh);
+		lineNode->SetParent(parentNode);
+		lineNode->Initialize(name, EntityType::PRIMITIVE);
+		return lineNode;
 	}
 
 	Ref<Node> Factory::InstantiateQuad(const std::string& name, Ref<Node> parentNode)
 	{
 		Ref<Node> quadNode = CreateRef<Node>();
 		quadNode->SetNodeRef(quadNode);
-		quadNode->SetName(name);
-		quadNode->AddMesh(CreateRef<TS_ENGINE::Quad>()->GetMesh());
-		Ref<Mesh> mesh = quadNode->GetMeshes()[0];
+		Ref<Mesh> mesh = CreateRef<Quad>()->GetMesh();
+		mesh->SetName(name);
+		quadNode->AddMesh(mesh);
 		quadNode->SetParent(parentNode);
+		quadNode->Initialize(name, EntityType::PRIMITIVE);
 		return quadNode;
 	}
 
@@ -46,10 +59,11 @@ namespace TS_ENGINE
 	{
 		Ref<Node> cubeNode = CreateRef<Node>();
 		cubeNode->SetNodeRef(cubeNode);
-		cubeNode->SetName(name);
-		cubeNode->AddMesh(CreateRef<TS_ENGINE::Cube>()->GetMesh());
-		Ref<Mesh> mesh = cubeNode->GetMeshes()[0];
+		Ref<Mesh> mesh = CreateRef<Cube>()->GetMesh();
+		mesh->SetName(name);
+		cubeNode->AddMesh(mesh);		
 		cubeNode->SetParent(parentNode);
+		cubeNode->Initialize(name, EntityType::PRIMITIVE);
 		return cubeNode;
 	}
 
@@ -57,10 +71,11 @@ namespace TS_ENGINE
 	{
 		Ref<Node> sphereNode = CreateRef<Node>();
 		sphereNode->SetNodeRef(sphereNode);
-		sphereNode->SetName(name);
-		sphereNode->AddMesh(CreateRef<TS_ENGINE::Sphere>()->GetMesh());
-		Ref<Mesh> mesh = sphereNode->GetMeshes()[0];
+		Ref<Mesh> mesh = CreateRef<Sphere>()->GetMesh();
+		mesh->SetName(name);
+		sphereNode->AddMesh(mesh);		
 		sphereNode->SetParent(parentNode);
+		sphereNode->Initialize(name, EntityType::PRIMITIVE);
 		return sphereNode;
 	}
 

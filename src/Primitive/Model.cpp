@@ -71,8 +71,7 @@ namespace TS_ENGINE {
 	Ref<Node> Model::ProcessNode(aiNode* aiNode, const aiScene* scene)
 	{	
 		Ref<Node> node = CreateRef<Node>();
-		node->SetNodeRef(node);
-		node->SetName(aiNode->mName.C_Str());
+		node->SetNodeRef(node);		
 		
 		aiVector3D pos;
 		aiVector3D rot;
@@ -97,6 +96,8 @@ namespace TS_ENGINE {
 		}
 
 		mProcessedNodes.push_back(node);
+
+		node->Initialize(aiNode->mName.C_Str(), EntityType::MODEL);// Set name and register entity
 		return node;
 	}
 

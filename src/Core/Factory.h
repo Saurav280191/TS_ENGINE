@@ -23,6 +23,7 @@ namespace TS_ENGINE
 
 		Ref<SceneCamera> InstantitateSceneCamera(const std::string& name, Scene* scene);
 		
+		Ref<Node> InstantiateLine(const std::string& name, Ref<Node> parentNode, const std::vector<Vector3>& points);
 		Ref<Node> InstantiateQuad(const std::string& name, Ref<Node> parentNode);
 		Ref<Node> InstantiateCube(const std::string& name, Ref<Node> parentNode);
 		Ref<Node> InstantiateSphere(const std::string& name, Ref<Node> parentNode);

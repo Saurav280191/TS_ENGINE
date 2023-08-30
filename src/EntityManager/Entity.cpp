@@ -6,9 +6,9 @@ namespace TS_ENGINE
 	EntityID Entity::mIdCount = 0;
 	std::queue<EntityID> Entity::mIdRemoved;
 
-	Entity::Entity(const std::string& name) : // , EntityType entityType) :
-		mName(name)//,
-		//mEntityType(entityType)
+	Entity::Entity(const std::string& name, EntityType entityType) :
+		mName(name),
+		mEntityType(entityType)
 	{
 		if (!mIdRemoved.empty())
 		{
@@ -31,35 +31,42 @@ namespace TS_ENGINE
 		return mId;
 	}
 
-	void Entity::UpdateName(const std::string& name)
-	{
-		TS_CORE_TRACE("Renamed Entity with entityID {0} to {1}", mId, name);
-		mName = name;
-	}
+	//void Entity::SetName(const std::string& name)
+	//{
+	//	TS_CORE_TRACE("Setting name for Entity with entityID {0} to {1}", mId, name);
+	//	mName = name;
+	//}
 
-	/*const char* Entity::GetEntityTypeStr(EntityType type)
+	const char* Entity::GetEntityTypeStr(EntityType type)
 	{
 		const char* typeStr = "";
 
 		switch (type)
 		{
-		case EntityType::NODE:
-			typeStr = "NODE";
+		case EntityType::PRIMITIVE:
+			typeStr = "PRIMITIVE";
 			break;
-		case EntityType::GAMEOBJECT:
-			typeStr = "GAMEOBJECT";
+		case EntityType::MODEL:
+			typeStr = "MODEL";
 			break;
 		case EntityType::CAMERA:
 			typeStr = "CAMERA";
 			break;
-		case EntityType::DEFAULT:
-			typeStr = "DEFAULT";
+		case EntityType::SKYBOX:
+			typeStr = "SKYBOX";
+			break;
+		case EntityType::SCENE:
+			typeStr = "SCENE";
+			break;
+		case EntityType::EMPTY:
+			typeStr = "EMPTY";
 			break;
 		}
 
 		return typeStr;
 	}
 
+	/*
 	const EntityType Entity::GetEntityTypeFromStr(std::string str)
 	{
 		if (str == "NODE")

@@ -11,14 +11,15 @@ namespace TS_ENGINE {
 	{
 		mCameraNode = CreateRef<Node>();
 		mCameraNode->SetNodeRef(mCameraNode);
-		mCameraNode->SetName(name);
+		//mCameraNode->SetName(name);
 		mCameraType = TS_ENGINE::Camera::Type::EDITORCAMERA;
 
 		mDefaultPos = Vector3(8.56551170f, 3.30869126f, 9.40866184f);
 		mDefaultEulerAngles = Vector3(0.493025780f, -0.706756115f, 0.0f);
 
-		mCameraNode->SetPosition(mDefaultPos);
-		mCameraNode->SetEulerAngles(mDefaultEulerAngles);
+		mCameraNode->GetTransform()->SetLocalPosition(mDefaultPos);
+		mCameraNode->GetTransform()->SetLocalEulerAngles(mDefaultEulerAngles);
+		mCameraNode->Initialize(name, EntityType::CAMERA);
 	}
 
 	EditorCamera::~EditorCamera()

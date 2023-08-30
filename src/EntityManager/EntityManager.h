@@ -15,7 +15,7 @@ namespace TS_ENGINE
 		static Ref<EntityManager> mInstance;
 	public:
 		static Ref<EntityManager> GetInstance();
-		Ref<Entity> Register(const std::string& name);
+		Ref<Entity> Register(const std::string& name, const EntityType& entityType);
 		Ref<Entity> Get(EntityID id);
 		void Remove(EntityID id);
 

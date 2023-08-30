@@ -34,12 +34,10 @@ namespace TS_ENGINE {
 #ifdef TS_ENGINE_EDITOR
 		Ref<Camera> mEditorCamera;
 		Ref<Texture2D> mCameraIcon;
-		Ref<Node> mSceneCameraGuiNode;
 		
-		//Frustrum GUI
-		Ref<Node> mFrustrumLineNode;
-		Ref<Line> mFrustrumLine;
-		Ref<Mesh> mLineMesh;
+		//GUI
+		Ref<Node> mSceneCameraFrustrumNode;
+		Ref<Node> mSceneCameraGuiNode;
 #endif
 	};
 }

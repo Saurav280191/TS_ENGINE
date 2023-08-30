@@ -14,11 +14,8 @@ namespace TS_ENGINE {
 		static ModelLoader* GetInstance();
 		~ModelLoader();
 
-		Ref<Model> LoadModel(const std::string& modelPath);		
-		const Ref<Model> GetLastLoadedModel() const
-		{
-			return mLastLoadedModel;
-		};
+		Ref<Model> LoadModel(const std::string& modelPath);
+		const Ref<Model> GetLastLoadedModel() const { return mLastLoadedModel; };
 		bool IsModelLoaded(const std::string& fullModelPath);
 	};
 }

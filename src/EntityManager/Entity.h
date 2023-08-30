@@ -3,15 +3,15 @@
 
 namespace TS_ENGINE
 {
-	/*enum EntityType
+	enum EntityType
 	{
-		NODE,
-		GAMEOBJECT,
-		Skybox,
-		LIGHT,
+		PRIMITIVE,
+		MODEL,
 		CAMERA,
-		DEFAULT
-	};*/
+		SKYBOX,
+		SCENE,
+		EMPTY
+	};
 
 	typedef unsigned long int EntityID;
 
@@ -23,16 +23,17 @@ namespace TS_ENGINE
 		static std::queue<EntityID> mIdRemoved;
 
 		std::string mName;
-		//EntityType mEntityType;
+		EntityType mEntityType;
 	public:
-		Entity(const std::string& name);// , EntityType entityType);
+		Entity(const std::string& name, EntityType entityType);
 		~Entity();
 
 		EntityID GetEntityID() const;
 
-		void UpdateName(const std::string& name);
+		//void SetName(const std::string& name);
 		const std::string& GetName() { return mName; }
-		//static const char* GetEntityTypeStr(EntityType type);
+		const EntityType& GetEntityType() { return mEntityType; }
+		static const char* GetEntityTypeStr(EntityType type);
 		//static const EntityType GetEntityTypeFromStr(std::string str);
 	};
 }
