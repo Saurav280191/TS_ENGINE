@@ -61,6 +61,8 @@ namespace TS_ENGINE
 		duplicateNode->mNodeRef->mIsVisibleInEditor = mNodeRef->mIsVisibleInEditor;
 #endif
 
+		duplicateNode->mParentNode = mNodeRef->mParentNode;
+
 		for (auto& child : mNodeRef->mChildren)
 		{
 			duplicateNode->AddChild(child->Duplicate());
