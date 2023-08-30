@@ -10,8 +10,6 @@ namespace TS_ENGINE
 	Node::Node()
 	{
 		this->mIsInitialized = false;
-		//this->mName = "";
-		//this->mNodeType = Type::EMPTY;
 		this->mTransform = CreateRef<Transform>();
 		this->mParentNode = nullptr;
 		this->mMeshes = {};
@@ -22,7 +20,7 @@ namespace TS_ENGINE
 
 	Node::~Node()
 	{
-		Destroy();//TODO:: Why is it getting destructured
+		Destroy();
 	}
 
 	void Node::Destroy()

@@ -19,9 +19,6 @@ namespace TS_ENGINE
 		void Destroy();
 		Ref<Node> Duplicate();
 
-		//void SetEntityType(EntityType entityType);		
-		//void SetName(const std::string& name);
-
 		//This is important to keep a reference of the smart pointer create in Object class
 		void SetNodeRef(Ref<Node> node);
 		void SetParent(Ref<Node> parentNode);
@@ -69,17 +66,14 @@ namespace TS_ENGINE
 
 #pragma region Getters
 		Ref<Node> GetNode() const { return mNodeRef; }		
-		const Ref<Entity> GetEntity() const { return mEntity; }
-		//const EntityType GetEntityType() const { return mEntityType; }
-		//const std::string& GetName() const { return mName; }
+		const Ref<Entity> GetEntity() const { return mEntity; }		
 		Ref<Node> GetChildAt(uint32_t childIndex) const;
 		Ref<Node> GetParentNode() const { return mParentNode; }
 		std::vector<Ref<Node>> GetChildren() const { return mChildren; }
 		const std::vector<Ref<Node>> GetSiblings() const { return mSiblings; }
 		const Ref<Transform> GetTransform() const { return mTransform; }
 		const size_t GetChildCount() const { return mChildren.size(); }
-		std::vector<Ref<Mesh>> GetMeshes() const { return mMeshes; }
-		//const PrimitiveType GetPrimitiveType() const { return mPrimitiveType; }
+		std::vector<Ref<Mesh>> GetMeshes() const { return mMeshes; }		
 #pragma endregion
 
 	public:
@@ -89,9 +83,7 @@ namespace TS_ENGINE
 	private:
 		bool mIsInitialized;		
 		Ref<Node> mNodeRef;// This will be used for referencing everywhere instead of Node*
-		Ref<Entity> mEntity;// Entity
-		//EntityType mEntityType;
-		//std::string mName;
+		Ref<Entity> mEntity;// Entity		
 		Ref<Node> mParentNode;
 		std::vector<Ref<Node>> mChildren;
 		Ref<Transform> mTransform;
@@ -101,8 +93,6 @@ namespace TS_ENGINE
 #ifdef TS_ENGINE_EDITOR
 		bool mIsVisibleInEditor = true;
 #endif
-	protected:
-		//PrimitiveType mPrimitiveType;//Only for GameObject EntityType
 	};
 }
 
