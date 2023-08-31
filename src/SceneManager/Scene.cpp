@@ -28,7 +28,7 @@ namespace TS_ENGINE
 		// Skybox		
 		mSkyboxNode = Factory::GetInstance()->InstantiateSphere("SkyboxSphere", nullptr);
 		mSkyboxNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\industrial_sunset_puresky.jpg"));
-		mSkyboxNode->GetTransform()->SetLocalScale(80000.0f, 80000.0f, 80000.0f);
+		mSkyboxNode->GetTransform()->SetLocalScale(1600.0f, 1600.0f, 1600.0f);
 		mSkyboxNode->GetTransform()->SetLocalEulerAngles(90.0f, 235.0f, 0.0f);		
 		mSkyboxNode->InitializeTransformMatrices();
 

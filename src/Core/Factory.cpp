@@ -14,7 +14,7 @@ namespace TS_ENGINE
 
 		return mInstance;
 	}
-	
+
 	Ref<SceneCamera> Factory::InstantitateSceneCamera(const std::string& name, Scene* scene)
 	{
 #ifdef TS_ENGINE_EDITOR
@@ -61,7 +61,7 @@ namespace TS_ENGINE
 		cubeNode->SetNodeRef(cubeNode);
 		Ref<Mesh> mesh = CreateRef<Cube>()->GetMesh();
 		mesh->SetName(name);
-		cubeNode->AddMesh(mesh);		
+		cubeNode->AddMesh(mesh);
 		cubeNode->SetParent(parentNode);
 		cubeNode->Initialize(name, EntityType::PRIMITIVE);
 		return cubeNode;
@@ -73,13 +73,35 @@ namespace TS_ENGINE
 		sphereNode->SetNodeRef(sphereNode);
 		Ref<Mesh> mesh = CreateRef<Sphere>()->GetMesh();
 		mesh->SetName(name);
-		sphereNode->AddMesh(mesh);		
+		sphereNode->AddMesh(mesh);
 		sphereNode->SetParent(parentNode);
 		sphereNode->Initialize(name, EntityType::PRIMITIVE);
 		return sphereNode;
 	}
 
-	// TODO: Add code for Cylinder and Cone generation
+	Ref<Node> Factory::InstantiateCylinder(const std::string& name, Ref<Node> parentNode)
+	{
+		Ref<Node> cylinderNode = CreateRef<Node>();
+		cylinderNode->SetNodeRef(cylinderNode);
+		Ref<Mesh> mesh = CreateRef<Cylinder>()->GetMesh();
+		mesh->SetName(name);
+		cylinderNode->AddMesh(mesh);
+		cylinderNode->SetParent(parentNode);
+		cylinderNode->Initialize(name, EntityType::PRIMITIVE);
+		return cylinderNode;
+	}
+
+	Ref<Node> Factory::InstantiateCone(const std::string& name, Ref<Node> parentNode)
+	{
+		Ref<Node> coneNode = CreateRef<Node>();
+		coneNode->SetNodeRef(coneNode);
+		Ref<Mesh> mesh = CreateRef<Cone>()->GetMesh();
+		mesh->SetName(name);
+		coneNode->AddMesh(mesh);
+		coneNode->SetParent(parentNode);
+		coneNode->Initialize(name, EntityType::PRIMITIVE);
+		return coneNode;
+	}
 
 	Ref<Node> Factory::InstantiateModel(const std::string& modelPath, Ref<Node> parentNode)
 	{
@@ -99,10 +121,44 @@ namespace TS_ENGINE
 			mModelNode = model->GetRootNode();
 			mLoadedModelNodeMap.insert(std::pair<std::string, Ref<Node>>(modelPath, mModelNode));
 		}
-		
+
 		mModelNode->SetParent(parentNode);
 
 		return mModelNode;
+	}
+
+	void Factory::ChangeMeshForNode(Ref<Node> node, PrimitiveType primitive)
+	{
+		Ref<Material> firstMeshMaterial = node->GetMeshes()[0]->GetMaterial();
+		node->RemoveAllMeshes();
+		Ref<Mesh> mesh = nullptr;
+
+		switch (primitive)
+		{
+		case PrimitiveType::QUAD:
+			mesh = CreateRef<Quad>()->GetMesh();
+			mesh->SetName("Quad");
+			break;
+		case PrimitiveType::CUBE:
+			mesh = CreateRef<Cube>()->GetMesh();
+			mesh->SetName("Cube");
+			break;
+		case PrimitiveType::SPHERE:
+			mesh = CreateRef<Sphere>()->GetMesh();
+			mesh->SetName("Sphere");
+			break;
+		case PrimitiveType::CYLINDER:
+			mesh = CreateRef<Cylinder>()->GetMesh();
+			mesh->SetName("Cylinder");
+			break;
+		case PrimitiveType::CONE:
+			mesh = CreateRef<Cone>()->GetMesh();
+			mesh->SetName("Cone");
+			break;
+		}
+
+		mesh->SetMaterial(firstMeshMaterial);
+		node->AddMesh(mesh);
 	}
 
 	//Ref<Light> Factory::CreateLight(Light::Type type)
@@ -128,4 +184,3 @@ namespace TS_ENGINE
 	//	return nullptr;
 	//}
 }
- 

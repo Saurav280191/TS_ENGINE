@@ -16,6 +16,7 @@ namespace TS_ENGINE {
 	Ref<Mesh> Cube::GetMesh()
 	{
 		Ref<Mesh> mesh = CreateRef<Mesh>();
+		mesh->SetPrimitiveType(PrimitiveType::CUBE);
 
 		//Front
 		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), Vector3(0, 0, -1), Vector2(1, 1)));
@@ -109,6 +110,7 @@ namespace TS_ENGINE {
 	Ref<Mesh> Cube::GetMesh(const Matrix4& transformationMatrix)
 	{
 		Ref<Mesh> mesh = CreateRef<Mesh>();
+		mesh->SetPrimitiveType(PrimitiveType::CUBE);
 
 		//Front
 		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), Vector3(0, 0, -1), Vector2(1, 1), transformationMatrix));

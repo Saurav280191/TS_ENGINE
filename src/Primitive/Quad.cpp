@@ -39,7 +39,8 @@ namespace TS_ENGINE {
 	Ref<Mesh> Quad::GetMesh()
 	{
 		Ref<Mesh> mesh = CreateRef<Mesh>();
-
+		mesh->SetPrimitiveType(PrimitiveType::QUAD);
+		
 		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.0f), Vector3(0, 1, 0), Vector2(0, 0)));
 		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.0f), Vector3(0, 1, 0), Vector2(0, 1)));
 		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.0f), Vector3(0, 1, 0), Vector2(1, 1)));

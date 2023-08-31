@@ -1,5 +1,6 @@
 #include "tspch.h"
 #include "SceneManager/Node.h"
+#include "Core/Factory.h"
 
 #ifdef TS_ENGINE_EDITOR
 #include <imgui.h>
@@ -274,6 +275,11 @@ namespace TS_ENGINE
 		mTransform->LookAt(mParentNode, targetNode->GetTransform());
 	}
 
+	void Node::ChangeMesh(PrimitiveType primitiveType)
+	{		
+		Factory::GetInstance()->ChangeMeshForNode(mNodeRef, primitiveType);		
+	}
+
 	void Node::AddMesh(Ref<Mesh> mesh)
 	{
 		mMeshes.push_back(mesh);
@@ -282,6 +288,16 @@ namespace TS_ENGINE
 	void Node::AddMeshes(std::vector<Ref<Mesh>> meshes)
 	{
 		mMeshes = meshes;
+	}
+
+	void Node::RemoveAllMeshes()
+	{
+		mMeshes.clear();
+	}
+
+	bool Node::HasMeshes()
+	{
+		return mMeshes.size() > 0 ? true : false;
 	}
 
 	void Node::PrintChildrenName()

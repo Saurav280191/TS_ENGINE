@@ -16,7 +16,8 @@ namespace TS_ENGINE
 	Ref<Mesh> Line::GetMesh(const std::vector<Vector3>& points)
 	{
 		Ref<Mesh> mesh = CreateRef<Mesh>();
-
+		mesh->SetPrimitiveType(PrimitiveType::LINE);
+		
 		for (int i = 0; i < points.size(); i++)
 		{
 			mesh->AddVertex(Vertex(points[i]));

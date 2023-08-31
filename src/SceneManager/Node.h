@@ -55,8 +55,12 @@ namespace TS_ENGINE
 
 		void LookAt(Ref<Node> targetNode);
 
+		void ChangeMesh(PrimitiveType primitiveType);
+
 		void AddMesh(Ref<Mesh> mesh);
 		void AddMeshes(std::vector<Ref<Mesh>> meshes);
+		void RemoveAllMeshes();
+		bool HasMeshes();
 
 		void PrintChildrenName();//Only for testing
 
@@ -74,7 +78,7 @@ namespace TS_ENGINE
 		const std::vector<Ref<Node>> GetSiblings() const { return mSiblings; }
 		const Ref<Transform> GetTransform() const { return mTransform; }
 		const size_t GetChildCount() const { return mChildren.size(); }
-		std::vector<Ref<Mesh>> GetMeshes() const { return mMeshes; }		
+		std::vector<Ref<Mesh>> GetMeshes() const { return mMeshes; }
 #pragma endregion
 
 	public:

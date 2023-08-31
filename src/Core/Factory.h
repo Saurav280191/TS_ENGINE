@@ -1,9 +1,11 @@
 #pragma once
 #include <vector>
 //GameObject and primitives
+#include "Primitive/Quad.h"
 #include "Primitive/Cube.h"
 #include "Primitive/Sphere.h"
-#include "Primitive/Quad.h"
+#include "Primitive/Cylinder.h"
+#include "Primitive/Cone.h"
 #include "Primitive/Model.h"
 #include "ModelLoader.h"
 
@@ -27,20 +29,12 @@ namespace TS_ENGINE
 		Ref<Node> InstantiateQuad(const std::string& name, Ref<Node> parentNode);
 		Ref<Node> InstantiateCube(const std::string& name, Ref<Node> parentNode);
 		Ref<Node> InstantiateSphere(const std::string& name, Ref<Node> parentNode);
+		Ref<Node> InstantiateCylinder(const std::string& name, Ref<Node> parentNode);
+		Ref<Node> InstantiateCone(const std::string& name, Ref<Node> parentNode);
 		Ref<Node> InstantiateModel(const std::string& modelPath, Ref<Node> parentNode);
 
-		//Ref<GameObject> CreateGameObject(PrimitiveType type);
-		//Ref<Model> LoadModel(std::string& modelPath);
-		//void ChangeMeshForNode(Ref<Node> node, int primitiveIndex);
-		
-//#ifdef TS_ENGINE_EDITOR
-		//Ref<SceneCamera> CreateSceneCamera(Ref<Camera> editorCamera);
-//#else
-		//Ref<SceneCamera> CreateSceneCamera();
-//#endif
+		void ChangeMeshForNode(Ref<Node> node, PrimitiveType primitive);
 		//Ref<Light> CreateLight(Light::Type lightType);
-	public:
-		//std::vector<Ref<Object>> mInstantiatedObjects;
 	private:
 		static Factory* mInstance;
 		std::unordered_map<std::string, Ref<Node>> mLoadedModelNodeMap;//Model path and Model Node map

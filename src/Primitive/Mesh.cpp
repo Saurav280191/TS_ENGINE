@@ -8,6 +8,7 @@ namespace TS_ENGINE {
 	Mesh::Mesh() :
 		mStatsRegistered(false)
 	{
+		mPrimitiveType = PrimitiveType::MODEL;
 		Ref<Shader> shader = TS_ENGINE::Shader::Create("DefaultShader", "HDRLighting.vert", "HDRLighting.frag");
 		mMaterial = CreateRef<Material>("DefaultMaterial", shader);
 	}
@@ -19,11 +20,17 @@ namespace TS_ENGINE {
 		mVertexArray = nullptr;
 		mStatsRegistered = false;
 		mDrawMode = DrawMode::TRIANGLE;
+		mPrimitiveType = PrimitiveType::MODEL;
 	}
 
 	void Mesh::SetName(const std::string& name)
 	{
 		mName = name;
+	}
+	
+	void Mesh::SetPrimitiveType(PrimitiveType primitiveType)
+	{
+		mPrimitiveType = primitiveType;
 	}
 
 	void Mesh::SetMaterial(Ref<Material> material)

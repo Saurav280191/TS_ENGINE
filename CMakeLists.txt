@@ -100,18 +100,22 @@ source_group("Platform\\Windows" FILES ${PlatformWindowsSrc})
 
 #Primitive Filter
 file (GLOB PrimitiveSrc 
+src/Primitive/Line.h
+src/Primitive/Line.cpp
+src/Primitive/Quad.h
+src/Primitive/Quad.cpp
 src/Primitive/Cube.h
 src/Primitive/Cube.cpp
+src/Primitive/Sphere.h
+src/Primitive/Sphere.cpp
+src/Primitive/Cylinder.h
+src/Primitive/Cylinder.cpp
+src/Primitive/Cone.h
+src/Primitive/Cone.cpp
 src/Primitive/Mesh.h
 src/Primitive/Mesh.cpp
 src/Primitive/Model.h
 src/Primitive/Model.cpp
-src/Primitive/Quad.h
-src/Primitive/Quad.cpp
-src/Primitive/Sphere.h
-src/Primitive/Sphere.cpp
-src/Primitive/Line.h
-src/Primitive/Line.cpp
 )
 source_group("Primitive" FILES ${PrimitiveSrc})
 

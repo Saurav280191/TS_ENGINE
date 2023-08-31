@@ -12,7 +12,8 @@ namespace TS_ENGINE {
 		CUBE,
 		SPHERE,
 		CYLINDER,
-		CONE
+		CONE,
+		MODEL
 	};
 
 	struct AssimpMaterial
@@ -70,6 +71,7 @@ namespace TS_ENGINE {
 		~Mesh();
 
 		void SetName(const std::string& name);
+		void SetPrimitiveType(PrimitiveType primitiveType);
 		void SetMaterial(Ref<Material> material);
 		void SetVertices(std::vector<Vertex> vertices);
 		void SetIndices(std::vector<uint32_t> indices);
@@ -92,11 +94,11 @@ namespace TS_ENGINE {
 		std::vector<Vertex> GetVertices() { return mVertices; }
 		std::vector<Vertex> GetWorldSpaceVertices(Vector3 position, Vector3 eulerAngles, Vector3 scale);
 		std::vector<uint32_t> GetIndices() { return mIndices; }
-
 		Ref<Material> GetMaterial() const { return mMaterial; }
-
+		PrimitiveType GetPrimitiveType() { return mPrimitiveType; }
 	private:
 		std::string mName;
+		PrimitiveType mPrimitiveType;
 		std::vector<Vertex> mVertices;
 		std::vector<uint32_t> mIndices;
 		Ref<VertexArray> mVertexArray;

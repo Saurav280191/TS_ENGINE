@@ -5,7 +5,7 @@ namespace TS_ENGINE {
 
 	Sphere::Sphere()
 	{
-		
+
 	}
 
 	Sphere::~Sphere()
@@ -57,11 +57,10 @@ namespace TS_ENGINE {
 	void Sphere::CreateIndices(Ref<Mesh> mesh)
 	{
 		// generate CCW index list of sphere triangles
-	// k1--k1+1
-	// |  / |
-	// | /  |
-	// k2--k2+1
-		//std::vector<int> indices;
+		// k1--k1+1
+		// |  / |
+		// | /  |
+		// k2--k2+1
 		std::vector<int> lineIndices;
 		int k1, k2;
 		for (int i = 0; i < mStackCount; ++i)
@@ -105,6 +104,7 @@ namespace TS_ENGINE {
 	Ref<Mesh> Sphere::GetMesh()
 	{
 		Ref<Mesh> mesh = CreateRef<Mesh>();
+		mesh->SetPrimitiveType(PrimitiveType::SPHERE);
 
 		CreateVertices(mesh);
 		CreateIndices(mesh);
