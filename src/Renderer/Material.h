@@ -92,7 +92,7 @@ namespace TS_ENGINE {
 
 #ifdef TS_ENGINE_EDITOR
 		void SetMaterialGui(MaterialGui materialGui);		
-		void ShowMaterialUI(int meshIndex);
+		void ShowGUI(int meshIndex, bool treeOpen = true);
 		void DropContentBrowserTexture(TextureType textureType, Material::MaterialGui& materialGui, int meshIndex);
 #endif
 	private:
