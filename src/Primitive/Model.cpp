@@ -17,15 +17,19 @@ namespace TS_ENGINE {
 		this->LoadModel(modelPath);
 	}
 
-	void Model::CopyFrom(Ref<Model> model)
+	void Model::CopyFrom(Ref<Model> model)// TODO:: Check why this does not work
 	{
+		mAssimpScene = model->mAssimpScene;
 		mRendererID = model->mRendererID;
 		mMaterial = model->mMaterial;
+		mTsMaterial = model->mTsMaterial;
 		mModelDirectory = model->mModelDirectory;
 		mRootNode = model->mRootNode;
 		mDefaultShader = model->mDefaultShader;
 		mProcessedNodes = model->mProcessedNodes;
 		mProcessedMeshes = model->mProcessedMeshes;
+		mProcessedMaterials = model->mProcessedMaterials;
+		mProcessedEmbeddedTextures = model->mProcessedEmbeddedTextures;
 		mTexture = model->mTexture;
 	}
 
