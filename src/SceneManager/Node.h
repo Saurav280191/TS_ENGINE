@@ -34,15 +34,16 @@ namespace TS_ENGINE
 		void SetScale(float x, float y, float z);
 		void SetScale(const Vector3& scale);
 
+
 		void AddChild(Ref<Node> child);
 		void RemoveChild(Ref<Node> child);
 		void RemoveAllChildren();
 		void UpdateSiblings();
 
 		/// <summary>
-		/// Updates Model matrix for it's self and for children
+		/// Updates local and global model matrices for it's self and for children
 		/// </summary>
-		void InitializeTransformMatrices();		
+		void InitializeTransformMatrices();	
 		void UpdateTransformationMatrices(Matrix4 transformationMatrix);
 		
 		/// <summary>

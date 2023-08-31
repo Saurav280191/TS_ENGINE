@@ -12,7 +12,7 @@ namespace TS_ENGINE
 		m_Right(Vector3(1, 0, 0)),
 		m_Up(Vector3(0, 1, 0)),
 		m_Forward(Vector3(0, 0, 1)),
-		m_TransformationMatrix(Matrix4(1.0f))
+		m_GlobalTransformationMatrix(Matrix4(1.0f))
 	{
 
 	}
@@ -24,8 +24,7 @@ namespace TS_ENGINE
 		m_Right(Vector3(1, 0, 0)),
 		m_Up(Vector3(0, 1, 0)),
 		m_Forward(Vector3(0, 0, 1)),
-		m_TransformationMatrix(Matrix4(1.0f)),
-		data(new float[3] {1, 2, 3})
+		m_GlobalTransformationMatrix(Matrix4(1.0f))
 	{
 
 	}
@@ -37,7 +36,7 @@ namespace TS_ENGINE
 
 	void Transform::Follow(Ref<Node> targetNode)
 	{
-		m_TransformationMatrix = targetNode->GetTransform()->GetTransformationMatrix();
+		m_GlobalTransformationMatrix = targetNode->GetTransform()->GetGlobalTransformationMatrix();
 	}
 
 	void Transform::LookAt(Ref<Node> parentNode, const Ref<Transform> target)
@@ -51,16 +50,16 @@ namespace TS_ENGINE
 		const Matrix4 scaleMatrix = glm::scale(Matrix4(1.0f), m_Scale);
 
 		if (parentNode)
-			m_TransformationMatrix = parentNode->GetTransform()->GetTransformationMatrix() * modelMatrix;
+			m_GlobalTransformationMatrix = parentNode->GetTransform()->GetGlobalTransformationMatrix() * modelMatrix;
 		else
-			m_TransformationMatrix = modelMatrix;
+			m_GlobalTransformationMatrix = modelMatrix;
 
 		if (mLookAtTarget)
 		{
 			const Matrix4 lookAtRotationMatrix = TS_ENGINE::Utility::GetLookatAtRotationMatrix(m_Pos, mLookAtTarget->GetLocalPosition(), Vector3(0, 1, 0));
-			m_TransformationMatrix = m_TransformationMatrix * lookAtRotationMatrix;
+			m_GlobalTransformationMatrix = m_GlobalTransformationMatrix * lookAtRotationMatrix;
 
-			auto dd = Utility::Decompose(m_TransformationMatrix);
+			auto dd = Utility::Decompose(m_GlobalTransformationMatrix);
 			m_Pos = dd->translation;
 			m_EulerAngles = dd->eulerAngles * Vector3(57.2958f);
 			m_Scale = dd->scale;		
@@ -71,9 +70,9 @@ namespace TS_ENGINE
 		m_Forward = GetForward();
 	}
 
-	void Transform::ComputeTransformationMatrix(Ref<Node> parentNode)
+	Matrix4 Transform::GetLocalTransformationMatrix()
 	{
-		Matrix4 modelMatrix = Matrix4(1);
+		Matrix4 localTransformationMatrix = Matrix4(1);
 
 		const Matrix4 translationMatrix = glm::translate(Matrix4(1.0f), m_Pos);
 		const Matrix4 scaleMatrix = glm::scale(Matrix4(1.0f), m_Scale);
@@ -81,17 +80,22 @@ namespace TS_ENGINE
 		const Matrix4 rotationMatrixX = glm::rotate(Matrix4(1.0f), glm::radians(m_EulerAngles.x), Vector3(1.0f, 0.0f, 0.0f));
 		const Matrix4 rotationMatrixY = glm::rotate(Matrix4(1.0f), glm::radians(m_EulerAngles.y), Vector3(0.0f, 1.0f, 0.0f));
 		const Matrix4 rotationMatrixZ = glm::rotate(Matrix4(1.0f), glm::radians(m_EulerAngles.z), Vector3(0.0f, 0.0f, 1.0f));
-
 		const Matrix4 rotationMatrix = rotationMatrixY * rotationMatrixX * rotationMatrixZ;
-		
+
+		localTransformationMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+		return localTransformationMatrix;
+	}
+
+	void Transform::ComputeTransformationMatrix(Ref<Node> parentNode)
+	{
+		m_LocalTransformationMatrix = GetLocalTransformationMatrix();
+
 		if (!mLookAtTarget)
 		{
-			modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
-		
 			if (parentNode)		
-				m_TransformationMatrix = parentNode->GetTransform()->GetTransformationMatrix() * modelMatrix;		
+				m_GlobalTransformationMatrix = parentNode->GetTransform()->m_GlobalTransformationMatrix * m_LocalTransformationMatrix;
 			else
-				m_TransformationMatrix = modelMatrix;
+				m_GlobalTransformationMatrix = m_LocalTransformationMatrix;
 		}
 
 		m_Right = GetRight();
@@ -99,9 +103,14 @@ namespace TS_ENGINE
 		m_Forward = GetForward();
 	}
 
-	void Transform::SetTransformationMatrix(Matrix4 transformationMatrix)
+	void Transform::SetLocalTransformationMatrix(Matrix4 transformationMatrix)
 	{
-		m_TransformationMatrix = transformationMatrix;
+		m_LocalTransformationMatrix = transformationMatrix;
+	}
+
+	void Transform::SetGlobalTransformationMatrix(Matrix4 transformationMatrix)
+	{
+		m_GlobalTransformationMatrix = transformationMatrix;
 	}
 
 	void Transform::SetLocalPosition(const Vector3& newPosition)
@@ -147,6 +156,13 @@ namespace TS_ENGINE
 		
 	}
 
+	void Transform::SetLocalTransforms(Vector3 pos, Vector3 eulerAngles, Vector3 scale)
+	{
+		m_Pos = pos;
+		m_EulerAngles = eulerAngles;
+		m_Scale = scale;
+	}
+
 	void Transform::Reset()
 	{
 		m_Pos = Vector3(0);
@@ -169,7 +185,7 @@ namespace TS_ENGINE
 
 	Matrix4 Transform::GetInverseParentMat(Matrix4 newTransformMatrix)
 	{
-		return glm::inverse(newTransformMatrix) * m_TransformationMatrix;
+		return glm::inverse(newTransformMatrix) * m_GlobalTransformationMatrix;
 	}
 
 	/*const Vector3& Transform::GetGlobalPosition() const
@@ -189,19 +205,19 @@ namespace TS_ENGINE
 
 	Vector3 Transform::GetRight() const
 	{
-		return (Vector3)m_TransformationMatrix[0];
+		return (Vector3)m_GlobalTransformationMatrix[0];
 	}
 	Vector3 Transform::GetUp() const
 	{
-		return (Vector3)m_TransformationMatrix[1];
+		return (Vector3)m_GlobalTransformationMatrix[1];
 	}
 	Vector3 Transform::GetBackward() const
 	{
-		return -(Vector3)m_TransformationMatrix[2];
+		return -(Vector3)m_GlobalTransformationMatrix[2];
 	}
 	Vector3 Transform::GetForward() const
 	{
-		return (Vector3)m_TransformationMatrix[2];
+		return (Vector3)m_GlobalTransformationMatrix[2];
 	}
 
 	void Transform::MoveFwd(float moveSpeed, float deltaTime)

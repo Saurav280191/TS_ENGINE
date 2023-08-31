@@ -12,20 +12,22 @@ namespace TS_ENGINE
 		Transform(const char* createdFrom);
 		~Transform();
 
-		float* data;
 		Vector3 m_Pos;
-		Vector3 m_EulerAngles;
+		Vector3 m_EulerAngles;//This is in degree to readability
 		Vector3 m_Scale;
 		Vector3 m_Right;
 		Vector3 m_Up;
 		Vector3 m_Forward;
-		Matrix4 m_TransformationMatrix;
+		Matrix4 m_LocalTransformationMatrix;
+		Matrix4 m_GlobalTransformationMatrix;
 
 		void Follow(Ref<Node> targetNode);
 		void LookAt(Ref<Node> parentNode, const Ref<Transform> target);
 
+		Matrix4 GetLocalTransformationMatrix();
 		void ComputeTransformationMatrix(Ref<Node> parentNode);
-		void SetTransformationMatrix(Matrix4 transformationMatrix);
+		void SetLocalTransformationMatrix(Matrix4 transformationMatrix);
+		void SetGlobalTransformationMatrix(Matrix4 transformationMatrix);
 
 		void SetLocalPosition(const Vector3& newPosition);
 		void SetLocalPosition(float x, float y, float z);
@@ -36,6 +38,8 @@ namespace TS_ENGINE
 		void SetLocalScale(const Vector3& newScale);
 		void SetLocalScale(float x, float y, float z);
 		void SetLocalScale(const float* newScale);
+
+		void SetLocalTransforms(Vector3 pos, Vector3 eulerAngles, Vector3 scale);
 
 		void Reset();
 
@@ -49,7 +53,8 @@ namespace TS_ENGINE
 		//const Vector3& GetGlobalEulerAngles(Vector3 parentEulerAngles) const;
 		//const Vector3& GetGlobalScale() const;
 
-		const Matrix4 GetTransformationMatrix() const { return m_TransformationMatrix; }
+		const Matrix4 GetLocalTransformationMatrix() const { return m_LocalTransformationMatrix; }
+		const Matrix4 GetGlobalTransformationMatrix() const { return m_GlobalTransformationMatrix; }
 
 		Vector3 GetRight() const;
 		Vector3 GetUp() const;

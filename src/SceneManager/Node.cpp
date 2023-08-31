@@ -81,18 +81,6 @@ namespace TS_ENGINE
 		mNodeRef = node;
 	}
 
-	/*void Node::SetNodeType(const Type& nodeType)
-	{
-		mNodeType = nodeType;
-	}*/
-
-	//void Node::SetName(const std::string& name)
-	//{
-	//	//TS_CORE_TRACE("Renamed Node with entityID {0} to {1}", mEntity->GetEntityID(), name);
-	//	//mName = name;		
-	//	mEntity->SetName(name);
-	//}
-
 	void Node::SetParent(Ref<Node> parentNode)
 	{
 		//TS_CORE_INFO("Setting parent of {0} as {1}", mEntity->GetName().c_str(), parentNode->mEntity->GetName().c_str());
@@ -111,7 +99,7 @@ namespace TS_ENGINE
 
 	void Node::ChangeParent(Ref<Node> parentNode)
 	{
-		//TS_CORE_INFO("Setting parent of {0} as {1}", mEntity->GetName().c_str(), parentNode->mEntity->GetName().c_str());
+		TS_CORE_INFO("Changed parent of {0} to {1}", mEntity->GetName().c_str(), parentNode->mEntity->GetName().c_str());
 
 		if (parentNode)
 		{
@@ -127,85 +115,49 @@ namespace TS_ENGINE
 	void Node::SetPosition(float* pos)
 	{
 		mTransform->SetLocalPosition(pos);
-
-		mTransform->ComputeTransformationMatrix(mParentNode);
-
-		for (auto& child : mChildren)
-			child->InitializeTransformMatrices();
+		InitializeTransformMatrices();
 	}
 	void Node::SetPosition(float x, float y, float z)
 	{
 		mTransform->SetLocalPosition(x, y, z);
-
-		mTransform->ComputeTransformationMatrix(mParentNode);
-
-		for (auto& child : mChildren)
-			child->InitializeTransformMatrices();
+		InitializeTransformMatrices();
 	}
 	void Node::SetPosition(const Vector3& pos)
 	{
 		mTransform->SetLocalPosition(pos);
-
-		mTransform->ComputeTransformationMatrix(mParentNode);
-
-		for (auto& child : mChildren)
-			child->InitializeTransformMatrices();
+		InitializeTransformMatrices();
 	}
 
 	void Node::SetEulerAngles(float* eulerAngles)
 	{
 		mTransform->SetLocalEulerAngles(eulerAngles);
-
-		mTransform->ComputeTransformationMatrix(mParentNode);
-
-		for (auto& child : mChildren)
-			child->InitializeTransformMatrices();
+		InitializeTransformMatrices();
 	}
 	void Node::SetEulerAngles(float x, float y, float z)
 	{
 		mTransform->SetLocalEulerAngles(x, y, z);
-
-		mTransform->ComputeTransformationMatrix(mParentNode);
-
-		for (auto& child : mChildren)
-			child->InitializeTransformMatrices();
+		InitializeTransformMatrices();
 	}
 	void Node::SetEulerAngles(const Vector3& eulerAngles)
 	{
 		mTransform->SetLocalEulerAngles(eulerAngles);
-
-		mTransform->ComputeTransformationMatrix(mParentNode);
-
-		for (auto& child : mChildren)
-			child->InitializeTransformMatrices();
+		InitializeTransformMatrices();
 	}
 
 	void Node::SetScale(float* scale)
 	{
 		mTransform->SetLocalScale(scale);
-
-		mTransform->ComputeTransformationMatrix(mParentNode);
-
-		for (auto& child : mChildren)
-			child->InitializeTransformMatrices();
+		InitializeTransformMatrices();
 	}
 	void Node::SetScale(float x, float y, float z)
 	{
 		mTransform->SetLocalScale(x, y, z);
-
-		mTransform->ComputeTransformationMatrix(mParentNode);
-
-		for (auto& child : mChildren)
-			child->InitializeTransformMatrices();
+		InitializeTransformMatrices();
 	}
 	void Node::SetScale(const Vector3& scale)
 	{
 		mTransform->SetLocalScale(scale);
-
-		mTransform->ComputeTransformationMatrix(mParentNode);
-
-		for (auto& child : mChildren)
-			child->InitializeTransformMatrices();
+		InitializeTransformMatrices();
 	}
 
 	void Node::AddChild(Ref<Node> child)
@@ -277,7 +229,7 @@ namespace TS_ENGINE
 
 	void Node::UpdateTransformationMatrices(Matrix4 transformationMatrix)
 	{
-		mTransform->m_TransformationMatrix = transformationMatrix;
+		//mTransform->m_GlobalTransformationMatrix = transformationMatrix;
 
 		for (auto& child : mChildren)
 		{
@@ -299,7 +251,7 @@ namespace TS_ENGINE
 		TS_CORE_ASSERT(mIsInitialized, "Node is not initialized!");
 
 		//Send modelMatrix to shader
-		shader->SetMat4("u_Model", mTransform->GetTransformationMatrix());
+		shader->SetMat4("u_Model", mTransform->GetGlobalTransformationMatrix());
 
 		if (m_Enabled)
 		{

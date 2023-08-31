@@ -102,7 +102,7 @@ namespace TS_ENGINE {
 		}
 #endif
 
-		mViewMatrix = mCameraNode->GetTransform()->GetTransformationMatrix();
+		mViewMatrix = mCameraNode->GetTransform()->GetGlobalTransformationMatrix();
 		mViewMatrix = glm::inverse(mViewMatrix);
 
 		shader->SetVec3("u_ViewPos", mCameraNode->GetTransform()->GetLocalPosition());

@@ -34,7 +34,7 @@ namespace TS_ENGINE {
 
 	void EditorCamera::Update(Ref<TS_ENGINE::Shader> shader, float deltaTime)
 	{
-		mViewMatrix = mCameraNode->GetTransform()->GetTransformationMatrix();;
+		mViewMatrix = mCameraNode->GetTransform()->GetGlobalTransformationMatrix();;
 		mViewMatrix = glm::inverse(mViewMatrix);
 
 		shader->SetVec3("u_ViewPos", mCameraNode->GetTransform()->GetLocalPosition());
@@ -60,33 +60,63 @@ namespace TS_ENGINE {
 	{
 		//Vertical
 		if (Input::IsKeyPressed(Key::W))
+		{
 			mCameraNode->GetTransform()->MoveFwd(mMoveSpeed, deltaTime);
+			mCameraNode->GetTransform()->ComputeTransformationMatrix(mCameraNode->GetParentNode());
+		}
 		if (Input::IsKeyPressed(Key::S))
+		{
 			mCameraNode->GetTransform()->MoveBack(mMoveSpeed, deltaTime);
+			mCameraNode->GetTransform()->ComputeTransformationMatrix(mCameraNode->GetParentNode());
+		}
 
 		//Horizontal
 		if (Input::IsKeyPressed(Key::D))
+		{
 			mCameraNode->GetTransform()->MoveRight(mMoveSpeed, deltaTime);
+			mCameraNode->GetTransform()->ComputeTransformationMatrix(mCameraNode->GetParentNode());
+		}
 		if (Input::IsKeyPressed(Key::A))
+		{
 			mCameraNode->GetTransform()->MoveLeft(mMoveSpeed, deltaTime);
+			mCameraNode->GetTransform()->ComputeTransformationMatrix(mCameraNode->GetParentNode());
+		}
 
 		//Move Up/Down
 		if (Input::IsKeyPressed(Key::Space))
+		{
 			mCameraNode->GetTransform()->MoveUp(mMoveSpeed, deltaTime);
+			mCameraNode->GetTransform()->ComputeTransformationMatrix(mCameraNode->GetParentNode());
+		}
 		if (Input::IsKeyPressed(Key::C))
+		{
 			mCameraNode->GetTransform()->MoveDown(mMoveSpeed, deltaTime);
+			mCameraNode->GetTransform()->ComputeTransformationMatrix(mCameraNode->GetParentNode());
+		}
 
 		//Yaw - Keyboard
 		if (Input::IsKeyPressed(Key::Right))
+		{
 			mCameraNode->GetTransform()->Yaw(mRotateSpeed, deltaTime);
+			mCameraNode->GetTransform()->ComputeTransformationMatrix(mCameraNode->GetParentNode());
+		}
 		if (Input::IsKeyPressed(Key::Left))
+		{
 			mCameraNode->GetTransform()->Yaw(-mRotateSpeed, deltaTime);
+			mCameraNode->GetTransform()->ComputeTransformationMatrix(mCameraNode->GetParentNode());
+		}
 
 		//Pitch - Keyboard
 		if (Input::IsKeyPressed(Key::Up))
+		{
 			mCameraNode->GetTransform()->Pitch(mRotateSpeed, deltaTime);
+			mCameraNode->GetTransform()->ComputeTransformationMatrix(mCameraNode->GetParentNode());
+		}
 		if (Input::IsKeyPressed(Key::Down))
+		{
 			mCameraNode->GetTransform()->Pitch(-mRotateSpeed, deltaTime);
+			mCameraNode->GetTransform()->ComputeTransformationMatrix(mCameraNode->GetParentNode());
+		}
 
 		//Mouse Move
 		{
@@ -98,15 +128,19 @@ namespace TS_ENGINE {
 			if (Input::IsMouseButtonPressed(Mouse::Button1))
 			{
 				if (deltaMousePos.x != 0)
+				{
 					mCameraNode->GetTransform()->Yaw(20.0f * deltaMousePos.x, deltaTime);
-
+					mCameraNode->GetTransform()->ComputeTransformationMatrix(mCameraNode->GetParentNode());
+				}
 				//Pitch Mouse
 				if (deltaMousePos.y != 0)
+				{
 					mCameraNode->GetTransform()->Pitch(-20.0f * deltaMousePos.y, deltaTime);
+					mCameraNode->GetTransform()->ComputeTransformationMatrix(mCameraNode->GetParentNode());
+				}
 			}
 		}
 
-		mCameraNode->GetTransform()->ComputeTransformationMatrix(mCameraNode->GetParentNode());
 	}
 }
 
