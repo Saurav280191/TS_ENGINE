@@ -83,9 +83,25 @@ namespace TS_ENGINE
 
 	Ref<Node> Factory::InstantiateModel(const std::string& modelPath, Ref<Node> parentNode)
 	{
-		Ref<Model> model = ModelLoader::GetInstance()->LoadModel(modelPath);
-		Ref<Node> mModelNode = model->GetRootNode();
+		Ref<Node> mModelNode = nullptr;
+		Ref<Model> model = nullptr;
+
+		auto it = mLoadedModelNodeMap.find(modelPath);
+
+		if (it != mLoadedModelNodeMap.end())
+		{
+			mModelNode = it->second->Duplicate();
+			mModelNode->GetTransform()->Reset();
+		}
+		else
+		{
+			model = ModelLoader::GetInstance()->LoadModel(modelPath);
+			mModelNode = model->GetRootNode();
+			mLoadedModelNodeMap.insert(std::pair<std::string, Ref<Node>>(modelPath, mModelNode));
+		}
+		
 		mModelNode->SetParent(parentNode);
+
 		return mModelNode;
 	}
 
@@ -112,3 +128,4 @@ namespace TS_ENGINE
 	//	return nullptr;
 	//}
 }
+ 

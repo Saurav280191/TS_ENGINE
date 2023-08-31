@@ -43,5 +43,6 @@ namespace TS_ENGINE
 		//std::vector<Ref<Object>> mInstantiatedObjects;
 	private:
 		static Factory* mInstance;
+		std::unordered_map<std::string, Ref<Node>> mLoadedModelNodeMap;//Model path and Model Node map
 	};
 }
