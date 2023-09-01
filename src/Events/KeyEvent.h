@@ -27,8 +27,9 @@ namespace TS_ENGINE {
 	class KeyPressedEvent : public KeyEvent
 	{
 	public:
-		KeyPressedEvent(const KeyCode keycode, bool isRepeat = false)
-			: KeyEvent(keycode), m_IsRepeat(isRepeat)
+		KeyPressedEvent(const KeyCode keycode, bool isRepeat = false) : 
+			KeyEvent(keycode), 
+			m_IsRepeat(isRepeat)
 		{
 
 		}

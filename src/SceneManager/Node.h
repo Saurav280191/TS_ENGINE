@@ -10,6 +10,7 @@
 namespace TS_ENGINE
 {
 	class Transform;
+	class SceneCamera;
 	class Node
 	{		
 	public:
@@ -33,7 +34,7 @@ namespace TS_ENGINE
 		void SetScale(float* scale);
 		void SetScale(float x, float y, float z);
 		void SetScale(const Vector3& scale);
-
+		void SetSceneCamera(Ref<SceneCamera> sceneCamera);
 
 		void AddChild(Ref<Node> child);
 		void RemoveChild(Ref<Node> child);
@@ -79,6 +80,7 @@ namespace TS_ENGINE
 		const Ref<Transform> GetTransform() const { return mTransform; }
 		const size_t GetChildCount() const { return mChildren.size(); }
 		std::vector<Ref<Mesh>> GetMeshes() const { return mMeshes; }
+		Ref<SceneCamera> GetSceneCamera() { return mSceneCamera; }
 #pragma endregion
 
 	public:
@@ -95,6 +97,7 @@ namespace TS_ENGINE
 
 		std::vector<Ref<Node>> mSiblings = {};
 		std::vector<Ref<Mesh>> mMeshes;
+		Ref<SceneCamera> mSceneCamera;// Only used incase of scene camera node
 #ifdef TS_ENGINE_EDITOR
 		bool mIsVisibleInEditor = true;
 #endif

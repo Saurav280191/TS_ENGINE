@@ -17,6 +17,7 @@ namespace TS_ENGINE
 #ifdef TS_ENGINE_EDITOR
 		this->mIsVisibleInEditor = true;
 #endif
+		this->mSceneCamera = nullptr;
 	}
 
 	Node::~Node()
@@ -43,6 +44,7 @@ namespace TS_ENGINE
 
 		mParentNode.reset();
 		mChildren.clear();
+		mSceneCamera = nullptr;
 	}
 
 	Ref<Node> Node::Duplicate()
@@ -69,6 +71,9 @@ namespace TS_ENGINE
 
 		duplicateNode->mNodeRef->Initialize(mNodeRef->mEntity->GetName(), mNodeRef->mEntity->GetEntityType());
 		duplicateNode->mNodeRef->UpdateSiblings();
+
+		duplicateNode->mNodeRef->mSceneCamera = mNodeRef->mSceneCamera;
+		
 		return duplicateNode;
 	}
 
@@ -159,6 +164,11 @@ namespace TS_ENGINE
 	{
 		mTransform->SetLocalScale(scale);
 		InitializeTransformMatrices();
+	}
+
+	void Node::SetSceneCamera(Ref<SceneCamera> sceneCamera)
+	{
+		mSceneCamera = sceneCamera;
 	}
 
 	void Node::AddChild(Ref<Node> child)

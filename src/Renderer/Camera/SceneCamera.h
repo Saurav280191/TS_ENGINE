@@ -22,7 +22,8 @@ namespace TS_ENGINE {
 		virtual void Update(Ref<Shader> shader, float deltaTime) override;
 		virtual void DeleteMeshes() override;
 
-		void RenderGui(Ref<Shader> shader, float deltaTime);
+		void ShowCameraGUI(Ref<Shader> shader, float deltaTime);
+		void ShowFrustrumGUI(Ref<Shader> shader, float deltaTime);
 
 		bool IsSceneCameraGuiSelected(int entityID);
 

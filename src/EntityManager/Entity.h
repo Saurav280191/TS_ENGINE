@@ -10,6 +10,7 @@ namespace TS_ENGINE
 		CAMERA,
 		SKYBOX,
 		SCENE,
+		LIGHT,
 		EMPTY
 	};
 

@@ -79,27 +79,39 @@ namespace TS_ENGINE {
 		//void OnBatched();
 		//void OnUnBatched();
 
-		void Render(Ref<Shader> shader, float deltaTime);
-		Ref<Node> GetSceneNode() const { return mSceneNode; }
-		Ref<SceneCamera> GetCurrentSceneCamera() { return mCurrentSceneCamera; }
 		void UpdateCameraRT(Ref<Camera> camera, Ref<Shader> shader, float deltaTime, bool isEditorCamera);
-
+		void Render(Ref<Shader> shader, float deltaTime);
 		int GetSkyboxEntityID() { return mSkyboxNode->GetEntity()->GetEntityID(); }
+		void SetCurrentSceneCamera(Ref<SceneCamera> sceneCamera);
+		void SwitchToAnotherSceneCamera(Ref<SceneCamera> sceneCamera);
+		void AddSceneCamera(Ref<SceneCamera> sceneCamera);
+		void RemoveSceneCamera(Ref<SceneCamera> sceneCamera);
+		void ShowSceneCameraGUI(Ref<Shader> shader, float deltaTime);
 
+		Ref<Node> GetSceneNode() const { return mSceneNode; }
+		Ref<SceneCamera> GetCurrentSceneCamera() { return mSceneCameras[mCurrentSceneCameraIndex]; }
+		int GetCurrentSceneCameraIndex() { return mCurrentSceneCameraIndex; }
+		std::vector<Ref<SceneCamera>> GetSceneCameras() { return mSceneCameras; }
+		size_t GetNumSceneCameras() { return mSceneCameras.size(); }
 #ifdef TS_ENGINE_EDITOR
 		Ref<EditorCamera> GetEditorCamera() { return mEditorCamera; }
 #endif
 
 	private:
-		Ref<Node> mSceneNode;
 
+		// Editor camera
 #ifdef TS_ENGINE_EDITOR
 		Ref<EditorCamera> mEditorCamera = nullptr;
 #endif
+		// Scene camera
+		std::vector<Ref<SceneCamera>> mSceneCameras = {};
+		int mCurrentSceneCameraIndex;
 
-		std::vector<Ref<Camera>> mSceneCameras = {};
-		Ref<SceneCamera> mCurrentSceneCamera;
-		//ButtonHandler mBatchButtonHandler;		
+		// Root node
+		Ref<Node> mSceneNode;
+		
+		// Skybox node
 		Ref<TS_ENGINE::Node> mSkyboxNode;
+		//ButtonHandler mBatchButtonHandler;		
 	};
 }

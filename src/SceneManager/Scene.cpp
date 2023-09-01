@@ -20,7 +20,6 @@ namespace TS_ENGINE
 	{
 		mSceneNode = CreateRef<Node>();
 		mSceneNode->SetNodeRef(mSceneNode);
-		//mSceneNode->SetName(name);
 		mEditorCamera = editorCamera;
 		//m_BatchButton.RegisterClickHandler(std::bind(&ButtonHandler::OnButtonClicked, &mBatchButtonHandler, std::placeholders::_1, std::placeholders::_2));
 		
@@ -35,21 +34,30 @@ namespace TS_ENGINE
 		auto sceneCamera1 = Factory::GetInstance()->InstantitateSceneCamera("SceneCamera1", this);
 		sceneCamera1->GetNode()->GetTransform()->SetLocalPosition(7.156f, 2.951f, 8.770f);
 		sceneCamera1->GetNode()->GetTransform()->SetLocalEulerAngles(-13.235f, 38.064f, 0.0f);
+		
+		auto sceneCamera2 = Factory::GetInstance()->InstantitateSceneCamera("SceneCamera2", this);
+		sceneCamera2->GetNode()->GetTransform()->SetLocalPosition(-7.156f, 2.951f, 8.770f);
+		sceneCamera2->GetNode()->GetTransform()->SetLocalEulerAngles(-13.235f, -38.064f, 0.0f);
 
-		//Default ground
+		// Add to list and set currentSceneCameraIndex
+		mSceneCameras.push_back(sceneCamera1);
+		mSceneCameras.push_back(sceneCamera2);
+		mCurrentSceneCameraIndex = 0;// Current Scene Camera
+
+		// Default ground
 		auto groundNode = Factory::GetInstance()->InstantiateQuad("Ground", mSceneNode);
 		groundNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\raw_plank_wall_diff_4k.jpg"));
 		groundNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMapTiling(Vector2(2, 2));
 		groundNode->GetTransform()->SetLocalEulerAngles(-90.0f, 0.0f, 0.0f);
 		groundNode->GetTransform()->SetLocalScale(10.0f, 10.0f, 10.0f);
 		
-		//Cube
+		// Cube
 		auto cubeNode = Factory::GetInstance()->InstantiateCube("Cube", mSceneNode);		
 		cubeNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\crate.png"));
 		cubeNode->GetTransform()->SetLocalPosition(2.75f, 0.312f, 0.0f);		
 		cubeNode->GetTransform()->SetLocalScale(0.62f, 0.62f, 0.62f);
 		
-		//Cube1
+		// Cube1
 		auto cube1Node = Factory::GetInstance()->InstantiateCube("Cube1", cubeNode);
 		cube1Node->GetMeshes()[0]->GetMaterial()->SetAmbientColor(Vector4(1, 0, 0, 1));
 		cube1Node->GetTransform()->SetLocalPosition(1.0f, 1.0f, -1.0f);
@@ -63,7 +71,6 @@ namespace TS_ENGINE
 		//auto modelNode = Factory::GetInstance()->InstantiateModel("D:/Downloads/Ely By K.Atienza.fbx", mSceneNode);
 		//modelNode->GetTransform()->SetLocalScale(0.01f, 0.01f, 0.01f);
 
-		mCurrentSceneCamera = sceneCamera1;//Current Scene Camera		
 		mSceneNode->Initialize("Scene1", EntityType::SCENE);//Needs to be done at the end to initialize the hierarchy once
 #pragma endregion 
 	}
@@ -93,11 +100,61 @@ namespace TS_ENGINE
 	void Scene::Render(Ref<Shader> shader, float deltaTime)
 	{
 		//Scene camera pass
-		if (mCurrentSceneCamera)
+		if (mSceneCameras[mCurrentSceneCameraIndex])
 		{
-			UpdateCameraRT(mCurrentSceneCamera, shader, deltaTime, false);
-			mCurrentSceneCamera->GetFramebuffer()->Unbind();
+			UpdateCameraRT(mSceneCameras[mCurrentSceneCameraIndex], shader, deltaTime, false);
+			mSceneCameras[mCurrentSceneCameraIndex]->GetFramebuffer()->Unbind();
 		}
+	}
+
+	void Scene::SetCurrentSceneCamera(Ref<SceneCamera> sceneCamera)
+	{
+		for (int i = 0; i < mSceneCameras.size(); i++)
+		{
+			if (mSceneCameras[i] == sceneCamera)
+			{
+				mCurrentSceneCameraIndex = i;
+				return;
+			}
+		}
+	}
+
+	void Scene::SwitchToAnotherSceneCamera(Ref<SceneCamera> sceneCamera)
+	{
+		for (int i = 0; i < mSceneCameras.size(); i++)
+		{
+			if (mSceneCameras[i] != sceneCamera)
+			{
+				TS_CORE_INFO("Switched current scene camera to: {0}", mSceneCameras[i]->GetNode()->GetEntity()->GetName().c_str());
+				mCurrentSceneCameraIndex = i;
+				return;
+			}
+		}
+	}
+	
+	void Scene::AddSceneCamera(Ref<SceneCamera> sceneCamera)
+	{
+		mSceneCameras.push_back(sceneCamera);
+	}
+
+	void Scene::RemoveSceneCamera(Ref<SceneCamera> sceneCamera) 
+	{
+		for (int i = 0; i < mSceneCameras.size(); i++)
+		{
+			if (mSceneCameras[i] == sceneCamera)
+			{
+				mSceneCameras.erase(mSceneCameras.begin() + i);
+				return;
+			}
+		}
+	}
+
+	void Scene::ShowSceneCameraGUI(Ref<Shader> shader, float deltaTime)
+	{
+		for (auto& sceneCamera : mSceneCameras)
+			sceneCamera->ShowCameraGUI(shader, deltaTime);//Render Scene camera's GUI
+
+		mSceneCameras[mCurrentSceneCameraIndex]->ShowFrustrumGUI(shader, deltaTime);
 	}
 
 	void Scene::UpdateCameraRT(Ref<Camera> camera, Ref<Shader> shader, float deltaTime, bool isEditorCamera)
@@ -129,7 +186,7 @@ namespace TS_ENGINE
 		//mDirectionalLight->SetCommonParams(mCurrentShader, mDirectionalLight->GetNode()->GetTransform()->GetLocalPosition(),
 		//	mDirectionalLight->GetNode()->GetTransform()->GetForward(), Vector3(0.5f), Vector3(0.5f), Vector3(0.5f));
 
-		// Camera And Skybox Render		
+		// Camera And Skybox Render (To render skybox without distance dependency)		
 		camera->SetIsDistanceIndependent(true);
 		camera->Update(shader, deltaTime);				
 		mSkyboxNode->Update(shader, deltaTime);

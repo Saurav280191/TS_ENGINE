@@ -11,7 +11,7 @@ namespace TS_ENGINE {
 		Camera(name)
 	{
 		mCameraNode = CreateRef<Node>();
-		mCameraNode->SetNodeRef(mCameraNode);
+		mCameraNode->SetNodeRef(mCameraNode);		
 		//mCameraNode->SetName(name);
 		mCameraType = Type::SCENECAMERA;
 		mEditorCamera = editorCamera;
@@ -94,14 +94,6 @@ namespace TS_ENGINE {
 
 	void SceneCamera::Update(Ref<Shader> shader, float deltaTime)
 	{
-#ifdef TS_ENGINE_EDITOR
-		if (mEditorCamera)
-		{
-			mSceneCameraGuiNode->GetTransform()->LookAt(mCameraNode, mEditorCamera->GetNode()->GetTransform());
-			mSceneCameraFrustrumNode->GetTransform()->Follow(mCameraNode);
-		}
-#endif
-
 		mViewMatrix = mCameraNode->GetTransform()->GetGlobalTransformationMatrix();
 		mViewMatrix = glm::inverse(mViewMatrix);
 
@@ -118,6 +110,23 @@ namespace TS_ENGINE {
 		}
 	}
 
+	void SceneCamera::ShowCameraGUI(Ref<Shader> shader, float deltaTime)
+	{
+#ifdef TS_ENGINE_EDITOR
+		if (mEditorCamera)
+		{
+			mSceneCameraGuiNode->GetTransform()->LookAt(mCameraNode, mEditorCamera->GetNode()->GetTransform());
+			mSceneCameraFrustrumNode->GetTransform()->Follow(mCameraNode);
+		}
+#endif
+		mSceneCameraGuiNode->Update(shader, deltaTime);		
+	}
+
+	void SceneCamera::ShowFrustrumGUI(Ref<Shader> shader, float deltaTime)
+	{
+		mSceneCameraFrustrumNode->Update(shader, deltaTime);
+	}
+
 	bool SceneCamera::IsSceneCameraGuiSelected(int entityID)
 	{
 		if (entityID == mSceneCameraGuiNode->GetEntity()->GetEntityID())
@@ -129,11 +138,5 @@ namespace TS_ENGINE {
 	void SceneCamera::DeleteMeshes()
 	{
 
-	}
-
-	void SceneCamera::RenderGui(Ref<Shader> shader, float deltaTime)
-	{
-		mSceneCameraFrustrumNode->Update(shader, deltaTime);
-		mSceneCameraGuiNode->Update(shader, deltaTime);		
 	}
 }
