@@ -26,9 +26,35 @@ namespace TS_ENGINE
 		sceneCamera->SetPerspective(Camera::Perspective(45.0f, 1.77f, 1.0f, 20.0f));
 		sceneCamera->CreateFramebuffer(800, 600);
 		sceneCamera->Initialize();
+		sceneCamera->GetNode()->SetSceneCamera(sceneCamera);
 		sceneCamera->GetNode()->SetParent(scene->GetSceneNode());
 		sceneCamera->GetNode()->Initialize(name, EntityType::CAMERA);
 		return sceneCamera;
+	}
+
+	Ref<SceneCamera> Factory::InstantitateDuplicateSceneCamera(Ref<SceneCamera> sceneCamera)
+	{
+		Scene* scene = SceneManager::GetInstance()->GetCurrentScene().get();
+
+#ifdef TS_ENGINE_EDITOR
+		Ref<SceneCamera> duplicateSceneCamera = CreateRef<SceneCamera>("SceneCamera", scene->GetEditorCamera());
+#else
+		Ref<SceneCamera> duplicateSceneCamera = CreateRef<SceneCamera>("SceneCamera");
+#endif
+		duplicateSceneCamera->SetPerspective(sceneCamera->GetPerspective());
+		duplicateSceneCamera->CreateFramebuffer(sceneCamera->GetFramebuffer()->GetSpecification().Width, sceneCamera->GetFramebuffer()->GetSpecification().Height);
+		duplicateSceneCamera->Initialize();
+		duplicateSceneCamera->GetNode()->SetSceneCamera(duplicateSceneCamera);
+		duplicateSceneCamera->GetNode()->SetParent(sceneCamera->GetNode()->GetParentNode());
+		duplicateSceneCamera->GetNode()->Initialize(sceneCamera->GetNode()->GetEntity()->GetName() + " - Copy", EntityType::CAMERA);
+
+		duplicateSceneCamera->GetNode()->GetTransform()->SetLocalPosition(sceneCamera->GetNode()->GetTransform()->GetLocalPosition());
+		duplicateSceneCamera->GetNode()->GetTransform()->SetLocalEulerAngles(sceneCamera->GetNode()->GetTransform()->GetLocalEulerAngles());
+		duplicateSceneCamera->GetNode()->GetTransform()->SetLocalScale(sceneCamera->GetNode()->GetTransform()->GetLocalScale());
+		duplicateSceneCamera->GetNode()->InitializeTransformMatrices();
+
+		scene->AddSceneCamera(duplicateSceneCamera);
+		return duplicateSceneCamera;
 	}
 
 	Ref<Node> Factory::InstantiateLine(const std::string& name, Ref<Node> parentNode, const std::vector<Vector3>& points)

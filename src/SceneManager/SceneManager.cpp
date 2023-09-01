@@ -52,45 +52,11 @@ namespace TS_ENGINE
 		}
 	}
 
-	/*void SceneManager::Initialize()
-	{
-		if (mCurrentScene)
-		{
-			mCurrentScene->Initialize();
-		}
-	}*/
-
-	/*void SceneManager::Update(float deltaTime)
-	{
-		if (mCurrentScene)
-		{
-			mCurrentScene->Update(deltaTime);
-		}
-	}*/
-
-	/*void SceneManager::Render(ShaderManager::ShaderProgram* shaderProgram, const Matrix4& viewMatrix, const Matrix4& projectionMatrix)
-	{
-		if (mCurrentScene)
-		{
-			mCurrentScene->Render(shaderProgram, viewMatrix, projectionMatrix);
-		}
-	}*/
-
-	/*bool SceneManager::HasSiblingWithSameName(Node* parentNode, const char* name)
-	{
-		for (auto i : parentNode->GetChildren())
-		{
-			if(strcmp(i->GetName(), name) == 0)
-				return true;
-		}
-		return false;
-	}*/
-
 	void SceneManager::SaveCurrentScene()
 	{
-		/*if (mCurrentScene)		
+		if (mCurrentScene)		
 			mSceneSerializer->Save(mCurrentScene);		
 		else		
-			TS_CORE_ERROR("Current scene is not set!");	*/	
+			TS_CORE_ERROR("Current scene is not set!");
 	}
 }

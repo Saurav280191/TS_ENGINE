@@ -8,10 +8,43 @@ namespace TS_ENGINE
 	void SceneSerializer::Save(Ref<Scene> scene)
 	{
 		nlohmann::json json;
-		std::string sceneName = scene->GetSceneNode()->GetName();
+		std::string sceneName = scene->GetSceneNode()->GetEntity()->GetName();
 
 		//Scene name
 		json["Scene"][sceneName]["Name"] = sceneName;
+
+		//Editor Camera
+		{
+			//Transform
+			json["Scene"][sceneName]["EditorCamera"]["Transform"] = {
+				{ "LocalPosition", {scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalPosition().x, scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalPosition().y, scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalPosition().z}},
+				{ "LocalEulerAngles", {scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalEulerAngles().x, scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalEulerAngles().y, scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalEulerAngles().z}},
+				{ "LocalScale", {scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalScale().x, scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalScale().y, scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalScale().z}}
+			};
+
+			//Projection
+			json["Scene"][sceneName]["EditorCamera"]["Projection"] = {
+				{"fov", scene->GetEditorCamera()->GetPerspective().fov},
+				{"aspectRatio", scene->GetEditorCamera()->GetPerspective().aspectRatio},
+				{"zNear", scene->GetEditorCamera()->GetPerspective().zNear},
+				{"zFar", scene->GetEditorCamera()->GetPerspective().zFar},
+			};
+		}
+
+		//Scene cameras
+		{
+			for (int i = 0; i < scene->GetSceneCameras().size(); i++)
+			{
+				json["Scene"][sceneName]["SceneCameras"]["Name"] = scene->GetSceneCameras()[i]->GetNode()->GetEntity()->GetName();
+
+				json["Scene"][sceneName]["SceneCameras"]["Transform"] =
+				{
+					{ "LocalPosition", { scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalPosition().x, scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalPosition().y, scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalPosition().z} },
+					{ "LocalEulerAngles", { scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalEulerAngles().x, scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalEulerAngles().y, scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalEulerAngles().z} },
+					{ "LocalScale", { scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalScale().x, scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalScale().y, scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalScale().z} },
+				};
+			}
+		}
 
 		//Recursively iterate through scene node children and serialize them	
 		for (auto& child : scene->GetSceneNode()->GetChildren())
@@ -24,74 +57,66 @@ namespace TS_ENGINE
 
 	nlohmann::json::value_type SceneSerializer::SerializeNode(nlohmann::json::value_type jNode, Ref<Node> node)
 	{
-		const char* nodeName = node->GetName().c_str();
+		const char* nodeName = node->GetEntity()->GetName().c_str();
 
 		jNode[nodeName]["Name"] = nodeName;
 
-		switch (node->GetEntityType())
+		switch (node->GetEntity()->GetEntityType())
 		{
-		case NODE:
+		case PRIMITIVE:
 		{
-
-		}
-		break;
-
-		case GAMEOBJECT:
-		{
-			jNode[node->GetName()]["Type"] = "GameObject";
-
-			jNode[node->GetName()]["GameObject"];
-			jNode[node->GetName()]["GameObject"]["Name"] = node->GetAttachedObject()->GetName();
+			jNode[nodeName]["Type"] = "Primitive";
+			jNode[nodeName]["HasMeshes"] = "True";
 
 			/*switch (node->GetAttachedGameObject()->GetPrimitiveType())
 			{
 			case GameObject::PrimitiveType::QUAD:
 			{
-				jNode[node->GetName()]["GameObject"]["Type"] = "QUAD";
+				jNode[nodeName]["GameObject"]["Type"] = "QUAD";
 
 			}
 			break;
 
 			case GameObject::PrimitiveType::CUBE:
 			{
-				jNode[node->GetName()]["GameObject"]["Type"] = "CUBE";
+				jNode[nodeName]["GameObject"]["Type"] = "CUBE";
 			}
 			break;
 
 			case GameObject::PrimitiveType::SPHERE:
 			{
-				jNode[node->GetName()]["GameObject"]["Type"] = "SPHERE";
+				jNode[nodeName]["GameObject"]["Type"] = "SPHERE";
 			}
 			break;
 
 			case GameObject::PrimitiveType::CYLINDER:
 			{
-				jNode[node->GetName()]["GameObject"]["Type"] = "CYLINDER";
+				jNode[nodeName]["GameObject"]["Type"] = "CYLINDER";
 			}
 			break;
 
 			case GameObject::PrimitiveType::CONE:
 			{
-				jNode[node->GetName()]["GameObject"]["Type"] = "CONE";
+				jNode[nodeName]["GameObject"]["Type"] = "CONE";
 			}
 			break;
 
 			case GameObject::PrimitiveType::MODEL:
 			{
-				jNode[node->GetName()]["GameObject"]["Type"] = "MODEL";
+				jNode[nodeName]["GameObject"]["Type"] = "MODEL";
 			}
 			break;
 
 			case GameObject::PrimitiveType::EMPTY:
 			{
-				jNode[node->GetName()]["GameObject"]["Type"] = "EMPTY";
+				jNode[nodeName]["GameObject"]["Type"] = "EMPTY";
 			}
 			break;
 			}*/
 
-			//jNode[node->GetName()]["Object"]["IsRendererActive"] = node->GetAttachedObject()->IsMeshRendererActive;
+			//jNode[nodeName]["Object"]["IsRendererActive"] = node->GetAttachedObject()->IsMeshRendererActive;
 
-			//jNode[node->GetName()]["GameObject"]["MeshRenderer"]["MaterialProperties"] =
+			//jNode[nodeName]["GameObject"]["MeshRenderer"]["MaterialProperties"] =
 			{
 				//{"Name", node->GetAttachedObject()->GetMeshRenderer()->GetMaterial()->GetMaterialProperties()->GetName()},
 
@@ -129,20 +154,21 @@ namespace TS_ENGINE
 		}
 		break;
 
-		case LIGHT:
+		case MODEL:
 		{
-
+			jNode[nodeName]["Type"] = "Model";
+			jNode[nodeName]["HasMeshes"] = "True";
 		}
 		break;
 
 		case CAMERA:
 		{
-			jNode[node->GetName()] = {
+			jNode[nodeName] = {
 			{ "Type", "Camera"},
 
-			//{ "ProjectionType", node->GetAttachedCamera()->GetProjectionType() },
+			/*{ "ProjectionType", node->GetAttachedCamera()->GetProjectionType() },
 
-			/*{ "Perspective", 
+			{ "Perspective",
 				{
 							{"fov", node->GetAttachedCamera()->GetPerspective().fov},
 							{"aspectRatio", node->GetAttachedCamera()->GetPerspective().aspectRatio},
@@ -150,20 +176,37 @@ namespace TS_ENGINE
 							{"zFar", node->GetAttachedCamera()->GetPerspective().zFar}
 				}
 			},*/
-
 			};
 		}
 		break;
 
-		case DEFAULT:
+		case SKYBOX:
 		{
-			jNode[node->GetName()]["Type"] = "DEFAULT";
+
+		}
+		break;
+
+		case SCENE:
+		{
+
+		}
+		break;
+
+		case LIGHT:
+		{
+
+		}
+		break;
+
+		case EMPTY:
+		{
+			jNode[nodeName]["Type"] = "DEFAULT";
 		}
 		break;
 		}
 
 		//Transform
-		jNode[node->GetName()]["Transform"] =
+		jNode[nodeName]["Transform"] =
 		{
 			{"LocalPosition", {node->GetTransform()->GetLocalPosition().x, node->GetTransform()->GetLocalPosition().y, node->GetTransform()->GetLocalPosition().z}},
 			{"LocalEulerAngles", {node->GetTransform()->GetLocalEulerAngles().x, node->GetTransform()->GetLocalEulerAngles().y, node->GetTransform()->GetLocalEulerAngles().z}},
@@ -173,7 +216,7 @@ namespace TS_ENGINE
 		for (int i = 0; i < node->GetChildren().size(); i++)
 		{
 			if (node->GetChildren()[i]->IsVisibleInEditor())
-				jNode[node->GetName()] = SerializeNode(jNode[node->GetName()], node->GetChildren()[i]);
+				jNode[nodeName] = SerializeNode(jNode[nodeName], node->GetChildren()[i]);
 		}
 
 		return jNode;
@@ -263,7 +306,7 @@ namespace TS_ENGINE
 		}
 
 		//Set node name
-		node->SetName(name.c_str());
+		//node->GetEntity()->SetName(name.c_str());
 
 		//Set node tansform
 		node->GetTransform()->SetLocalPosition(localPosition);

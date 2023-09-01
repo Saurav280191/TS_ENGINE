@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+
 //GameObject and primitives
 #include "Primitive/Quad.h"
 #include "Primitive/Cube.h"
@@ -9,21 +10,22 @@
 #include "Primitive/Model.h"
 #include "ModelLoader.h"
 
-//Cameras
-#include "Renderer/Camera/SceneCamera.h"
-
-#include "SceneManager/SceneManager.h"
 #include "SceneManager/Node.h"
+#include "SceneManager/SceneManager.h"
+#include "Renderer/Camera/SceneCamera.h"
 #include "Renderer/Lighting/Light.h"
 
 namespace TS_ENGINE
 {
+	class Scene;
+	class SceneCamera;
 	class Factory
 	{
 	public:
 		static Factory* GetInstance();
 
 		Ref<SceneCamera> InstantitateSceneCamera(const std::string& name, Scene* scene);
+		Ref<SceneCamera> InstantitateDuplicateSceneCamera(Ref<SceneCamera> sceneCamera);
 		
 		Ref<Node> InstantiateLine(const std::string& name, Ref<Node> parentNode, const std::vector<Vector3>& points);
 		Ref<Node> InstantiateQuad(const std::string& name, Ref<Node> parentNode);

@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene.h"
-//#include "SceneSerializer.h"
+#include "SceneSerializer.h"
 
 namespace TS_ENGINE
 {
@@ -11,10 +11,7 @@ namespace TS_ENGINE
 	public:
 		static SceneManager* GetInstance();
 		void SetCurrentScene(Ref<Scene> scene);
-		//void Initialize();
-		//void Update(float deltaTime);	
-		//void Render(ShaderManager::ShaderProgram* shaderProgram, const Matrix4& viewMatrix, const Matrix4& projectionMatrix);
-		//bool HasSiblingWithSameName(Node* parentNode, const char* name);
+
 		void SaveCurrentScene();
 		Ref<Scene> GetCurrentScene();
 	private:
@@ -23,7 +20,7 @@ namespace TS_ENGINE
 		SceneManager();
 		~SceneManager();
 
-		//Ref<SceneSerializer> mSceneSerializer;
+		Ref<SceneSerializer> mSceneSerializer;
 		Ref<Node> GetCurrentSceneNode();
 	};
 }
