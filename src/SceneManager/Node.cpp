@@ -285,6 +285,12 @@ namespace TS_ENGINE
 		mTransform->LookAt(mParentNode, targetNode->GetTransform());
 	}
 
+	void Node::ReplaceMesh(Ref<Mesh> mesh)
+	{
+		mMeshes.clear();
+		mMeshes.push_back(mesh);
+	}
+
 	void Node::ChangeMesh(PrimitiveType primitiveType)
 	{		
 		Factory::GetInstance()->ChangeMeshForNode(mNodeRef, primitiveType);		

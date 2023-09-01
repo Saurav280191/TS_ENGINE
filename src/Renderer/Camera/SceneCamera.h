@@ -26,12 +26,12 @@ namespace TS_ENGINE {
 		void ShowFrustrumGUI(Ref<Shader> shader, float deltaTime);
 
 		bool IsSceneCameraGuiSelected(int entityID);
+		void RefreshFrustrumGUI();
 
 		Ref<Node> GetSceneCameraGui() { return mSceneCameraGuiNode; }
 		virtual Ref<Node> GetNode() override { return mCameraNode; }
 	private:
-		Ref<Shader> mSkyboxShader;
-		Ref<Material> mSkyboxMat;
+	private:
 #ifdef TS_ENGINE_EDITOR
 		Ref<Camera> mEditorCamera;
 		Ref<Texture2D> mCameraIcon;

@@ -56,6 +56,7 @@ namespace TS_ENGINE
 
 		void LookAt(Ref<Node> targetNode);
 
+		void ReplaceMesh(Ref<Mesh> mesh);
 		void ChangeMesh(PrimitiveType primitiveType);
 
 		void AddMesh(Ref<Mesh> mesh);

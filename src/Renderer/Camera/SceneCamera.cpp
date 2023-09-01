@@ -11,8 +11,7 @@ namespace TS_ENGINE {
 		Camera(name)
 	{
 		mCameraNode = CreateRef<Node>();
-		mCameraNode->SetNodeRef(mCameraNode);		
-		//mCameraNode->SetName(name);
+		mCameraNode->SetNodeRef(mCameraNode);
 		mCameraType = Type::SCENECAMERA;
 		mEditorCamera = editorCamera;
 	}
@@ -69,11 +68,17 @@ namespace TS_ENGINE {
 				projViewIMat * glm::vec4(1, -1, 1, 1),//5
 			};
 
+			//Multiplying the point with inverse of mCameraNode's transform is important because it will be following mCamerNode
+			for (auto& frustrumPoints : homogeneousFrustrumPoints)
+			{
+				frustrumPoints = glm::inverse(mCameraNode->GetTransform()->GetGlobalTransformationMatrix()) * frustrumPoints;
+			}
+
 			std::vector<Vector3> nonHomogeneousFrustrumPoints(homogeneousFrustrumPoints.size());
-			
+
 			for (int i = 0; i < homogeneousFrustrumPoints.size(); i++)
 				nonHomogeneousFrustrumPoints[i] = Vector3(homogeneousFrustrumPoints[i]) / homogeneousFrustrumPoints[i].w;
-			
+
 			mSceneCameraFrustrumNode = Factory::GetInstance()->InstantiateLine("SceneCameraFrustrum", nullptr, nonHomogeneousFrustrumPoints);
 			mSceneCameraFrustrumNode->GetMeshes()[0]->GetMaterial()->DisableDepthTest();
 		}
@@ -90,6 +95,68 @@ namespace TS_ENGINE {
 			mSceneCameraGuiNode->GetTransform()->SetLocalScale(-1.0f, 1.0f, 1.0f);
 		}		
 #endif
+	}
+
+	void SceneCamera::RefreshFrustrumGUI()
+	{
+		Matrix4 projViewIMat = glm::inverse(GetProjectionViewMatrix());
+
+		std::vector<Vector4> homogeneousFrustrumPoints = {
+			projViewIMat * glm::vec4(-1, -1, -1, 1),//0
+			projViewIMat * glm::vec4(-1, -1, 1, 1),//1
+
+			projViewIMat * glm::vec4(-1, -1, 1, 1),//1
+			projViewIMat * glm::vec4(-1, 1, 1, 1),//2
+
+			projViewIMat * glm::vec4(-1, 1, 1, 1),//2
+			projViewIMat * glm::vec4(-1, 1, -1, 1),//3
+
+			projViewIMat * glm::vec4(-1, 1, -1, 1),//3
+			projViewIMat * glm::vec4(-1, -1, -1, 1),//0
+
+			projViewIMat * glm::vec4(1, -1, -1, 1),//4
+			projViewIMat * glm::vec4(1, -1, 1, 1),//5
+
+			projViewIMat * glm::vec4(1, -1, -1, 1),//4
+			projViewIMat * glm::vec4(1, 1, -1, 1),//7
+
+			projViewIMat * glm::vec4(1, 1, 1, 1),//6
+			projViewIMat * glm::vec4(1, 1, -1, 1),//7
+
+			projViewIMat * glm::vec4(1, -1, 1, 1),//5
+			projViewIMat * glm::vec4(1, 1, 1, 1),//6
+
+			projViewIMat * glm::vec4(-1, 1, -1, 1),//3
+			projViewIMat * glm::vec4(1, 1, -1, 1),//7
+
+			projViewIMat * glm::vec4(-1, -1, -1, 1),//0
+			projViewIMat * glm::vec4(1, -1, -1, 1),//4
+
+			projViewIMat * glm::vec4(-1, 1, 1, 1),//2
+			projViewIMat * glm::vec4(1, 1, 1, 1),//6
+
+			projViewIMat * glm::vec4(-1, -1, 1, 1),//1
+			projViewIMat * glm::vec4(1, -1, 1, 1),//5
+		};
+
+		//Multiplying the point with inverse of mCameraNode's transform is important because it will be following mCamerNode
+		for (auto& frustrumPoints : homogeneousFrustrumPoints)
+		{
+			frustrumPoints = glm::inverse(mCameraNode->GetTransform()->GetGlobalTransformationMatrix()) * frustrumPoints;
+		}
+
+		std::vector<Vector3> nonHomogeneousFrustrumPoints(homogeneousFrustrumPoints.size());
+		
+		for (int i = 0; i < homogeneousFrustrumPoints.size(); i++)
+		{
+			nonHomogeneousFrustrumPoints[i] = Vector3(homogeneousFrustrumPoints[i]) / homogeneousFrustrumPoints[i].w;			
+		}
+
+		Ref<Mesh> mesh = CreateRef<Line>()->GetMesh(nonHomogeneousFrustrumPoints);
+		mesh->SetName("SceneCameraFrustrum");
+
+		mSceneCameraFrustrumNode->ReplaceMesh(mesh);
+		mSceneCameraFrustrumNode->GetMeshes()[0]->GetMaterial()->DisableDepthTest();
 	}
 
 	void SceneCamera::Update(Ref<Shader> shader, float deltaTime)

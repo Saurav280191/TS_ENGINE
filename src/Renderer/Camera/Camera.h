@@ -63,8 +63,8 @@ namespace TS_ENGINE
 		};
 		enum ProjectionType
 		{
-			ORTHOGRAPHIC,
-			PERSPECTIVE
+			PERSPECTIVE,
+			ORTHOGRAPHIC
 		};
 
 		Camera(const std::string& name);
@@ -76,11 +76,16 @@ namespace TS_ENGINE
 
 		void CreateFramebuffer(uint32_t _width, uint32_t _height);
 
+		void SetProjectionType(ProjectionType projectionType);
 		void SetOrthographic(float left, float right, float top, float bottom, float zNear, float zFar);
 		void SetOrthographic(Orthographic orthographic);
 		void SetPerspective(float fov, float aspectRatio, float zNear, float zFar);
 		void SetPerspective(Perspective perspective);
 		void SetIsDistanceIndependent(bool distanceIndependent);
+		void SetFieldOfView(float fov);
+		void SetNearPlane(float zNear);
+		void SetFarPlane(float zFar);
+		void SetOrthographicSize(float size);
 
 		//Getters
 		const ProjectionType Camera::GetProjectionType() const { return mProjectionType; }
@@ -88,8 +93,8 @@ namespace TS_ENGINE
 		const Perspective& Camera::GetPerspective()	const { return mPerspective; }
 		const Matrix4 GetProjectionMatrix() const { return mProjectionMatrix; }
 		const Matrix4 GetViewMatrix() const { return mViewMatrix; }
-		const Matrix4 GetProjectionViewMatrix() const;
-		
+		const Matrix4 GetProjectionViewMatrix() const;		
+
 		const Ref<Framebuffer> GetFramebuffer() const { return mFramebuffer; }
 		virtual Ref<Node> GetNode() = 0;
 	protected:

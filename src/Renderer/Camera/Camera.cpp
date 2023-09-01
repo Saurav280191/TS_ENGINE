@@ -34,6 +34,20 @@ namespace TS_ENGINE {
 		mFramebuffer = TS_ENGINE::Framebuffer::Create(fbSpec);
 	}
 
+	void Camera::SetProjectionType(ProjectionType projectionType)
+	{
+		mProjectionType = projectionType;
+
+		if (mProjectionType == ProjectionType::PERSPECTIVE)
+		{
+			SetPerspective(60.0f, 1.77f, 0.5f, 50.0f);
+		}
+		else if (mProjectionType == ProjectionType::ORTHOGRAPHIC)
+		{
+			SetOrthographic(-5.0f, 5.0f, 5.0f, -5.0f, 0.5f, 50.0f);
+		}
+	}
+
 	void Camera::SetOrthographic(Orthographic orthographic)
 	{
 		mProjectionType = ProjectionType::ORTHOGRAPHIC;
@@ -51,13 +65,13 @@ namespace TS_ENGINE {
 	{
 		mProjectionType = ProjectionType::PERSPECTIVE;
 		mPerspective = perspective;
-		mProjectionMatrix = glm::perspective(perspective.fov, perspective.aspectRatio, perspective.zNear, perspective.zFar);
+		mProjectionMatrix = glm::perspective(glm::radians(perspective.fov), perspective.aspectRatio, perspective.zNear, perspective.zFar);
 	}
 	void Camera::SetPerspective(float fov, float aspectRatio, float zNear, float zFar)
 	{
 		mProjectionType = ProjectionType::PERSPECTIVE;
 		mPerspective = Perspective(fov, aspectRatio, zNear, zFar);
-		mProjectionMatrix = glm::perspective(fov, aspectRatio, zNear, zFar);
+		mProjectionMatrix = glm::perspective(glm::radians(fov), aspectRatio, zNear, zFar);
 	}
 	
 	void Camera::SetIsDistanceIndependent(bool distanceIndependent)
@@ -65,8 +79,43 @@ namespace TS_ENGINE {
 		mIsDistanceIndependent = distanceIndependent;
 	}
 
+	void Camera::SetFieldOfView(float fov)
+	{
+		mPerspective.fov = fov;
+		mProjectionMatrix = glm::perspective(glm::radians(mPerspective.fov), mPerspective.aspectRatio, mPerspective.zNear, mPerspective.zFar);
+	}
+
+	void Camera::SetNearPlane(float zNear)
+	{
+		mPerspective.zNear = zNear;
+		mOrthographic.zNear = zNear;
+
+		if (mProjectionType == ProjectionType::PERSPECTIVE)
+			mProjectionMatrix = glm::perspective(glm::radians(mPerspective.fov), mPerspective.aspectRatio, mPerspective.zNear, mPerspective.zFar);
+		else if (mProjectionType == ProjectionType::ORTHOGRAPHIC)
+			mProjectionMatrix = glm::ortho(mOrthographic.left, mOrthographic.right, mOrthographic.top, mOrthographic.bottom, mOrthographic.zNear, mOrthographic.zFar);
+	}
+
+	void Camera::SetFarPlane(float zFar)
+	{
+		mPerspective.zFar = zFar;
+		mOrthographic.zFar = zFar;
+
+		if(mProjectionType == ProjectionType::PERSPECTIVE)
+			mProjectionMatrix = glm::perspective(glm::radians(mPerspective.fov), mPerspective.aspectRatio, mPerspective.zNear, mPerspective.zFar);
+		else if(mProjectionType == ProjectionType::ORTHOGRAPHIC)
+			mProjectionMatrix = glm::ortho(mOrthographic.left, mOrthographic.right, mOrthographic.top, mOrthographic.bottom, mOrthographic.zNear, mOrthographic.zFar);
+	}
+
+	void Camera::SetOrthographicSize(float size)
+	{
+		mOrthographic.top = size;
+		mOrthographic.bottom = -size;
+		mProjectionMatrix = glm::ortho(mOrthographic.left, mOrthographic.right, mOrthographic.top, mOrthographic.bottom, mOrthographic.zNear, mOrthographic.zFar);
+	}
+
 	const Matrix4 Camera::GetProjectionViewMatrix() const 
 	{ 
 		return mProjectionMatrix * mViewMatrix; 
-	}
+	}	
 }

@@ -23,7 +23,7 @@ namespace TS_ENGINE
 #else
 		Ref<SceneCamera> sceneCamera = CreateRef<SceneCamera>("SceneCamera");
 #endif
-		sceneCamera->SetPerspective(Camera::Perspective(45.0f, 1.77f, 1.0f, 20.0f));
+		sceneCamera->SetPerspective(Camera::Perspective(60.0f, 1.77f, 0.5f, 50.0f));
 		sceneCamera->CreateFramebuffer(800, 600);
 		sceneCamera->Initialize();
 		sceneCamera->GetNode()->SetSceneCamera(sceneCamera);
