@@ -56,7 +56,7 @@ namespace TS_ENGINE
 
 		if (mLookAtTarget)
 		{
-			const Matrix4 lookAtRotationMatrix = TS_ENGINE::Utility::GetLookatAtRotationMatrix(m_Pos, mLookAtTarget->GetLocalPosition(), Vector3(0, 1, 0));
+			const Matrix4 lookAtRotationMatrix = Utility::GetLookatAtRotationMatrix(m_Pos, mLookAtTarget->GetLocalPosition(), Vector3(0, 1, 0));
 			m_GlobalTransformationMatrix = m_GlobalTransformationMatrix * lookAtRotationMatrix;
 
 			auto dd = Utility::Decompose(m_GlobalTransformationMatrix);
@@ -106,11 +106,19 @@ namespace TS_ENGINE
 	void Transform::SetLocalTransformationMatrix(Matrix4 transformationMatrix)
 	{
 		m_LocalTransformationMatrix = transformationMatrix;
+		
+		m_Right = GetRight();
+		m_Up = GetUp();
+		m_Forward = GetForward();
 	}
 
 	void Transform::SetGlobalTransformationMatrix(Matrix4 transformationMatrix)
 	{
 		m_GlobalTransformationMatrix = transformationMatrix;
+
+		m_Right = GetRight();
+		m_Up = GetUp();
+		m_Forward = GetForward();
 	}
 
 	void Transform::SetLocalPosition(const Vector3& newPosition)

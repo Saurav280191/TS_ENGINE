@@ -180,8 +180,8 @@ namespace TS_ENGINE {
 #ifdef TS_ENGINE_EDITOR
 		if (mEditorCamera)
 		{
-			mSceneCameraGuiNode->GetTransform()->LookAt(mCameraNode, mEditorCamera->GetNode()->GetTransform());
-			mSceneCameraFrustrumNode->GetTransform()->Follow(mCameraNode);
+			mSceneCameraFrustrumNode->GetTransform()->Follow(mCameraNode);// Frustrum
+			mSceneCameraGuiNode->GetTransform()->LookAt(mCameraNode, mEditorCamera->GetNode()->GetTransform());// CameraGUI
 		}
 #endif
 		mSceneCameraGuiNode->Update(shader, deltaTime);		
