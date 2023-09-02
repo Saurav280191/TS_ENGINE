@@ -22,9 +22,9 @@ namespace TS_ENGINE {
 		glTextureParameteri(mRendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	}
 
-	OpenGLTexture2D::OpenGLTexture2D(const std::string& path):
-		mPath(path)
+	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
 	{
+		mPath = path;
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(1);
 		

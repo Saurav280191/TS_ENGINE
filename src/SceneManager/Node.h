@@ -64,6 +64,8 @@ namespace TS_ENGINE
 		void RemoveAllMeshes();
 		bool HasMeshes();
 
+		void SetModelPath(std::string modelPath);
+
 		void PrintChildrenName();//Only for testing
 
 #ifdef TS_ENGINE_EDITOR
@@ -82,6 +84,7 @@ namespace TS_ENGINE
 		const size_t GetChildCount() const { return mChildren.size(); }
 		std::vector<Ref<Mesh>> GetMeshes() const { return mMeshes; }
 		Ref<SceneCamera> GetSceneCamera() { return mSceneCamera; }
+		std::string GetModelPath() { return mModelPath; }
 #pragma endregion
 
 	public:
@@ -98,6 +101,7 @@ namespace TS_ENGINE
 
 		std::vector<Ref<Node>> mSiblings = {};
 		std::vector<Ref<Mesh>> mMeshes;
+		std::string mModelPath;
 		Ref<SceneCamera> mSceneCamera;// Only used incase of scene camera node
 #ifdef TS_ENGINE_EDITOR
 		bool mIsVisibleInEditor = true;

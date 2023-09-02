@@ -31,11 +31,6 @@ namespace TS_ENGINE {
 			return mRendererID;
 		}
 
-		virtual const std::string& GetPath() const override
-		{
-			return mPath;
-		}
-
 		virtual void SetData(unsigned char* data, uint32_t size) override;
 		virtual void Bind(uint32_t slot) const override;
 		virtual void SetVerticalFlip(bool flip) const override;
@@ -62,7 +57,6 @@ namespace TS_ENGINE {
 	private:
 		unsigned char* data = nullptr;
 		std::vector<unsigned char> mPixels;
-		std::string mPath;
 		bool mIsLoaded = false;
 		uint32_t mWidth, mHeight, mChannels;
 		uint32_t mRendererID;

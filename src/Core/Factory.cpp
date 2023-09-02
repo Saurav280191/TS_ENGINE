@@ -148,6 +148,7 @@ namespace TS_ENGINE
 			mLoadedModelNodeMap.insert(std::pair<std::string, Ref<Node>>(modelPath, mModelNode));
 		}
 
+		mModelNode->SetModelPath(modelPath);
 		mModelNode->SetParent(parentNode);
 
 		return mModelNode;

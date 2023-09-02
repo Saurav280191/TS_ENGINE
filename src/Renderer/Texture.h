@@ -44,8 +44,15 @@ namespace TS_ENGINE {
 		{
 			return mTextureIdAndTexture2DMap;
 		}
+		
+		virtual const std::string& GetPath() const override
+		{
+			return mPath;
+		}
 	private:
 		static std::map<std::string, uint32_t> mTextureStrAndIdMap;
 		static std::map<uint32_t, Ref<TS_ENGINE::Texture2D>> mTextureIdAndTexture2DMap;
+	protected:
+		std::string mPath;
 	};
 }

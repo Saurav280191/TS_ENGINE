@@ -14,6 +14,7 @@ namespace TS_ENGINE
 		this->mTransform = CreateRef<Transform>();
 		this->mParentNode = nullptr;
 		this->mMeshes = {};
+		this->mModelPath = "";
 #ifdef TS_ENGINE_EDITOR
 		this->mIsVisibleInEditor = true;
 #endif
@@ -34,6 +35,7 @@ namespace TS_ENGINE
 		mParentNode->RemoveChild(mNodeRef);
 
 		mMeshes.clear();
+		this->mModelPath = "";
 
 		mTransform.reset();
 
@@ -52,6 +54,7 @@ namespace TS_ENGINE
 		Ref<Node> duplicateNode = CreateRef<Node>();	
 		duplicateNode->mNodeRef = duplicateNode;		
 		duplicateNode->mNodeRef->mMeshes = mNodeRef->mMeshes;
+		duplicateNode->mNodeRef->mModelPath = mNodeRef->mModelPath;
 		
 		duplicateNode->mNodeRef->mTransform = CreateRef<Transform>();
 		duplicateNode->mNodeRef->mTransform->m_Pos = mNodeRef->mTransform->m_Pos;
@@ -314,6 +317,11 @@ namespace TS_ENGINE
 	bool Node::HasMeshes()
 	{
 		return mMeshes.size() > 0 ? true : false;
+	}
+
+	void Node::SetModelPath(std::string modelPath)
+	{
+		mModelPath = modelPath;
 	}
 
 	void Node::PrintChildrenName()

@@ -91,6 +91,7 @@ namespace TS_ENGINE {
 		void Render(int entityID);
 		void Destroy();
 
+		const std::string GetName() const { return mName; }
 		std::vector<Vertex> GetVertices() { return mVertices; }
 		std::vector<Vertex> GetWorldSpaceVertices(Vector3 position, Vector3 eulerAngles, Vector3 scale);
 		std::vector<uint32_t> GetIndices() { return mIndices; }
