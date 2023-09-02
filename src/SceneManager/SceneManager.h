@@ -12,6 +12,7 @@ namespace TS_ENGINE
 		static SceneManager* GetInstance();
 		void SetCurrentScene(Ref<Scene> scene);
 
+		void CreateNewScene();
 		void SaveCurrentScene();
 		Ref<Scene> GetCurrentScene();
 	private:

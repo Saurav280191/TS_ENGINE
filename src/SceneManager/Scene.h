@@ -68,6 +68,7 @@ namespace TS_ENGINE {
 	class Camera;
 	class SceneCamera;
 
+
 	class Scene
 	{
 	public:
@@ -92,7 +93,7 @@ namespace TS_ENGINE {
 		Ref<SceneCamera> GetCurrentSceneCamera() { return mSceneCameras[mCurrentSceneCameraIndex]; }
 		int GetCurrentSceneCameraIndex() { return mCurrentSceneCameraIndex; }
 		std::vector<Ref<SceneCamera>> GetSceneCameras() { return mSceneCameras; }
-		size_t GetNumSceneCameras() { return mSceneCameras.size(); }
+		size_t GetNumSceneCameras() { return mSceneCameras.size(); }		
 #ifdef TS_ENGINE_EDITOR
 		Ref<EditorCamera> GetEditorCamera() { return mEditorCamera; }
 #endif
@@ -105,11 +106,11 @@ namespace TS_ENGINE {
 #endif
 		// Scene camera
 		std::vector<Ref<SceneCamera>> mSceneCameras = {};
-		int mCurrentSceneCameraIndex;
+		int mCurrentSceneCameraIndex = 0;
 
 		// Root node
 		Ref<Node> mSceneNode;
-		
+
 		// Skybox node
 		Ref<TS_ENGINE::Node> mSkyboxNode;
 		//ButtonHandler mBatchButtonHandler;		

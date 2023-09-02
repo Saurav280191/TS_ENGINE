@@ -52,6 +52,21 @@ namespace TS_ENGINE
 		}
 	}
 
+	void SceneManager::CreateNewScene()
+	{
+		Ref<EditorCamera> editorCamera = CreateRef<EditorCamera>("EditorCamera");
+		editorCamera->SetPerspective(TS_ENGINE::Camera::Perspective(60.0f, 1.77f, 0.1f, 1000.0f));
+		editorCamera->GetNode()->GetTransform()->SetLocalPosition(-0.738f, 5.788f, 14.731f);
+		editorCamera->GetNode()->GetTransform()->SetLocalEulerAngles(-18.102f, 0.066f, 0.0f);
+		editorCamera->CreateFramebuffer(1920, 1080);//Create framebuffer for editorCamera
+		editorCamera->Initialize();
+		editorCamera->GetNode()->InitializeTransformMatrices();
+
+		Ref<Scene> scene = CreateRef<Scene>("NewScene", editorCamera);
+
+		mCurrentScene = scene;
+	}
+
 	void SceneManager::SaveCurrentScene()
 	{
 		if (mCurrentScene)		
