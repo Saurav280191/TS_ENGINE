@@ -145,18 +145,16 @@ namespace TS_ENGINE {
 			frustrumPoints = glm::inverse(mCameraNode->GetTransform()->GetGlobalTransformationMatrix()) * frustrumPoints;
 		}
 
-		std::vector<Vector3> nonHomogeneousFrustrumPoints(homogeneousFrustrumPoints.size());
+		std::vector<Vertex> nonHomogeneousFrustrumVertices(homogeneousFrustrumPoints.size());
 		
 		for (int i = 0; i < homogeneousFrustrumPoints.size(); i++)
-		{
-			nonHomogeneousFrustrumPoints[i] = Vector3(homogeneousFrustrumPoints[i]) / homogeneousFrustrumPoints[i].w;			
+		{					
+			Vector3 pos = Vector3(homogeneousFrustrumPoints[i]) / homogeneousFrustrumPoints[i].w;
+			nonHomogeneousFrustrumVertices[i].position = Vector4(pos, 1);
 		}
 
-		Ref<Mesh> mesh = CreateRef<Line>()->GetMesh(nonHomogeneousFrustrumPoints);
-		mesh->SetName("SceneCameraFrustrum");
-
-		mSceneCameraFrustrumNode->ReplaceMesh(mesh);
-		mSceneCameraFrustrumNode->GetMeshes()[0]->GetMaterial()->DisableDepthTest();
+		mSceneCameraFrustrumNode->GetMeshes()[0]->SetVertices(nonHomogeneousFrustrumVertices);
+		mSceneCameraFrustrumNode->GetMeshes()[0]->Create(DrawMode::LINE);
 	}
 
 	void SceneCamera::Update(Ref<Shader> shader, float deltaTime)
