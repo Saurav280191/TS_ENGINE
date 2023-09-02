@@ -44,23 +44,38 @@ namespace TS_ENGINE {
 		}
 		else if (mProjectionType == ProjectionType::ORTHOGRAPHIC)
 		{
-			SetOrthographic(-5.0f, 5.0f, 5.0f, -5.0f, 0.5f, 50.0f);
+			SetOrthographic(5.0f, 0.5f, 50.0f);
 		}
 	}
 
-	void Camera::SetOrthographic(Orthographic orthographic)
+	/*void Camera::SetOrthographic(Orthographic orthographic)
 	{
 		mProjectionType = ProjectionType::ORTHOGRAPHIC;
 		mOrthographic = orthographic;
 		mProjectionMatrix = glm::ortho(orthographic.left, orthographic.right, orthographic.top,
 			orthographic.bottom, orthographic.zNear, orthographic.zFar);
-	}
-	void Camera::SetOrthographic(float left, float right, float top, float bottom, float zNear, float zFar)
+	}*/
+	
+	/*void Camera::SetOrthographic(float left, float right, float top, float bottom, float zNear, float zFar)
 	{
 		mProjectionType = ProjectionType::ORTHOGRAPHIC;
 		mOrthographic = Orthographic(left, right, top, bottom, zNear, zFar);
 		mProjectionMatrix = glm::ortho(left, right, top, bottom, zNear, zFar);
+	}*/
+	
+	void Camera::SetOrthographic(float size, float zNear, float zFar)
+	{
+		mProjectionType = ProjectionType::ORTHOGRAPHIC;
+		mOrthographic.top = size;
+		mOrthographic.bottom = -size;
+		mOrthographic.left = -size / 0.5625f;// 9/16 = 0.5625f
+		mOrthographic.right = size / 0.5625f;
+		mOrthographic.zNear = zNear;
+		mOrthographic.zFar = zFar;
+
+		mProjectionMatrix = glm::ortho(mOrthographic.left, mOrthographic.right, mOrthographic.bottom, mOrthographic.top, mOrthographic.zNear, mOrthographic.zFar);
 	}
+
 	void Camera::SetPerspective(Perspective perspective)
 	{
 		mProjectionType = ProjectionType::PERSPECTIVE;
@@ -111,7 +126,9 @@ namespace TS_ENGINE {
 	{
 		mOrthographic.top = size;
 		mOrthographic.bottom = -size;
-		mProjectionMatrix = glm::ortho(mOrthographic.left, mOrthographic.right, mOrthographic.top, mOrthographic.bottom, mOrthographic.zNear, mOrthographic.zFar);
+		mOrthographic.left = -size / 0.5625f;// 9/16 = 0.5625f
+		mOrthographic.right = size / 0.5625f;
+		mProjectionMatrix = glm::ortho(mOrthographic.left, mOrthographic.right, mOrthographic.bottom, mOrthographic.top, mOrthographic.zNear, mOrthographic.zFar);
 	}
 
 	const Matrix4 Camera::GetProjectionViewMatrix() const 

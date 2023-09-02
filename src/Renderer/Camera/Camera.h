@@ -77,8 +77,9 @@ namespace TS_ENGINE
 		void CreateFramebuffer(uint32_t _width, uint32_t _height);
 
 		void SetProjectionType(ProjectionType projectionType);
-		void SetOrthographic(float left, float right, float top, float bottom, float zNear, float zFar);
-		void SetOrthographic(Orthographic orthographic);
+		//void SetOrthographic(float left, float right, float top, float bottom, float zNear, float zFar);
+		//void SetOrthographic(Orthographic orthographic);
+		void SetOrthographic(float size, float zNear, float zFar);
 		void SetPerspective(float fov, float aspectRatio, float zNear, float zFar);
 		void SetPerspective(Perspective perspective);
 		void SetIsDistanceIndependent(bool distanceIndependent);
