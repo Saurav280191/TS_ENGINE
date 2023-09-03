@@ -25,8 +25,10 @@ namespace TS_ENGINE
 			//Projection
 			if (scene->GetEditorCamera()->GetProjectionType() == Camera::ProjectionType::PERSPECTIVE)// Perspective 
 			{
-				json["Scene"]["EditorCamera"]["Projection"] = {
-					{"ProjectionType", "Perspective"},
+				json["Scene"]["EditorCamera"]["ProjectionType"] = Camera::ProjectionType::PERSPECTIVE,
+
+				json["Scene"]["EditorCamera"]["Projection"] = 
+				{
 					{"fov", scene->GetEditorCamera()->GetPerspective().fov},
 					{"aspectRatio", scene->GetEditorCamera()->GetPerspective().aspectRatio},
 					{"zNear", scene->GetEditorCamera()->GetPerspective().zNear},
@@ -35,8 +37,10 @@ namespace TS_ENGINE
 			}
 			else if (scene->GetEditorCamera()->GetProjectionType() == Camera::ProjectionType::ORTHOGRAPHIC) // Orthographic
 			{
-				json["Scene"]["EditorCamera"]["Projection"] = {
-					{"ProjectionType", "Orthographic"},
+				json["Scene"]["EditorCamera"]["ProjectionType"] = Camera::ProjectionType::ORTHOGRAPHIC,
+
+				json["Scene"]["EditorCamera"]["Projection"] = 
+				{
 					{"size", scene->GetEditorCamera()->GetOrthographic().top},
 					{"zNear", scene->GetEditorCamera()->GetOrthographic().zNear},
 					{"zFar", scene->GetEditorCamera()->GetOrthographic().zFar},
@@ -62,8 +66,9 @@ namespace TS_ENGINE
 				// Projection
 				if (scene->GetSceneCameras()[i]->GetProjectionType() == Camera::ProjectionType::PERSPECTIVE)// Perspective 
 				{
-					json["Scene"]["SceneCameras"][i]["Projection"] = {
-						{"ProjectionType", "Perspective"},
+					json["Scene"]["SceneCameras"][i]["ProjectionType"] = Camera::ProjectionType::PERSPECTIVE,
+
+					json["Scene"]["SceneCameras"][i]["Projection"] = {						
 						{"fov", scene->GetSceneCameras()[i]->GetPerspective().fov},
 						{"aspectRatio", scene->GetSceneCameras()[i]->GetPerspective().aspectRatio},
 						{"zNear", scene->GetSceneCameras()[i]->GetPerspective().zNear},
@@ -72,8 +77,9 @@ namespace TS_ENGINE
 				}
 				else if (scene->GetSceneCameras()[i]->GetProjectionType() == Camera::ProjectionType::ORTHOGRAPHIC) // Orthographic
 				{
+					json["Scene"]["SceneCameras"][i]["ProjectionType"] = Camera::ProjectionType::ORTHOGRAPHIC,
+					
 					json["Scene"]["SceneCameras"][i]["Projection"] = {
-						{"ProjectionType", "Orthographic"},
 						{"size", scene->GetSceneCameras()[i]->GetOrthographic().top},
 						{"zNear", scene->GetSceneCameras()[i]->GetOrthographic().zNear},
 						{"zFar", scene->GetSceneCameras()[i]->GetOrthographic().zFar},
@@ -99,81 +105,96 @@ namespace TS_ENGINE
 		TS_CORE_TRACE("Loading: {0}", savedScenePath);
 		nlohmann::json jsonData = GetJsonDataFromFile(savedScenePath);
 
+		// Scene Name
 		std::string sceneName = jsonData["Scene"]["Name"];
 
-		// Access and use the JSON data
-		//std::string name = jsonData["name"];
-		//int age = jsonData["age"];
-		//bool isActive = jsonData["isActive"];
-
-		// Print the data
-		//std::cout << "Name: " << name << std::endl;
-		//std::cout << "Age: " << age << std::endl;
-		//std::cout << "Active: " << (isActive ? "Yes" : "No") << std::endl;
+		// Editor Camera
+		Camera::ProjectionType projectionType = jsonData["Scene"]["EditorCamera"]["ProjectionType"];
 		
+		Ref<EditorCamera> editorCamera = CreateRef<EditorCamera>("EditorCamera");
+		
+		// Editor Camera Perspective
+		if (projectionType == Camera::ProjectionType::PERSPECTIVE)
+		{
+			float fov = jsonData["Scene"]["EditorCamera"]["Projection"]["fov"];
+			float aspectRatio = jsonData["Scene"]["EditorCamera"]["Projection"]["aspectRatio"];
+			float zNear = jsonData["Scene"]["EditorCamera"]["Projection"]["zNear"];
+			float zFar = jsonData["Scene"]["EditorCamera"]["Projection"]["zFar"];
+			
+			editorCamera->SetPerspective(fov, aspectRatio, zNear, zFar);
+		}
+		else if (projectionType == Camera::ProjectionType::ORTHOGRAPHIC)
+		{
+			float size = jsonData["Scene"]["EditorCamera"]["Projection"]["size"];
+			float zNear = jsonData["Scene"]["EditorCamera"]["Projection"]["zNear"];
+			float zFar = jsonData["Scene"]["EditorCamera"]["Projection"]["zFar"];
+			
+			editorCamera->SetOrthographic(size, zNear, zFar);
+		}
 
-		//std::string sceneName;
-		//std::string editorCameraName;
-		//TS_ENGINE::CameraNew* editorCamera = new TS_ENGINE::CameraNew(TS_ENGINE::CameraNew::EDITORCAMERA);
-		//TS_ENGINE::CameraNew::ProjectionType projectionType;
-		//TS_ENGINE::CameraNew::Perspective perspective;
-		//TS_ENGINE::CameraNew::Orthographic orthographic;
+		// Editor Camera Transform
+		Vector3 localPosition = Vector3(jsonData["Scene"]["EditorCamera"]["Transform"]["LocalPosition"][0], 
+			jsonData["Scene"]["EditorCamera"]["Transform"]["LocalPosition"][1], jsonData["Scene"]["EditorCamera"]["Transform"]["LocalPosition"][2]);
 
-		//j.at("Name").get_to(sceneName);
-		////j.at("EntityID").get_to(scene.enityID);
-		//j.at("Camera").at("Name").get_to(editorCameraName);
-		////j.at("Camera").at("EntityID").get_to(camera->enityID);
-		//j.at("Camera").at("ProjectionType").get_to(projectionType);
+		Vector3 localEulerAngles = Vector3(jsonData["Scene"]["EditorCamera"]["Transform"]["LocalEulerAngles"][0],
+			jsonData["Scene"]["EditorCamera"]["Transform"]["LocalEulerAngles"][1], jsonData["Scene"]["EditorCamera"]["Transform"]["LocalEulerAngles"][2]);
 
-		//if (projectionType == TS_ENGINE::CameraNew::PERSPECTIVE)
-		//{
-		//	float fov, aspectRatio, zNear, zFar;
-		//	j.at("Camera").at("Perspective").at("fov").get_to(fov);
-		//	j.at("Camera").at("Perspective").at("aspectRatio").get_to(aspectRatio);
-		//	j.at("Camera").at("Perspective").at("zNear").get_to(zNear);
-		//	j.at("Camera").at("Perspective").at("zFar").get_to(zFar);
-		//	perspective = TS_ENGINE::CameraNew::Perspective(fov, aspectRatio, zNear, zFar);
-		//}
-		//else if (projectionType == TS_ENGINE::CameraNew::ProjectionType::ORTHOGRAPHIC)
-		//{
-		//	float left, right, top, bottom, zNear, zFar = 0;
-		//	j.at("Camera").at("Orthographic").at("fov").get_to(left);
-		//	j.at("Camera").at("Orthographic").at("aspectRatio").get_to(right);
-		//	j.at("Camera").at("Orthographic").at("fov").get_to(top);
-		//	j.at("Camera").at("Orthographic").at("fov").get_to(bottom);
-		//	j.at("Camera").at("Orthographic").at("zNear").get_to(zNear);
-		//	j.at("Camera").at("Orthographic").at("zFar").get_to(zFar);
-		//	orthographic = TS_ENGINE::CameraNew::Orthographic(left, right, top, bottom, zNear, zFar);
-		//}
+		editorCamera->GetNode()->GetTransform()->SetLocalPosition(localPosition);
+		editorCamera->GetNode()->GetTransform()->SetLocalEulerAngles(localEulerAngles);
+		editorCamera->CreateFramebuffer(1920, 1080);//Create framebuffer for editorCamera
+		editorCamera->Initialize();
+		editorCamera->GetNode()->InitializeTransformMatrices();
 
-		//float localPosition[3];
-		//j.at("Camera").at("Transform").at("LocalPosition").get_to(localPosition);
-		//float localEulerAngles[3];
-		//j.at("Camera").at("Transform").at("LocalEulerAngles").get_to(localEulerAngles);
-		//float localScale[3];
-		//j.at("Camera").at("Transform").at("LocalScale").get_to(localScale);
+		// Scene Cameras
+		std::vector<Ref<SceneCamera>> sceneCameras = {};
 
-		//scene.SetName(sceneName.c_str());
-		//editorCamera->SetName(editorCameraName.c_str());
+		int numSceneCameras = jsonData["Scene"]["SceneCameras"].size();
+		for (int i = 0; i < numSceneCameras; i++)
+		{
+			// Scene Camera Name
+			std::string name = jsonData["Scene"]["SceneCameras"][i]["Name"];
+			Ref<SceneCamera> sceneCamera = Factory::GetInstance()->InstantitateSceneCamera(name, editorCamera);
+			
+			Camera::ProjectionType projectionType = jsonData["Scene"]["SceneCameras"][i]["ProjectionType"];
 
-		//if (projectionType == TS_ENGINE::CameraNew::PERSPECTIVE)
-		//	editorCamera->SetPerspective(perspective);
-		//else if (projectionType == TS_ENGINE::CameraNew::ORTHOGRAPHIC)
-		//	editorCamera->SetOrthographic(orthographic);
+			// Scene Camera Perspective
+			if (projectionType == Camera::ProjectionType::PERSPECTIVE)
+			{
+				float fov = jsonData["Scene"]["SceneCameras"][i]["Projection"]["fov"];
+				float aspectRatio = jsonData["Scene"]["SceneCameras"][i]["Projection"]["aspectRatio"];
+				float zNear = jsonData["Scene"]["SceneCameras"][i]["Projection"]["zNear"];
+				float zFar = jsonData["Scene"]["SceneCameras"][i]["Projection"]["zFar"];
 
-		//scene.SetEditorCamera(editorCamera);
+				sceneCamera->SetPerspective(fov, aspectRatio, zNear, zFar);
+			}
+			else if (projectionType == Camera::ProjectionType::ORTHOGRAPHIC)
+			{
+				float size = jsonData["Scene"]["SceneCameras"][i]["Projection"]["size"];
+				float zNear = jsonData["Scene"]["SceneCameras"][i]["Projection"]["zNear"];
+				float zFar = jsonData["Scene"]["SceneCameras"][i]["Projection"]["zFar"];
 
-		//nlohmann::json rootJsonNode = j.at("RootNode");
+				sceneCamera->SetOrthographic(size, zNear, zFar);
+			}
 
-		//if (rootJsonNode.at("Children") != NULL)
-		//{
-		//	for (auto child : rootJsonNode.at("Children"))
-		//		scene.GetNode()->AddChild(DeserializeNode(child));
-		//}
+			// Scene Camera Transform
+			Vector3 localPosition = Vector3(jsonData["Scene"]["SceneCameras"][i]["Transform"]["LocalPosition"][0],
+				jsonData["Scene"]["SceneCameras"][i]["Transform"]["LocalPosition"][1], jsonData["Scene"]["SceneCameras"][i]["Transform"]["LocalPosition"][2]);
 
-		//TS_CORE_INFO("Deserialized Scene!");
+			Vector3 localEulerAngles = Vector3(jsonData["Scene"]["SceneCameras"][i]["Transform"]["LocalEulerAngles"][0],
+				jsonData["Scene"]["SceneCameras"][i]["Transform"]["LocalEulerAngles"][1], jsonData["Scene"]["SceneCameras"][i]["Transform"]["LocalEulerAngles"][2]);
+
+			sceneCamera->GetNode()->GetTransform()->SetLocalPosition(localPosition);
+			sceneCamera->GetNode()->GetTransform()->SetLocalEulerAngles(localEulerAngles);
+			sceneCamera->Initialize();
+			//sceneCamera->GetNode()->InitializeTransformMatrices();
+
+			sceneCameras.push_back(sceneCamera);
+		}
+
+		Ref<Scene> scene = CreateRef<Scene>(sceneName, editorCamera, sceneCameras);
+		SceneManager::GetInstance()->SetCurrentScene(scene);		
 	}
-	
+
 	nlohmann::json::value_type SceneSerializer::SerializeNode(nlohmann::json::value_type jNode, Ref<Node> node)
 	{
 		const char* nodeName = node->GetEntity()->GetName().c_str();
@@ -221,7 +242,7 @@ namespace TS_ENGINE
 		case MODEL:
 		{
 			jNode[nodeName]["EnityType"] = "Model";
-			
+
 			if (node->GetModelPath() != "")
 				jNode[nodeName]["ModelPath"] = node->GetModelPath();
 		}
