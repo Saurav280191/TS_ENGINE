@@ -52,7 +52,7 @@ namespace TS_ENGINE
 		}
 	}
 
-	void SceneManager::CreateNewScene()
+	void SceneManager::CreateNewScene(const std::string& sceneName)
 	{
 		Ref<EditorCamera> editorCamera = CreateRef<EditorCamera>("EditorCamera");
 		editorCamera->SetPerspective(TS_ENGINE::Camera::Perspective(60.0f, 1.77f, 0.1f, 1000.0f));
@@ -62,7 +62,7 @@ namespace TS_ENGINE
 		editorCamera->Initialize();
 		editorCamera->GetNode()->InitializeTransformMatrices();
 
-		Ref<Scene> scene = CreateRef<Scene>("NewScene", editorCamera);
+		Ref<Scene> scene = CreateRef<Scene>(sceneName, editorCamera);
 
 		mCurrentScene = scene;
 	}

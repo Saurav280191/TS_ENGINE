@@ -34,6 +34,7 @@ namespace TS_ENGINE
 		auto groundNode = Factory::GetInstance()->InstantiateQuad("Ground", mSceneNode);
 		groundNode->GetTransform()->SetLocalEulerAngles(-90.0f, 0.0f, 0.0f);
 		groundNode->GetTransform()->SetLocalScale(10.0f, 10.0f, 10.0f);
+		groundNode->GetMeshes()[0]->GetMaterial()->SetAmbientColor(Vector4(0.7f, 0.7f, 0.7f, 1.0f));
 
 		auto sceneCamera = Factory::GetInstance()->InstantitateSceneCamera("SceneCamera", this);
 		sceneCamera->GetNode()->GetTransform()->SetLocalPosition(7.156f, 2.951f, 8.770f);
