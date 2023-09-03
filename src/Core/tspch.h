@@ -37,8 +37,6 @@
 #include <assimp\scene.h>
 #include <assimp\postprocess.h>
 
-#include <stb_image.h>
-
 #include "Base.h"
 
 #ifdef TS_PLATFORM_WINDOWS

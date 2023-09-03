@@ -1,7 +1,6 @@
 #pragma once
 #include "Core/tspch.h"
 #include "Mesh.h"
-#include <stb_image.h>
 #include "SceneManager/Node.h"
 
 namespace TS_ENGINE {

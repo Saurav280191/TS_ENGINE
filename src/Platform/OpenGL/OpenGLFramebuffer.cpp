@@ -1,6 +1,5 @@
 #include "tspch.h"
 #include "Platform/OpenGL/OpenGLFramebuffer.h"
-
 #include <glad/glad.h>
 
 namespace TS_ENGINE {
@@ -244,5 +243,21 @@ namespace TS_ENGINE {
 	const FramebufferSpecification& OpenGLFramebuffer::GetSpecification() const
 	{
 		return mSpecification;
+	}
+
+	Ref<Image> OpenGLFramebuffer::GetFrameBufferImage(int startX, int startY)
+	{
+		// Create a buffer to store the pixel data
+		std::vector<GLubyte> pixels(4 * mSpecification.Width * mSpecification.Height); // Assuming RGBA format
+
+		// Read the framebuffer's color attachment into the pixel buffer
+		glReadPixels(startX, startY, mSpecification.Width, mSpecification.Height, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+
+		Ref<Image> framebufferImage = CreateRef<Image>();
+		framebufferImage->pixels = pixels;
+		framebufferImage->width = mSpecification.Width;
+		framebufferImage->height = mSpecification.Height;
+
+		return framebufferImage;
 	}
 }

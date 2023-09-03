@@ -27,6 +27,8 @@ namespace TS_ENGINE {
 
 		virtual const FramebufferSpecification& GetSpecification() const override;
 
+		virtual Ref<Image> GetFrameBufferImage(int startX, int startY) override;
+
 	private:
 		uint32_t mRendererID = 0;
 		FramebufferSpecification mSpecification;

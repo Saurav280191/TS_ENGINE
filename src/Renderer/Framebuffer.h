@@ -3,8 +3,10 @@
 #include <initializer_list>
 #include <vector>
 
+#include "Renderer/Image.h"
+
 namespace TS_ENGINE {
-	
+
 	enum class FramebufferTextureFormat
 	{
 		None = 0,
@@ -64,6 +66,8 @@ namespace TS_ENGINE {
 		virtual uint32_t GetColorAttachmentRendererID(uint32_t index = 0) const = 0;
 
 		virtual const FramebufferSpecification& GetSpecification() const = 0;
+
+		virtual Ref<Image> GetFrameBufferImage(int startX = 0, int startY = 0) = 0;
 
 		static Ref<Framebuffer> Create(const FramebufferSpecification& spec);
 	};

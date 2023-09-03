@@ -1,7 +1,6 @@
 #pragma once
+#include "Core/tspch.h"
 #include "Core/Base.h"
-#include <string>
-#include <map>
 #include "TextureAtlasHelper.h"
 
 namespace TS_ENGINE {
@@ -49,6 +48,7 @@ namespace TS_ENGINE {
 		{
 			return mPath;
 		}
+
 	private:
 		static std::map<std::string, uint32_t> mTextureStrAndIdMap;
 		static std::map<uint32_t, Ref<TS_ENGINE::Texture2D>> mTextureIdAndTexture2DMap;

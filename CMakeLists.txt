@@ -17,6 +17,8 @@ endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 #SOURCE_FILES
 set (SOURCE_FILES
 src/stb_image.h
+#src/stb_image_write.h
+#src/stb_image_resize.h
 )
 
 #Core Filter
@@ -137,6 +139,8 @@ src/Renderer/Shader.h
 src/Renderer/Shader.cpp
 src/Renderer/Material.h
 src/Renderer/Material.cpp
+src/Renderer/Image.h
+src/Renderer/Image.cpp
 src/Renderer/Texture.h
 src/Renderer/Texture.cpp
 src/Renderer/TextureAtlas.h
