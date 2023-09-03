@@ -72,7 +72,8 @@ namespace TS_ENGINE {
 	class Scene
 	{
 	public:
-		Scene(std::string name, Ref<EditorCamera> editorCamera);
+		Scene(std::string name, Ref<EditorCamera> editorCamera, Ref<SceneCamera> sceneCamera);
+		Scene(std::string name, Ref<EditorCamera> editorCamera, std::vector<Ref<SceneCamera>> sceneCameras);
 		~Scene();
 
 		//BatchButton m_BatchButton;

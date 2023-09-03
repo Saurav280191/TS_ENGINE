@@ -62,7 +62,11 @@ namespace TS_ENGINE
 		editorCamera->Initialize();
 		editorCamera->GetNode()->InitializeTransformMatrices();
 
-		Ref<Scene> scene = CreateRef<Scene>(sceneName, editorCamera);
+		auto sceneCamera = Factory::GetInstance()->InstantitateSceneCamera("SceneCamera", editorCamera);
+		sceneCamera->GetNode()->GetTransform()->SetLocalPosition(7.156f, 2.951f, 8.770f);
+		sceneCamera->GetNode()->GetTransform()->SetLocalEulerAngles(-13.235f, 38.064f, 0.0f);
+
+		Ref<Scene> scene = CreateRef<Scene>(sceneName, editorCamera, sceneCamera);
 
 		mCurrentScene = scene;
 	}

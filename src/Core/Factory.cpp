@@ -15,11 +15,10 @@ namespace TS_ENGINE
 		return mInstance;
 	}
 
-	Ref<SceneCamera> Factory::InstantitateSceneCamera(const std::string& name, Scene* scene)
+	Ref<SceneCamera> Factory::InstantitateSceneCamera(const std::string& name, Ref<EditorCamera> editorCamera)
 	{
 #ifdef TS_ENGINE_EDITOR
-		TS_CORE_ASSERT(scene->GetEditorCamera());
-		Ref<SceneCamera> sceneCamera = CreateRef<SceneCamera>("SceneCamera", scene->GetEditorCamera());
+		Ref<SceneCamera> sceneCamera = CreateRef<SceneCamera>("SceneCamera", editorCamera);
 #else
 		Ref<SceneCamera> sceneCamera = CreateRef<SceneCamera>("SceneCamera");
 #endif
@@ -27,7 +26,6 @@ namespace TS_ENGINE
 		sceneCamera->CreateFramebuffer(800, 600);
 		sceneCamera->Initialize();
 		sceneCamera->GetNode()->SetSceneCamera(sceneCamera);
-		sceneCamera->GetNode()->SetParent(scene->GetSceneNode());
 		sceneCamera->GetNode()->Initialize(name, EntityType::CAMERA);
 		return sceneCamera;
 	}

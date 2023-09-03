@@ -15,7 +15,7 @@
 
 namespace TS_ENGINE
 {
-	Scene::Scene(std::string name, Ref<EditorCamera> editorCamera)
+	Scene::Scene(std::string name, Ref<EditorCamera> editorCamera, Ref<SceneCamera> sceneCamera)
 		//: m_BatchingEnabled(false)
 	{
 		mSceneNode = CreateRef<Node>();
@@ -36,10 +36,7 @@ namespace TS_ENGINE
 		groundNode->GetTransform()->SetLocalScale(10.0f, 10.0f, 10.0f);
 		groundNode->GetMeshes()[0]->GetMaterial()->SetAmbientColor(Vector4(0.7f, 0.7f, 0.7f, 1.0f));
 
-		auto sceneCamera = Factory::GetInstance()->InstantitateSceneCamera("SceneCamera", this);
-		sceneCamera->GetNode()->GetTransform()->SetLocalPosition(7.156f, 2.951f, 8.770f);
-		sceneCamera->GetNode()->GetTransform()->SetLocalEulerAngles(-13.235f, 38.064f, 0.0f);
-
+		sceneCamera->GetNode()->SetParent(mSceneNode);
 		mSceneCameras.push_back(sceneCamera);
 #pragma endregion
 
@@ -91,6 +88,38 @@ namespace TS_ENGINE
 		//auto modelNode = Factory::GetInstance()->InstantiateModel("D:/Downloads/Ely By K.Atienza.fbx", mSceneNode);
 		//modelNode->GetTransform()->SetLocalScale(0.01f, 0.01f, 0.01f);
 #pragma endregion 
+
+		mSceneNode->Initialize(name, EntityType::SCENE);//Needs to be done at the end to initialize the hierarchy once
+	}
+
+	Scene::Scene(std::string name, Ref<EditorCamera> editorCamera, std::vector<Ref<SceneCamera>> sceneCameras)
+		//: m_BatchingEnabled(false)
+	{
+		mSceneNode = CreateRef<Node>();
+		mSceneNode->SetNodeRef(mSceneNode);
+		mEditorCamera = editorCamera;
+		mCurrentSceneCameraIndex = 0;
+		//m_BatchButton.RegisterClickHandler(std::bind(&ButtonHandler::OnButtonClicked, &mBatchButtonHandler, std::placeholders::_1, std::placeholders::_2));
+
+#pragma region DefaultNewScene
+		mSkyboxNode = Factory::GetInstance()->InstantiateSphere("SkyboxSphere", nullptr);
+		mSkyboxNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\industrial_sunset_puresky.jpg"));
+		mSkyboxNode->GetTransform()->SetLocalScale(1600.0f, 1600.0f, 1600.0f);
+		mSkyboxNode->GetTransform()->SetLocalEulerAngles(90.0f, 235.0f, 0.0f);
+		mSkyboxNode->InitializeTransformMatrices();
+
+		auto groundNode = Factory::GetInstance()->InstantiateQuad("Ground", mSceneNode);
+		groundNode->GetTransform()->SetLocalEulerAngles(-90.0f, 0.0f, 0.0f);
+		groundNode->GetTransform()->SetLocalScale(10.0f, 10.0f, 10.0f);
+		groundNode->GetMeshes()[0]->GetMaterial()->SetAmbientColor(Vector4(0.7f, 0.7f, 0.7f, 1.0f));
+		
+		//Add multiple camera
+		for (auto& sceneCamera : sceneCameras)
+		{
+			sceneCamera->GetNode()->SetParent(mSceneNode);
+			mSceneCameras.push_back(sceneCamera);
+		}
+#pragma endregion
 
 		mSceneNode->Initialize(name, EntityType::SCENE);//Needs to be done at the end to initialize the hierarchy once
 	}
