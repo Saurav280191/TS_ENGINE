@@ -31,7 +31,7 @@ namespace TS_ENGINE
 
 		EntityID GetEntityID() const;
 
-		//void SetName(const std::string& name);
+		void SetName(const std::string& name);
 		const std::string& GetName() { return mName; }
 		const EntityType& GetEntityType() { return mEntityType; }
 		static const char* GetEntityTypeStr(EntityType type);
