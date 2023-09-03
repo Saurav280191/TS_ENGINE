@@ -2,6 +2,7 @@
 #include "SceneManager/Scene.h"
 #include "SceneManager/SceneSerializer.h"
 //#include <Factory.h>
+#include "Renderer/Texture.h"
 
 namespace TS_ENGINE
 {
@@ -83,9 +84,12 @@ namespace TS_ENGINE
 		for (auto& child : scene->GetSceneNode()->GetChildren())
 			json[sceneName]["RootNode"] = SerializeNode(json[sceneName]["RootNode"], child);
 
-		std::string filePath = "Assets\\SavedScenes\\" + std::string(sceneName) + ".scene";
+		std::string filePath = "..\\..\\..\\Assets\\SavedScenes\\" + std::string(sceneName) + ".tsScene";
 		std::ofstream o(filePath);
 		o << std::setw(4) << json << std::endl;
+
+		//auto framebufferImage = scene->GetEditorCamera()->GetFramebuffer()->GetFrameBufferImage(0, 219);
+		//WritePixelsToFile(framebufferImage, "..\\..\\..\\Resources\\SavedSceneThumbnails\\" + std::string(sceneName) + ".png");
 	}
 
 	void SceneSerializer::Load(const nlohmann::json& j, Ref<Scene> scene)

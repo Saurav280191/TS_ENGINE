@@ -69,9 +69,13 @@ namespace TS_ENGINE
 
 	void SceneManager::SaveCurrentScene()
 	{
-		if (mCurrentScene)		
-			mSceneSerializer->Save(mCurrentScene);		
-		else		
+		if (mCurrentScene)
+		{
+			mSceneSerializer->Save(mCurrentScene);	
+		}
+		else
+		{
 			TS_CORE_ERROR("Current scene is not set!");
+		}
 	}
 }
