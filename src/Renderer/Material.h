@@ -103,14 +103,14 @@ namespace TS_ENGINE {
 		Ref<Shader> mShader;
 
 		// Ambient
-		Vector4 mAmbientColor = Vector4(1, 1, 1, 1);
+		Vector4 mAmbientColor = Vector4(0.8f, 0.8f, 0.8f, 1);
 		// Diffuse
-		Vector4 mDiffuseColor = Vector4(1, 1, 1, 1);
+		Vector4 mDiffuseColor = Vector4(0.8f, 0.8f, 0.8f, 1);
 		Ref<Texture2D> mDiffuseMap = nullptr;
 		Vector2 mDiffuseMapOffset = Vector2(0, 0);
 		Vector2 mDiffuseMapTiling = Vector2(1, 1);
 		// Specular
-		Vector4 mSpecularColor = Vector4(1, 1, 1, 1);
+		Vector4 mSpecularColor = Vector4(0.8f, 0.8f, 0.8f, 1);
 		Ref<Texture2D> mSpecularMap = nullptr;
 		Vector2 mSpecularMapOffset = Vector2(0, 0);
 		Vector2 mSpecularMapTiling = Vector2(1, 1);
