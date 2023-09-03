@@ -13,7 +13,7 @@ namespace TS_ENGINE
 		void Load(const std::string& savedScenePath);
 	private:
 		nlohmann::json::value_type SerializeNode(nlohmann::json::value_type jNode, Ref<Node> node);
-		std::string ReadSceneFromJson(std::string path);
+		nlohmann::json GetJsonDataFromFile(const std::string& filePath);
 		Ref<Node> DeserializeNode(nlohmann::json jsonNode);
 	};
 }

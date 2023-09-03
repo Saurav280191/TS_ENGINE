@@ -11,10 +11,12 @@ namespace TS_ENGINE
 		nlohmann::json json;
 		std::string sceneName = scene->GetSceneNode()->GetEntity()->GetName();
 
+		json["Scene"]["Name"] = sceneName;
+
 		// Editor Camera
 		{
 			//Transform
-			json[sceneName]["EditorCamera"]["Transform"] = {
+			json["Scene"]["EditorCamera"]["Transform"] = {
 				{ "LocalPosition", {scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalPosition().x, scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalPosition().y, scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalPosition().z}},
 				{ "LocalEulerAngles", {scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalEulerAngles().x, scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalEulerAngles().y, scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalEulerAngles().z}},
 				{ "LocalScale", {scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalScale().x, scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalScale().y, scene->GetEditorCamera()->GetNode()->GetTransform()->GetLocalScale().z}}
@@ -23,7 +25,7 @@ namespace TS_ENGINE
 			//Projection
 			if (scene->GetEditorCamera()->GetProjectionType() == Camera::ProjectionType::PERSPECTIVE)// Perspective 
 			{
-				json[sceneName]["EditorCamera"]["Projection"] = {
+				json["Scene"]["EditorCamera"]["Projection"] = {
 					{"ProjectionType", "Perspective"},
 					{"fov", scene->GetEditorCamera()->GetPerspective().fov},
 					{"aspectRatio", scene->GetEditorCamera()->GetPerspective().aspectRatio},
@@ -33,7 +35,7 @@ namespace TS_ENGINE
 			}
 			else if (scene->GetEditorCamera()->GetProjectionType() == Camera::ProjectionType::ORTHOGRAPHIC) // Orthographic
 			{
-				json[sceneName]["EditorCamera"]["Projection"] = {
+				json["Scene"]["EditorCamera"]["Projection"] = {
 					{"ProjectionType", "Orthographic"},
 					{"size", scene->GetEditorCamera()->GetOrthographic().top},
 					{"zNear", scene->GetEditorCamera()->GetOrthographic().zNear},
@@ -47,10 +49,10 @@ namespace TS_ENGINE
 			for (int i = 0; i < scene->GetSceneCameras().size(); i++)
 			{
 				// Name
-				json[sceneName]["SceneCameras"][i]["Name"] = scene->GetSceneCameras()[i]->GetNode()->GetEntity()->GetName();
+				json["Scene"]["SceneCameras"][i]["Name"] = scene->GetSceneCameras()[i]->GetNode()->GetEntity()->GetName();
 
 				// Transform
-				json[sceneName]["SceneCameras"][i]["Transform"] =
+				json["Scene"]["SceneCameras"][i]["Transform"] =
 				{
 					{ "LocalPosition", { scene->GetSceneCameras()[i]->GetNode()->GetTransform()->GetLocalPosition().x, scene->GetSceneCameras()[i]->GetNode()->GetTransform()->GetLocalPosition().y, scene->GetSceneCameras()[i]->GetNode()->GetTransform()->GetLocalPosition().z} },
 					{ "LocalEulerAngles", { scene->GetSceneCameras()[i]->GetNode()->GetTransform()->GetLocalEulerAngles().x, scene->GetSceneCameras()[i]->GetNode()->GetTransform()->GetLocalEulerAngles().y, scene->GetSceneCameras()[i]->GetNode()->GetTransform()->GetLocalEulerAngles().z} },
@@ -60,7 +62,7 @@ namespace TS_ENGINE
 				// Projection
 				if (scene->GetSceneCameras()[i]->GetProjectionType() == Camera::ProjectionType::PERSPECTIVE)// Perspective 
 				{
-					json[sceneName]["SceneCameras"][i]["Projection"] = {
+					json["Scene"]["SceneCameras"][i]["Projection"] = {
 						{"ProjectionType", "Perspective"},
 						{"fov", scene->GetSceneCameras()[i]->GetPerspective().fov},
 						{"aspectRatio", scene->GetSceneCameras()[i]->GetPerspective().aspectRatio},
@@ -70,7 +72,7 @@ namespace TS_ENGINE
 				}
 				else if (scene->GetSceneCameras()[i]->GetProjectionType() == Camera::ProjectionType::ORTHOGRAPHIC) // Orthographic
 				{
-					json[sceneName]["SceneCameras"][i]["Projection"] = {
+					json["Scene"]["SceneCameras"][i]["Projection"] = {
 						{"ProjectionType", "Orthographic"},
 						{"size", scene->GetSceneCameras()[i]->GetOrthographic().top},
 						{"zNear", scene->GetSceneCameras()[i]->GetOrthographic().zNear},
@@ -82,7 +84,7 @@ namespace TS_ENGINE
 
 		// Nodes (Recursively iterate through scene node children and serialize them)	
 		for (auto& child : scene->GetSceneNode()->GetChildren())
-			json[sceneName]["RootNode"] = SerializeNode(json[sceneName]["RootNode"], child);
+			json["Scene"]["RootNode"] = SerializeNode(json["Scene"]["RootNode"], child);
 
 		std::string filePath = "..\\..\\..\\Assets\\SavedScenes\\" + std::string(sceneName) + ".scene";
 		std::ofstream o(filePath);
@@ -95,6 +97,20 @@ namespace TS_ENGINE
 	void SceneSerializer::Load(const std::string& savedScenePath)
 	{
 		TS_CORE_TRACE("Loading: {0}", savedScenePath);
+		nlohmann::json jsonData = GetJsonDataFromFile(savedScenePath);
+
+		std::string sceneName = jsonData["Scene"]["Name"];
+
+		// Access and use the JSON data
+		//std::string name = jsonData["name"];
+		//int age = jsonData["age"];
+		//bool isActive = jsonData["isActive"];
+
+		// Print the data
+		//std::cout << "Name: " << name << std::endl;
+		//std::cout << "Age: " << age << std::endl;
+		//std::cout << "Active: " << (isActive ? "Yes" : "No") << std::endl;
+		
 
 		//std::string sceneName;
 		//std::string editorCameraName;
@@ -301,28 +317,29 @@ namespace TS_ENGINE
 		return jNode;
 	}
 
-	std::string SceneSerializer::ReadSceneFromJson(std::string path)
+	nlohmann::json SceneSerializer::GetJsonDataFromFile(const std::string& filePath)
 	{
-		std::string finalText;
-		std::string line;
-		std::ifstream jsonFileStream(path);
+		try {
+			// Open the JSON file for reading
+			std::ifstream file(filePath);
 
-		if (jsonFileStream.is_open())
-		{
-			while (getline(jsonFileStream, line))
-			{
-				//std::cout << line << '\n';
-				finalText += line;
+			// Check if the file is open
+			if (!file.is_open()) {
+				TS_CORE_ERROR("Error: Failed to open the JSON file!");
 			}
-			jsonFileStream.close();
-		}
-		else if (jsonFileStream.fail())
-		{
-			TS_CORE_ERROR("Invalid path -> {0}", path);
-		}
 
-		TS_CORE_INFO("ReadSceneFromJson!");
-		return finalText;
+			// Read the JSON content from the file into a JSON object
+			nlohmann::json jsonData;
+			file >> jsonData;
+
+			// Close the file
+			file.close();
+
+			return jsonData;
+		}
+		catch (const std::exception& e) {
+			TS_CORE_ERROR("Error: {0}", e.what());
+		}
 	}
 
 	Ref<Node> SceneSerializer::DeserializeNode(nlohmann::json jsonNode)
