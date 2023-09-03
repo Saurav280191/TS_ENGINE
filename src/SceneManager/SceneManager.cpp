@@ -78,4 +78,9 @@ namespace TS_ENGINE
 			TS_CORE_ERROR("Current scene is not set!");
 		}
 	}
+	
+	void SceneManager::LoadScene(const std::string& savedScenePath)
+	{
+		mSceneSerializer->Load(savedScenePath);
+	}
 }

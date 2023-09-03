@@ -84,7 +84,7 @@ namespace TS_ENGINE
 		for (auto& child : scene->GetSceneNode()->GetChildren())
 			json[sceneName]["RootNode"] = SerializeNode(json[sceneName]["RootNode"], child);
 
-		std::string filePath = "..\\..\\..\\Assets\\SavedScenes\\" + std::string(sceneName) + ".tsScene";
+		std::string filePath = "..\\..\\..\\Assets\\SavedScenes\\" + std::string(sceneName) + ".scene";
 		std::ofstream o(filePath);
 		o << std::setw(4) << json << std::endl;
 
@@ -92,8 +92,10 @@ namespace TS_ENGINE
 		//WritePixelsToFile(framebufferImage, "..\\..\\..\\Resources\\SavedSceneThumbnails\\" + std::string(sceneName) + ".png");
 	}
 
-	void SceneSerializer::Load(const nlohmann::json& j, Ref<Scene> scene)
+	void SceneSerializer::Load(const std::string& savedScenePath)
 	{
+		TS_CORE_TRACE("Loading: {0}", savedScenePath);
+
 		//std::string sceneName;
 		//std::string editorCameraName;
 		//TS_ENGINE::CameraNew* editorCamera = new TS_ENGINE::CameraNew(TS_ENGINE::CameraNew::EDITORCAMERA);

@@ -14,6 +14,7 @@ namespace TS_ENGINE
 
 		void CreateNewScene(const std::string& sceneName);
 		void SaveCurrentScene();
+		void LoadScene(const std::string& savedScenePath);
 		Ref<Scene> GetCurrentScene();
 	private:
 		static SceneManager* mInstance;
