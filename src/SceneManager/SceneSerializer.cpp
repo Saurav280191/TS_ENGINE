@@ -192,7 +192,14 @@ namespace TS_ENGINE
 		}
 
 		Ref<Scene> scene = CreateRef<Scene>(sceneName, editorCamera, sceneCameras);
-		SceneManager::GetInstance()->SetCurrentScene(scene);		
+		SceneManager::GetInstance()->SetCurrentScene(scene);	
+
+		// Iterate through all the children nodes for root node
+		int numChildren = jsonData["Scene"]["RootNode"].size();
+		for (int i = 0; i < numChildren; i++)
+		{
+			EntityType entityType = (EntityType)jsonData["Scene"]["RootNode"][i]["EntityType"];
+		}
 	}
 
 	nlohmann::json::value_type SceneSerializer::SerializeNode(nlohmann::json::value_type jNode, Ref<Node> node)
@@ -202,81 +209,16 @@ namespace TS_ENGINE
 		jNode[nodeName]["Name"] = nodeName;
 		jNode[nodeName]["Enabled"] = node->m_Enabled;
 
-		switch (node->GetEntity()->GetEntityType())
-		{
-		case PRIMITIVE:
-		{
-			jNode[nodeName]["EntityType"] = "Primitive";
+		jNode[nodeName]["EntityType"] = node->GetEntity()->GetEntityType();
 
-			if (node->GetMeshes()[0]->GetPrimitiveType() == PrimitiveType::LINE)
-			{
-				jNode[nodeName]["PrimitiveType"] = "Line";
-			}
-			else if (node->GetMeshes()[0]->GetPrimitiveType() == PrimitiveType::QUAD)
-			{
-				jNode[nodeName]["PrimitiveType"] = "Quad";
-			}
-			else if (node->GetMeshes()[0]->GetPrimitiveType() == PrimitiveType::CUBE)
-			{
-				jNode[nodeName]["PrimitiveType"] = "Cube";
-			}
-			else if (node->GetMeshes()[0]->GetPrimitiveType() == PrimitiveType::SPHERE)
-			{
-				jNode[nodeName]["PrimitiveType"] = "Sphere";
-			}
-			else if (node->GetMeshes()[0]->GetPrimitiveType() == PrimitiveType::CYLINDER)
-			{
-				jNode[nodeName]["PrimitiveType"] = "Cylinder";
-			}
-			else if (node->GetMeshes()[0]->GetPrimitiveType() == PrimitiveType::CONE)
-			{
-				jNode[nodeName]["PrimitiveType"] = "Cone";
-			}
-			else if (node->GetMeshes()[0]->GetPrimitiveType() == PrimitiveType::MODEL)
-			{
-				jNode[nodeName]["PrimitiveType"] = "Model";
-			}
+		if (node->GetEntity()->GetEntityType() == EntityType::PRIMITIVE)
+		{
+			jNode[nodeName]["PrimitiveType"] = node->GetMeshes()[0]->GetPrimitiveType();
 		}
-		break;
-
-		case MODEL:
+		else if (node->GetEntity()->GetEntityType() == EntityType::MODEL)
 		{
-			jNode[nodeName]["EnityType"] = "Model";
-
 			if (node->GetModelPath() != "")
 				jNode[nodeName]["ModelPath"] = node->GetModelPath();
-		}
-		break;
-
-		case CAMERA:
-		{
-			jNode[nodeName]["EnityType"] = "Camera";
-		}
-		break;
-
-		case SKYBOX:
-		{
-			jNode[nodeName]["EnityType"] = "Skybox";
-		}
-		break;
-
-		case SCENE:
-		{
-			jNode[nodeName]["EnityType"] = "Scene";
-		}
-		break;
-
-		case LIGHT:
-		{
-			jNode[nodeName]["EnityType"] = "Light";
-		}
-		break;
-
-		case EMPTY:
-		{
-			jNode[nodeName]["EntityType"] = "Default";
-		}
-		break;
 		}
 
 		// Mesh and Material
