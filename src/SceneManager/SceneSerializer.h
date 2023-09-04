@@ -12,9 +12,9 @@ namespace TS_ENGINE
 		void Save(Ref<Scene> scene);
 		void Load(const std::string& savedScenePath);
 	private:
-		nlohmann::json::value_type SerializeNode(nlohmann::json::value_type jNode, Ref<Node> node);
+		void SerializeNode(Ref<Node> node, nlohmann::json& jsonNode);
 		nlohmann::json GetJsonDataFromFile(const std::string& filePath);
-		Ref<Node> DeserializeNode(nlohmann::json jsonNode);
+		Ref<Node> DeserializeNode(nlohmann::json& jsonNode);
 	};
 }
 

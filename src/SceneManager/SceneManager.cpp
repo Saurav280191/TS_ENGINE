@@ -68,6 +68,13 @@ namespace TS_ENGINE
 
 		Ref<Scene> scene = CreateRef<Scene>(sceneName, editorCamera, sceneCamera);
 
+		// Default Ground
+		auto groundNode = Factory::GetInstance()->InstantiateQuad("Ground", scene->GetSceneNode());
+		groundNode->GetTransform()->SetLocalEulerAngles(-90.0f, 0.0f, 0.0f);
+		groundNode->GetTransform()->SetLocalScale(10.0f, 10.0f, 10.0f);
+		groundNode->GetMeshes()[0]->GetMaterial()->SetAmbientColor(Vector4(0.7f, 0.7f, 0.7f, 1.0f));
+		groundNode->InitializeTransformMatrices();
+
 		mCurrentScene = scene;
 	}
 

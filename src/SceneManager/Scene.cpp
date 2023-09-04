@@ -31,11 +31,6 @@ namespace TS_ENGINE
 		mSkyboxNode->GetTransform()->SetLocalEulerAngles(90.0f, 235.0f, 0.0f);
 		mSkyboxNode->InitializeTransformMatrices();
 
-		auto groundNode = Factory::GetInstance()->InstantiateQuad("Ground", mSceneNode);
-		groundNode->GetTransform()->SetLocalEulerAngles(-90.0f, 0.0f, 0.0f);
-		groundNode->GetTransform()->SetLocalScale(10.0f, 10.0f, 10.0f);
-		groundNode->GetMeshes()[0]->GetMaterial()->SetAmbientColor(Vector4(0.7f, 0.7f, 0.7f, 1.0f));
-
 		sceneCamera->GetNode()->SetParent(mSceneNode);
 		mSceneCameras.push_back(sceneCamera);
 #pragma endregion
@@ -108,11 +103,6 @@ namespace TS_ENGINE
 		mSkyboxNode->GetTransform()->SetLocalEulerAngles(90.0f, 235.0f, 0.0f);
 		mSkyboxNode->InitializeTransformMatrices();
 
-		auto groundNode = Factory::GetInstance()->InstantiateQuad("Ground", mSceneNode);
-		groundNode->GetTransform()->SetLocalEulerAngles(-90.0f, 0.0f, 0.0f);
-		groundNode->GetTransform()->SetLocalScale(10.0f, 10.0f, 10.0f);
-		groundNode->GetMeshes()[0]->GetMaterial()->SetAmbientColor(Vector4(0.7f, 0.7f, 0.7f, 1.0f));
-		
 		//Add multiple camera
 		for (auto& sceneCamera : sceneCameras)
 		{
