@@ -48,7 +48,7 @@ namespace TS_ENGINE {
 	void Model::LoadModel(const std::string& modelPath)
 	{
 		Assimp::Importer importer;
-		mAssimpScene = importer.ReadFile(modelPath, aiProcess_Triangulate | aiProcess_FlipUVs);
+		mAssimpScene = importer.ReadFile(modelPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_PreTransformVertices);
 
 		if (!mAssimpScene || mAssimpScene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !mAssimpScene->mRootNode)
 		{

@@ -13,8 +13,8 @@ namespace TS_ENGINE
 		void Load(const std::string& savedScenePath);
 	private:
 		void SerializeNode(Ref<Node> node, nlohmann::json& jsonNode);
-		nlohmann::json GetJsonDataFromFile(const std::string& filePath);
-		Ref<Node> DeserializeNode(nlohmann::json& jsonNode);
+		nlohmann::json GetJsonDataFromFile(const std::string& filePath);		
+		void DeserializeNode(Ref<Node> parentNode, nlohmann::json& jsonNode, Ref<EditorCamera> editorCamera);
 	};
 }
 

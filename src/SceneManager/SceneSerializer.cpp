@@ -194,11 +194,11 @@ namespace TS_ENGINE
 
 		// Iterate through all the children nodes for root node
 		{
-			int numRootChildren = scene->GetSceneNode()->GetChildCount();
+			int numRootChildren = jsonData["Scene"]["RootNode"]["Children"].size();
 			for (int i = 0; i < numRootChildren; i++)
 			{
 				nlohmann::json jsonNode = jsonData["Scene"]["RootNode"]["Children"][i];
-				scene->GetSceneNode()->AddChild(DeserializeNode(jsonNode));
+				DeserializeNode(scene->GetSceneNode(), jsonNode, editorCamera);
 			}
 		}
 	}
@@ -217,7 +217,7 @@ namespace TS_ENGINE
 		else if (node->GetEntity()->GetEntityType() == EntityType::MODEL)
 		{
 			if (node->GetModelPath() != "")
-				jsonNode["ModelPath"] = node->GetModelPath();
+				jsonNode["ModelPath"] = node->GetModelPath().c_str();
 		}
 
 		// Mesh And Material
@@ -250,7 +250,7 @@ namespace TS_ENGINE
 				}
 				jsonNode["Meshes"][i]["Material"]["Specular"]["TextureOffset"] = { node->GetMeshes()[i]->GetMaterial()->GetSpecularMapOffset().x, node->GetMeshes()[i]->GetMaterial()->GetSpecularMapOffset().y };
 				jsonNode["Meshes"][i]["Material"]["Specular"]["TextureTiling"] = { node->GetMeshes()[i]->GetMaterial()->GetSpecularMapTiling().x, node->GetMeshes()[i]->GetMaterial()->GetSpecularMapTiling().y };
-				jsonNode["Meshes"][i]["Material"]["Shininess"] = node->GetMeshes()[i]->GetMaterial()->GetShininess();
+				jsonNode["Meshes"][i]["Material"]["Specular"]["Shininess"] = node->GetMeshes()[i]->GetMaterial()->GetShininess();
 
 				if (node->GetMeshes()[i]->GetMaterial()->GetNormalMap())
 				{
@@ -304,11 +304,8 @@ namespace TS_ENGINE
 		}
 	}
 
-	Ref<Node> SceneSerializer::DeserializeNode(nlohmann::json& jsonNode)
+	void SceneSerializer::DeserializeNode(Ref<Node> parentNode, nlohmann::json& jsonNode, Ref<EditorCamera> editorCamera)
 	{
-		Ref<Node> node = CreateRef<Node>();
-		node->SetNodeRef(node);
-
 		std::string name = jsonNode["Name"];
 		EntityType entityType = (EntityType)jsonNode["EntityType"];
 		bool enabled = jsonNode["Enabled"];
@@ -328,11 +325,151 @@ namespace TS_ENGINE
 			jsonNode["Transform"]["LocalScale"][1],
 			jsonNode["Transform"]["LocalScale"][2]);
 
-		node->GetTransform()->SetLocalPosition(transformPosition);
-		node->GetTransform()->SetLocalEulerAngles(transformEulerAngles);
-		node->GetTransform()->SetLocalScale(transformScale);
-		node->Initialize(name, entityType);
-		node->m_Enabled = enabled;		
+		Ref<Node> node = nullptr;
+
+		if (entityType == EntityType::PRIMITIVE)
+		{
+			PrimitiveType primitiveType = (PrimitiveType)jsonNode["PrimitiveType"];
+
+			switch (primitiveType)
+			{
+			case PrimitiveType::QUAD:
+				node = Factory::GetInstance()->InstantiateQuad(name, parentNode);
+				break;
+			case PrimitiveType::CUBE:
+				node = Factory::GetInstance()->InstantiateCube(name, parentNode);
+				break;
+			case PrimitiveType::SPHERE:
+				node = Factory::GetInstance()->InstantiateSphere(name, parentNode);
+				break;
+			case PrimitiveType::CYLINDER:
+				node = Factory::GetInstance()->InstantiateCylinder(name, parentNode);
+				break;
+			case PrimitiveType::CONE:
+				node = Factory::GetInstance()->InstantiateCone(name, parentNode);
+				break;
+			}
+		}
+		else if (entityType == EntityType::MODEL)
+		{
+			auto it = jsonNode.find("ModelPath");
+
+			if (it != jsonNode.end())
+			{
+				node = Factory::GetInstance()->InstantiateModel(jsonNode["ModelPath"], parentNode);
+			}
+		}
+		else if (entityType == EntityType::CAMERA)
+		{
+			Ref<SceneCamera> sceneCamera = Factory::GetInstance()->InstantitateSceneCamera(name, editorCamera);
+			node = sceneCamera->GetNode();// No need to set parent for camera it is already done in the scene creation process
+		}
+		else
+		{
+			Ref<Node> node = CreateRef<Node>();
+			node->SetNodeRef(node);
+			parentNode->AddChild(node);
+		}
+
+		if (node)
+		{
+			node->GetTransform()->SetLocalPosition(transformPosition);
+			node->GetTransform()->SetLocalEulerAngles(transformEulerAngles);
+			node->GetTransform()->SetLocalScale(transformScale);
+			node->Initialize(name, entityType);
+			node->m_Enabled = enabled;
+
+			// Apply Material
+			for (int i = 0; i < jsonNode["Meshes"].size(); i++)
+			{
+				nlohmann::json material = jsonNode["Meshes"][i]["Material"];
+
+				// Colors
+				Vector4 ambientColor = Vector4(
+					material["Ambient"]["Color"][0],
+					material["Ambient"]["Color"][1],
+					material["Ambient"]["Color"][2],
+					material["Ambient"]["Color"][3]
+				);
+				Vector4 diffuseColor = Vector4(
+					material["Diffuse"]["Color"][0],
+					material["Diffuse"]["Color"][1],
+					material["Diffuse"]["Color"][2],
+					material["Diffuse"]["Color"][3]
+				);
+				Vector4 specularColor = Vector4(
+					material["Specular"]["Color"][0],
+					material["Specular"]["Color"][1],
+					material["Specular"]["Color"][2],
+					material["Specular"]["Color"][3]
+				);
+
+				// Textures
+
+				Ref<Texture2D> diffuseTexture = nullptr;
+				{
+					auto it = material["Diffuse"].find("TexturePath");
+
+					if (it != material["Diffuse"].end())
+					{
+						diffuseTexture = Texture2D::Create(material["Diffuse"]["TexturePath"]);
+					}
+				}
+
+				Ref<Texture2D> specularTexture = nullptr;
+				{
+					auto it = material["Specular"].find("TexturePath");
+
+					if (it != material["Specular"].end())
+					{
+						specularTexture = Texture2D::Create(material["Specular"]["TexturePath"]);
+					}
+				}
+
+				Ref<Texture2D> normalTexture = nullptr;
+				{
+					auto it = material["Normal"].find("TexturePath");
+
+					if (it != material["Normal"].end())
+					{
+						normalTexture = Texture2D::Create(material["Normal"]["TexturePath"]);
+					}
+				}
+
+				// Offset And Tiling
+				Vector2 diffuseTextureOffset = Vector2(material["Diffuse"]["TextureOffset"][0], material["Diffuse"]["TextureOffset"][1]);
+				Vector2 diffuseTextureTiling = Vector2(material["Diffuse"]["TextureTiling"][0], material["Diffuse"]["TextureTiling"][1]);
+
+				Vector2 specularTextureOffset = Vector2(material["Specular"]["TextureOffset"][0], material["Specular"]["TextureOffset"][1]);
+				Vector2 specularTextureTiling = Vector2(material["Specular"]["TextureTiling"][0], material["Specular"]["TextureTiling"][1]);
+
+				Vector2 normalTextureOffset = Vector2(material["Normal"]["TextureOffset"][0], material["Normal"]["TextureOffset"][1]);
+				Vector2 normalTextureTiling = Vector2(material["Normal"]["TextureTiling"][0], material["Normal"]["TextureTiling"][1]);
+
+				// Shininess And BumpValue
+				float shininess = material["Specular"]["Shininess"];
+				float bumpValue = material["Normal"]["BumpValue"];
+
+				// Apply Material Properties
+				node->GetMeshes()[i]->GetMaterial()->SetAmbientColor(ambientColor);
+				node->GetMeshes()[i]->GetMaterial()->SetDiffuseColor(diffuseColor);
+				node->GetMeshes()[i]->GetMaterial()->SetSpecularColor(specularColor);
+
+				node->GetMeshes()[i]->GetMaterial()->SetDiffuseMap(diffuseTexture);
+				node->GetMeshes()[i]->GetMaterial()->SetSpecularMap(diffuseTexture);
+				node->GetMeshes()[i]->GetMaterial()->SetNormalMap(normalTexture);
+
+				node->GetMeshes()[i]->GetMaterial()->SetDiffuseMapOffset(diffuseTextureOffset);
+				node->GetMeshes()[i]->GetMaterial()->SetDiffuseMapTiling(diffuseTextureTiling);
+				node->GetMeshes()[i]->GetMaterial()->SetSpecularMapOffset(specularTextureOffset);
+				node->GetMeshes()[i]->GetMaterial()->SetSpecularMapTiling(specularTextureTiling);
+				node->GetMeshes()[i]->GetMaterial()->SetNormalMapOffset(normalTextureOffset);
+				node->GetMeshes()[i]->GetMaterial()->SetNormalMapTiling(normalTextureTiling);
+
+				node->GetMeshes()[i]->GetMaterial()->SetShininess(shininess);
+				node->GetMeshes()[i]->GetMaterial()->SetBumpValue(bumpValue);
+			}
+		}
 
 		// Deserialize children
 		if (jsonNode["Children"] != nullptr)//Making sure Children exist 
@@ -340,10 +477,9 @@ namespace TS_ENGINE
 			for (int i = 0; i < jsonNode["Children"].size(); i++)
 			{
 				nlohmann::json childJsonNode = jsonNode["Children"][i];
-				node->AddChild(DeserializeNode(childJsonNode));
+				DeserializeNode(node, childJsonNode, editorCamera);
 			}
 		}
 
-		return node;
 	}
 }
