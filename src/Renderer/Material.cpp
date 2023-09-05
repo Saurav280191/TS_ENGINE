@@ -64,42 +64,41 @@ namespace TS_ENGINE {
 	}
 
 	void Material::ShowGUI(int meshIndex, bool treeOpen)
-	{
-		//Material context menu
-		{
-			if (ImGui::BeginPopup("DiffuseTexturePopUp"))
-			{
-				if (ImGui::Button("Delete"))
-				{
-					mDiffuseMap = nullptr;
-					ImGui::CloseCurrentPopup();
-				}
-				ImGui::EndPopup();
-			}
-			if (ImGui::BeginPopup("SpecularTexturePopUp"))
-			{
-				if (ImGui::Button("Delete"))
-				{
-					mSpecularMap = nullptr;
-					ImGui::CloseCurrentPopup();
-				}
-				ImGui::EndPopup();
-			}
-			if (ImGui::BeginPopup("NormalTexturePopUp"))
-			{
-				if (ImGui::Button("Delete"))
-				{
-					mNormalMap = nullptr;
-					ImGui::CloseCurrentPopup();
-				}
-				ImGui::EndPopup();
-			}
-		}
-
-
+	{		
 		//Material name		
 		if (ImGui::TreeNodeEx(mName.c_str(), treeOpen ? ImGuiTreeNodeFlags_DefaultOpen : ImGuiTreeNodeFlags_None))
 		{
+			//Material context menu
+			{
+				if (ImGui::BeginPopup("DiffuseTexturePopUp"))
+				{
+					if (ImGui::Button("Delete"))
+					{
+						mDiffuseMap = nullptr;
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::EndPopup();
+				}
+				if (ImGui::BeginPopup("SpecularTexturePopUp"))
+				{
+					if (ImGui::Button("Delete"))
+					{
+						mSpecularMap = nullptr;
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::EndPopup();
+				}
+				if (ImGui::BeginPopup("NormalTexturePopUp"))
+				{
+					if (ImGui::Button("Delete"))
+					{
+						mNormalMap = nullptr;
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::EndPopup();
+				}
+			}
+
 			ImGui::Separator();
 			
 			//Ambient 
