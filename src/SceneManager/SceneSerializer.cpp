@@ -6,6 +6,16 @@
 
 namespace TS_ENGINE
 {
+	SceneSerializer::SceneSerializer()
+	{
+
+	}
+
+	SceneSerializer::~SceneSerializer()
+	{
+
+	}
+
 	void SceneSerializer::Save(Ref<Scene> scene)
 	{
 		nlohmann::json json;
@@ -151,7 +161,7 @@ namespace TS_ENGINE
 		{
 			// Scene Camera Name
 			std::string name = jsonData["Scene"]["SceneCameras"][i]["Name"];
-			Ref<SceneCamera> sceneCamera = Factory::GetInstance()->InstantitateSceneCamera(name, editorCamera);
+			Ref<SceneCamera> sceneCamera = Factory::GetInstance()->InstantitateSceneCamera(name, editorCamera)->GetSceneCamera();
 
 			Camera::ProjectionType projectionType = jsonData["Scene"]["SceneCameras"][i]["ProjectionType"];
 
@@ -302,14 +312,122 @@ namespace TS_ENGINE
 		catch (const std::exception& e) {
 			TS_CORE_ERROR("Error: {0}", e.what());
 		}
+
+		return nullptr;
 	}
 
 	void SceneSerializer::DeserializeNode(Ref<Node> parentNode, nlohmann::json& jsonNode, Ref<EditorCamera> editorCamera)
 	{
 		std::string name = jsonNode["Name"];
 		EntityType entityType = (EntityType)jsonNode["EntityType"];
-		bool enabled = jsonNode["Enabled"];
 
+		if (entityType == EntityType::PRIMITIVE)
+		{
+			PrimitiveType primitiveType = (PrimitiveType)jsonNode["PrimitiveType"];
+
+			switch (primitiveType)
+			{
+			case PrimitiveType::QUAD:
+			{
+				Ref<Node> node = Factory::GetInstance()->InstantiateQuad(name, parentNode);
+				ApplyAndDeserializeChildrenNode(node, jsonNode, editorCamera);
+			}
+			break;
+			case PrimitiveType::CUBE:
+			{
+				Ref<Node> node = Factory::GetInstance()->InstantiateCube(name, parentNode);
+				ApplyAndDeserializeChildrenNode(node, jsonNode, editorCamera);
+			}
+			break;
+			case PrimitiveType::SPHERE:
+			{
+				Ref<Node> node = Factory::GetInstance()->InstantiateSphere(name, parentNode);
+				ApplyAndDeserializeChildrenNode(node, jsonNode, editorCamera);
+			}
+			break;
+			case PrimitiveType::CYLINDER:
+			{
+				Ref<Node> node = Factory::GetInstance()->InstantiateCylinder(name, parentNode);
+				ApplyAndDeserializeChildrenNode(node, jsonNode, editorCamera);
+			}
+			break;
+			case PrimitiveType::CONE:
+			{
+				Ref<Node> node = Factory::GetInstance()->InstantiateCone(name, parentNode);				
+				ApplyAndDeserializeChildrenNode(node, jsonNode, editorCamera);
+			}
+			break;
+			}
+		}
+		else if (entityType == EntityType::MODEL)
+		{
+			auto it = jsonNode.find("ModelPath");
+
+			if (it != jsonNode.end())// For Model's RootNode
+			{
+				Ref<Node> modelRootNode = Factory::GetInstance()->InstantiateModel(jsonNode["ModelPath"], parentNode);				
+				ApplyAndDeserializeChildrenNode(modelRootNode, jsonNode, editorCamera);
+				
+				for (int i = 0; i < modelRootNode->GetChildCount(); i++)
+				{
+					nlohmann::json childJsonNode = jsonNode["Children"][i];
+					DeserializeModelNode(modelRootNode->GetChildAt(i), modelRootNode, childJsonNode, editorCamera);
+				}				
+			}
+		}
+		else if (entityType == EntityType::CAMERA)
+		{
+			Ref<Node> node = Factory::GetInstance()->InstantitateSceneCamera(name, editorCamera);// No need to set parent for camera. It gets set during scene creation process			
+			ApplyAndDeserializeChildrenNode(node, jsonNode, editorCamera);
+		}
+		else
+		{
+			Ref<Node> node = CreateRef<Node>();
+			node->SetNodeRef(node);
+			parentNode->AddChild(node);
+			ApplyAndDeserializeChildrenNode(node, jsonNode, editorCamera);
+		}
+	}
+
+	void SceneSerializer::DeserializeModelNode(Ref<Node> node, Ref<Node> parentNode, nlohmann::json& jsonNode, Ref<EditorCamera> editorCamera)
+	{
+		std::string name = jsonNode["Name"];
+		EntityType entityType = (EntityType)jsonNode["EntityType"];
+		
+		ApplyAndDeserializeChildrenNode(node, jsonNode, editorCamera);
+
+		for (int i = 0; i < node->GetChildCount(); i++)
+		{
+			nlohmann::json childJsonNode = jsonNode["Children"][i];
+			DeserializeModelNode(node, parentNode, childJsonNode, editorCamera);
+		}
+	}
+
+	void SceneSerializer::ApplyAndDeserializeChildrenNode(Ref<Node> node, nlohmann::json& jsonNode, Ref<EditorCamera> editorCamera)
+	{
+		if (node != nullptr)
+		{
+			std::string name = jsonNode["Name"];
+			EntityType entityType = (EntityType)jsonNode["EntityType"];
+
+			ApplyTransformAndMaterialForNode(node, jsonNode);
+			node->Initialize(name, entityType);
+
+			// Deserialize children
+			if (jsonNode["Children"] != nullptr)//Making sure Children exist 
+			{
+				for (int i = 0; i < jsonNode["Children"].size(); i++)
+				{
+					nlohmann::json childJsonNode = jsonNode["Children"][i];
+					DeserializeNode(node, childJsonNode, editorCamera);
+				}
+			}
+		}
+	}
+
+	void SceneSerializer::ApplyTransformAndMaterialForNode(Ref<Node> node, nlohmann::json& jsonNode)
+	{
+		// Apply Transforms
 		Vector3 transformPosition = Vector3(
 			jsonNode["Transform"]["LocalPosition"][0],
 			jsonNode["Transform"]["LocalPosition"][1],
@@ -325,161 +443,103 @@ namespace TS_ENGINE
 			jsonNode["Transform"]["LocalScale"][1],
 			jsonNode["Transform"]["LocalScale"][2]);
 
-		Ref<Node> node = nullptr;
-
-		if (entityType == EntityType::PRIMITIVE)
+		node->GetTransform()->SetLocalPosition(transformPosition);
+		node->GetTransform()->SetLocalEulerAngles(transformEulerAngles);
+		node->GetTransform()->SetLocalScale(transformScale);
+		
+		// Apply Material
+		for (int i = 0; i < jsonNode["Meshes"].size(); i++)
 		{
-			PrimitiveType primitiveType = (PrimitiveType)jsonNode["PrimitiveType"];
+			nlohmann::json material = jsonNode["Meshes"][i]["Material"];
 
-			switch (primitiveType)
+			// Colors
+			Vector4 ambientColor = Vector4(
+				material["Ambient"]["Color"][0],
+				material["Ambient"]["Color"][1],
+				material["Ambient"]["Color"][2],
+				material["Ambient"]["Color"][3]
+			);
+			Vector4 diffuseColor = Vector4(
+				material["Diffuse"]["Color"][0],
+				material["Diffuse"]["Color"][1],
+				material["Diffuse"]["Color"][2],
+				material["Diffuse"]["Color"][3]
+			);
+			Vector4 specularColor = Vector4(
+				material["Specular"]["Color"][0],
+				material["Specular"]["Color"][1],
+				material["Specular"]["Color"][2],
+				material["Specular"]["Color"][3]
+			);
+
+			// Textures
+
+			Ref<Texture2D> diffuseTexture = nullptr;
 			{
-			case PrimitiveType::QUAD:
-				node = Factory::GetInstance()->InstantiateQuad(name, parentNode);
-				break;
-			case PrimitiveType::CUBE:
-				node = Factory::GetInstance()->InstantiateCube(name, parentNode);
-				break;
-			case PrimitiveType::SPHERE:
-				node = Factory::GetInstance()->InstantiateSphere(name, parentNode);
-				break;
-			case PrimitiveType::CYLINDER:
-				node = Factory::GetInstance()->InstantiateCylinder(name, parentNode);
-				break;
-			case PrimitiveType::CONE:
-				node = Factory::GetInstance()->InstantiateCone(name, parentNode);
-				break;
-			}
-		}
-		else if (entityType == EntityType::MODEL)
-		{
-			auto it = jsonNode.find("ModelPath");
+				auto it = material["Diffuse"].find("TexturePath");
 
-			if (it != jsonNode.end())
-			{
-				node = Factory::GetInstance()->InstantiateModel(jsonNode["ModelPath"], parentNode);
-			}
-		}
-		else if (entityType == EntityType::CAMERA)
-		{
-			Ref<SceneCamera> sceneCamera = Factory::GetInstance()->InstantitateSceneCamera(name, editorCamera);
-			node = sceneCamera->GetNode();// No need to set parent for camera it is already done in the scene creation process
-		}
-		else
-		{
-			Ref<Node> node = CreateRef<Node>();
-			node->SetNodeRef(node);
-			parentNode->AddChild(node);
-		}
-
-		if (node)
-		{
-			node->GetTransform()->SetLocalPosition(transformPosition);
-			node->GetTransform()->SetLocalEulerAngles(transformEulerAngles);
-			node->GetTransform()->SetLocalScale(transformScale);
-			node->Initialize(name, entityType);
-			node->m_Enabled = enabled;
-
-			// Apply Material
-			for (int i = 0; i < jsonNode["Meshes"].size(); i++)
-			{
-				nlohmann::json material = jsonNode["Meshes"][i]["Material"];
-
-				// Colors
-				Vector4 ambientColor = Vector4(
-					material["Ambient"]["Color"][0],
-					material["Ambient"]["Color"][1],
-					material["Ambient"]["Color"][2],
-					material["Ambient"]["Color"][3]
-				);
-				Vector4 diffuseColor = Vector4(
-					material["Diffuse"]["Color"][0],
-					material["Diffuse"]["Color"][1],
-					material["Diffuse"]["Color"][2],
-					material["Diffuse"]["Color"][3]
-				);
-				Vector4 specularColor = Vector4(
-					material["Specular"]["Color"][0],
-					material["Specular"]["Color"][1],
-					material["Specular"]["Color"][2],
-					material["Specular"]["Color"][3]
-				);
-
-				// Textures
-
-				Ref<Texture2D> diffuseTexture = nullptr;
+				if (it != material["Diffuse"].end())
 				{
-					auto it = material["Diffuse"].find("TexturePath");
-
-					if (it != material["Diffuse"].end())
-					{
-						diffuseTexture = Texture2D::Create(material["Diffuse"]["TexturePath"]);
-					}
+					diffuseTexture = Texture2D::Create(material["Diffuse"]["TexturePath"]);
 				}
-
-				Ref<Texture2D> specularTexture = nullptr;
-				{
-					auto it = material["Specular"].find("TexturePath");
-
-					if (it != material["Specular"].end())
-					{
-						specularTexture = Texture2D::Create(material["Specular"]["TexturePath"]);
-					}
-				}
-
-				Ref<Texture2D> normalTexture = nullptr;
-				{
-					auto it = material["Normal"].find("TexturePath");
-
-					if (it != material["Normal"].end())
-					{
-						normalTexture = Texture2D::Create(material["Normal"]["TexturePath"]);
-					}
-				}
-
-				// Offset And Tiling
-				Vector2 diffuseTextureOffset = Vector2(material["Diffuse"]["TextureOffset"][0], material["Diffuse"]["TextureOffset"][1]);
-				Vector2 diffuseTextureTiling = Vector2(material["Diffuse"]["TextureTiling"][0], material["Diffuse"]["TextureTiling"][1]);
-
-				Vector2 specularTextureOffset = Vector2(material["Specular"]["TextureOffset"][0], material["Specular"]["TextureOffset"][1]);
-				Vector2 specularTextureTiling = Vector2(material["Specular"]["TextureTiling"][0], material["Specular"]["TextureTiling"][1]);
-
-				Vector2 normalTextureOffset = Vector2(material["Normal"]["TextureOffset"][0], material["Normal"]["TextureOffset"][1]);
-				Vector2 normalTextureTiling = Vector2(material["Normal"]["TextureTiling"][0], material["Normal"]["TextureTiling"][1]);
-
-				// Shininess And BumpValue
-				float shininess = material["Specular"]["Shininess"];
-				float bumpValue = material["Normal"]["BumpValue"];
-
-				// Apply Material Properties
-				node->GetMeshes()[i]->GetMaterial()->SetAmbientColor(ambientColor);
-				node->GetMeshes()[i]->GetMaterial()->SetDiffuseColor(diffuseColor);
-				node->GetMeshes()[i]->GetMaterial()->SetSpecularColor(specularColor);
-
-				node->GetMeshes()[i]->GetMaterial()->SetDiffuseMap(diffuseTexture);
-				node->GetMeshes()[i]->GetMaterial()->SetSpecularMap(diffuseTexture);
-				node->GetMeshes()[i]->GetMaterial()->SetNormalMap(normalTexture);
-
-				node->GetMeshes()[i]->GetMaterial()->SetDiffuseMapOffset(diffuseTextureOffset);
-				node->GetMeshes()[i]->GetMaterial()->SetDiffuseMapTiling(diffuseTextureTiling);
-				node->GetMeshes()[i]->GetMaterial()->SetSpecularMapOffset(specularTextureOffset);
-				node->GetMeshes()[i]->GetMaterial()->SetSpecularMapTiling(specularTextureTiling);
-				node->GetMeshes()[i]->GetMaterial()->SetNormalMapOffset(normalTextureOffset);
-				node->GetMeshes()[i]->GetMaterial()->SetNormalMapTiling(normalTextureTiling);
-
-				node->GetMeshes()[i]->GetMaterial()->SetShininess(shininess);
-				node->GetMeshes()[i]->GetMaterial()->SetBumpValue(bumpValue);
 			}
-		}
 
-		// Deserialize children
-		if (jsonNode["Children"] != nullptr)//Making sure Children exist 
-		{
-			for (int i = 0; i < jsonNode["Children"].size(); i++)
+			Ref<Texture2D> specularTexture = nullptr;
 			{
-				nlohmann::json childJsonNode = jsonNode["Children"][i];
-				DeserializeNode(node, childJsonNode, editorCamera);
-			}
-		}
+				auto it = material["Specular"].find("TexturePath");
 
+				if (it != material["Specular"].end())
+				{
+					specularTexture = Texture2D::Create(material["Specular"]["TexturePath"]);
+				}
+			}
+
+			Ref<Texture2D> normalTexture = nullptr;
+			{
+				auto it = material["Normal"].find("TexturePath");
+
+				if (it != material["Normal"].end())
+				{
+					normalTexture = Texture2D::Create(material["Normal"]["TexturePath"]);
+				}
+			}
+
+			// Offset And Tiling
+			Vector2 diffuseTextureOffset = Vector2(material["Diffuse"]["TextureOffset"][0], material["Diffuse"]["TextureOffset"][1]);
+			Vector2 diffuseTextureTiling = Vector2(material["Diffuse"]["TextureTiling"][0], material["Diffuse"]["TextureTiling"][1]);
+
+			Vector2 specularTextureOffset = Vector2(material["Specular"]["TextureOffset"][0], material["Specular"]["TextureOffset"][1]);
+			Vector2 specularTextureTiling = Vector2(material["Specular"]["TextureTiling"][0], material["Specular"]["TextureTiling"][1]);
+
+			Vector2 normalTextureOffset = Vector2(material["Normal"]["TextureOffset"][0], material["Normal"]["TextureOffset"][1]);
+			Vector2 normalTextureTiling = Vector2(material["Normal"]["TextureTiling"][0], material["Normal"]["TextureTiling"][1]);
+
+			// Shininess And BumpValue
+			float shininess = material["Specular"]["Shininess"];
+			float bumpValue = material["Normal"]["BumpValue"];
+
+			// Apply Material Properties
+			node->GetMeshes()[i]->GetMaterial()->SetAmbientColor(ambientColor);
+			node->GetMeshes()[i]->GetMaterial()->SetDiffuseColor(diffuseColor);
+			node->GetMeshes()[i]->GetMaterial()->SetSpecularColor(specularColor);
+
+			node->GetMeshes()[i]->GetMaterial()->SetDiffuseMap(diffuseTexture);
+			node->GetMeshes()[i]->GetMaterial()->SetSpecularMap(specularTexture);
+			node->GetMeshes()[i]->GetMaterial()->SetNormalMap(normalTexture);
+
+			node->GetMeshes()[i]->GetMaterial()->SetDiffuseMapOffset(diffuseTextureOffset);
+			node->GetMeshes()[i]->GetMaterial()->SetDiffuseMapTiling(diffuseTextureTiling);
+			node->GetMeshes()[i]->GetMaterial()->SetSpecularMapOffset(specularTextureOffset);
+			node->GetMeshes()[i]->GetMaterial()->SetSpecularMapTiling(specularTextureTiling);
+			node->GetMeshes()[i]->GetMaterial()->SetNormalMapOffset(normalTextureOffset);
+			node->GetMeshes()[i]->GetMaterial()->SetNormalMapTiling(normalTextureTiling);
+
+			node->GetMeshes()[i]->GetMaterial()->SetShininess(shininess);
+			node->GetMeshes()[i]->GetMaterial()->SetBumpValue(bumpValue);
+		}
+		
+		// Apply Enabled
+		bool enabled = jsonNode["Enabled"];
+		node->m_Enabled = enabled;
 	}
 }
