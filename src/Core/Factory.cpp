@@ -15,7 +15,7 @@ namespace TS_ENGINE
 		return mInstance;
 	}
 
-	Ref<SceneCamera> Factory::InstantitateSceneCamera(const std::string& name, Ref<EditorCamera> editorCamera)
+	Ref<Node> Factory::InstantitateSceneCamera(const std::string& name, Ref<EditorCamera> editorCamera)
 	{
 #ifdef TS_ENGINE_EDITOR
 		Ref<SceneCamera> sceneCamera = CreateRef<SceneCamera>("SceneCamera", editorCamera);
@@ -27,10 +27,12 @@ namespace TS_ENGINE
 		sceneCamera->Initialize();
 		sceneCamera->GetNode()->SetSceneCamera(sceneCamera);
 		sceneCamera->GetNode()->Initialize(name, EntityType::CAMERA);
-		return sceneCamera;
+		sceneCamera->GetNode()->SetNodeRef(sceneCamera->GetNode());
+
+		return sceneCamera->GetNode();
 	}
 
-	Ref<SceneCamera> Factory::InstantitateDuplicateSceneCamera(Ref<SceneCamera> sceneCamera)
+	Ref<Node> Factory::InstantitateDuplicateSceneCamera(Ref<SceneCamera> sceneCamera)
 	{
 		Scene* scene = SceneManager::GetInstance()->GetCurrentScene().get();
 
@@ -52,7 +54,7 @@ namespace TS_ENGINE
 		duplicateSceneCamera->GetNode()->InitializeTransformMatrices();
 
 		scene->AddSceneCamera(duplicateSceneCamera);
-		return duplicateSceneCamera;
+		return duplicateSceneCamera->GetNode();
 	}
 
 	Ref<Node> Factory::InstantiateLine(const std::string& name, Ref<Node> parentNode, const std::vector<Vector3>& points)

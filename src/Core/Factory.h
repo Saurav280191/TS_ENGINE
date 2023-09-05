@@ -24,8 +24,8 @@ namespace TS_ENGINE
 	public:
 		static Factory* GetInstance();
 
-		Ref<SceneCamera> InstantitateSceneCamera(const std::string& name, Ref<EditorCamera> editorCamera);
-		Ref<SceneCamera> InstantitateDuplicateSceneCamera(Ref<SceneCamera> sceneCamera);
+		Ref<Node> InstantitateSceneCamera(const std::string& name, Ref<EditorCamera> editorCamera);
+		Ref<Node> InstantitateDuplicateSceneCamera(Ref<SceneCamera> sceneCamera);
 		
 		Ref<Node> InstantiateLine(const std::string& name, Ref<Node> parentNode, const std::vector<Vector3>& points);
 		Ref<Node> InstantiateQuad(const std::string& name, Ref<Node> parentNode);
