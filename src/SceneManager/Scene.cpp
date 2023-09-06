@@ -26,7 +26,7 @@ namespace TS_ENGINE
 		
 #pragma region DefaultNewScene
 		mSkyboxNode = Factory::GetInstance()->InstantiateSphere("SkyboxSphere", nullptr);
-		mSkyboxNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create(Application::s_AssetsDir.string() + "\\Textures\\industrial_sunset_puresky.jpg"));
+		mSkyboxNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create(Application::s_AssetsDir.string() + "\\Textures\\Skybox\\industrial_sunset_puresky.jpg"));
 		mSkyboxNode->GetTransform()->SetLocalScale(1600.0f, 1600.0f, 1600.0f);
 		mSkyboxNode->GetTransform()->SetLocalEulerAngles(90.0f, 235.0f, 0.0f);
 		mSkyboxNode->InitializeTransformMatrices();
@@ -49,7 +49,7 @@ namespace TS_ENGINE
 
 #pragma region DefaultNewScene
 		mSkyboxNode = Factory::GetInstance()->InstantiateSphere("SkyboxSphere", nullptr);
-		mSkyboxNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create(Application::s_AssetsDir.string() + "\\Textures\\industrial_sunset_puresky.jpg"));
+		mSkyboxNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create(Application::s_AssetsDir.string() + "\\Textures\\Skybox\\industrial_sunset_puresky.jpg"));
 		mSkyboxNode->GetTransform()->SetLocalScale(1600.0f, 1600.0f, 1600.0f);
 		mSkyboxNode->GetTransform()->SetLocalEulerAngles(90.0f, 235.0f, 0.0f);
 		mSkyboxNode->InitializeTransformMatrices();
