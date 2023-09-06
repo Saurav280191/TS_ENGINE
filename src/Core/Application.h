@@ -52,8 +52,17 @@ namespace TS_ENGINE
 		{
 			mDrawCalls = 0;
 		}
+
+		static void SetExecutableDirectory(std::filesystem::path exeDir);
+	public:
+		static std::filesystem::path s_ExecutableDir;
+		static std::filesystem::path s_AssetsDir;
+		static std::filesystem::path s_ResourcesDir;
+		static std::filesystem::path s_SaveSceneDir;
+		static std::filesystem::path s_ThumbnailsDir;
 	private:
-		static Application* sInstance;
+		static Application* sInstance;		
+
 		friend int ::main(int argc, char** argv);
 
 		Scope<Window> mWindow;
@@ -71,5 +80,5 @@ namespace TS_ENGINE
 	};
 
 	//To be defined in client
-	Application* CreateApplication();
+	Application* CreateApplication(std::filesystem::path exeDir);
 }

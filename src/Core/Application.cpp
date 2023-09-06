@@ -7,6 +7,12 @@
 namespace TS_ENGINE
 {
 	Application* Application::sInstance = NULL;
+	std::filesystem::path Application::s_ExecutableDir;
+	std::filesystem::path Application::s_AssetsDir;
+	std::filesystem::path Application::s_ResourcesDir;
+	std::filesystem::path Application::s_SaveSceneDir;
+	std::filesystem::path Application::s_ThumbnailsDir;
+
 	std::chrono::time_point<std::chrono::steady_clock> finish;
 
 	Application::Application()
@@ -54,6 +60,15 @@ namespace TS_ENGINE
 
 			(*it)->OnEvent(e);
 		}
+	}
+
+	void Application::SetExecutableDirectory(std::filesystem::path exeDir)
+	{
+		s_ExecutableDir = exeDir;
+		s_AssetsDir = std::string(exeDir.string() + "\\Assets");
+		s_ResourcesDir = std::string(exeDir.string() + "\\Resources");
+		s_SaveSceneDir = std::string(exeDir.string() + "\\Assets\\SavedScenes");
+		s_ThumbnailsDir = std::string(exeDir.string() + "\\Resources\\SavedSceneThumbnails");
 	}
 
 	void Application::Run()
