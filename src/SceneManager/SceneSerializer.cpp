@@ -101,7 +101,7 @@ namespace TS_ENGINE
 		// Nodes (Recursively iterate through scene node children and serialize them)	
 		SerializeNode(scene->GetSceneNode(), json["Scene"]["RootNode"]);
 
-		std::string filePath = "..\\..\\..\\Assets\\SavedScenes\\" + std::string(sceneName) + ".scene";
+		std::string filePath = Application::s_SaveSceneDir.string() + "\\" + sceneName + ".scene";
 		std::ofstream o(filePath);
 		o << std::setw(4) << json << std::endl;
 

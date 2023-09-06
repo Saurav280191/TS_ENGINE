@@ -1,6 +1,7 @@
 #include "tspch.h"
 #include "Model.h"
 #include "Utils/Utility.h"
+#include "Core/Application.h"
 
 //#define AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS
 
@@ -190,7 +191,8 @@ namespace TS_ENGINE {
 	
 	void Model::ProcessMaterial(aiMaterial* aiMat)
 	{
-		mDefaultShader = Shader::Create("DefaultShader", "HDRLighting.vert", "HDRLighting.frag");
+		std::string shaderDir = Application::s_AssetsDir.string() + "\\Shaders\\";
+		mDefaultShader = Shader::Create("DefaultShader", shaderDir + "HDRLighting.vert", shaderDir + "HDRLighting.frag");
 		mTsMaterial = CreateRef<Material>(aiMat->GetName().C_Str(), mDefaultShader);
 
 		aiMat->Get(AI_MATKEY_NAME, this->mMaterial.name);

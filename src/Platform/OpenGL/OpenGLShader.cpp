@@ -16,10 +16,8 @@ namespace TS_ENGINE {
 		vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 		fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
-		std::string shaderResPath = "Assets\\Shaders\\";
-
-		std::string vsFullPath = shaderResPath + vertexShaderPath;
-		std::string fsFullPath = shaderResPath + fragmentShaderPath;
+		std::string vsFullPath = vertexShaderPath;
+		std::string fsFullPath = fragmentShaderPath;
 
 		try
 		{

@@ -26,7 +26,7 @@ namespace TS_ENGINE
 		
 #pragma region DefaultNewScene
 		mSkyboxNode = Factory::GetInstance()->InstantiateSphere("SkyboxSphere", nullptr);
-		mSkyboxNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\industrial_sunset_puresky.jpg"));
+		mSkyboxNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create(Application::s_AssetsDir.string() + "\\Textures\\industrial_sunset_puresky.jpg"));
 		mSkyboxNode->GetTransform()->SetLocalScale(1600.0f, 1600.0f, 1600.0f);
 		mSkyboxNode->GetTransform()->SetLocalEulerAngles(90.0f, 235.0f, 0.0f);
 		mSkyboxNode->InitializeTransformMatrices();
@@ -34,55 +34,6 @@ namespace TS_ENGINE
 		sceneCamera->GetNode()->SetParent(mSceneNode);
 		mSceneCameras.push_back(sceneCamera);
 #pragma endregion
-
-#pragma region DummyScene		
-		// Skybox		
-		//mSkyboxNode = Factory::GetInstance()->InstantiateSphere("SkyboxSphere", nullptr);
-		//mSkyboxNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\industrial_sunset_puresky.jpg"));
-		//mSkyboxNode->GetTransform()->SetLocalScale(1600.0f, 1600.0f, 1600.0f);
-		//mSkyboxNode->GetTransform()->SetLocalEulerAngles(90.0f, 235.0f, 0.0f);		
-		//mSkyboxNode->InitializeTransformMatrices();
-
-		/*auto sceneCamera1 = Factory::GetInstance()->InstantitateSceneCamera("SceneCamera1", this);
-		sceneCamera1->GetNode()->GetTransform()->SetLocalPosition(7.156f, 2.951f, 8.770f);
-		sceneCamera1->GetNode()->GetTransform()->SetLocalEulerAngles(-13.235f, 38.064f, 0.0f);*/
-		
-		/*auto sceneCamera2 = Factory::GetInstance()->InstantitateSceneCamera("SceneCamera2", this);
-		sceneCamera2->GetNode()->GetTransform()->SetLocalPosition(-7.156f, 2.951f, 8.770f);
-		sceneCamera2->GetNode()->GetTransform()->SetLocalEulerAngles(-13.235f, -38.064f, 0.0f);*/
-
-		// Add to list and set currentSceneCameraIndex
-		//mSceneCameras.push_back(sceneCamera1);
-		//mSceneCameras.push_back(sceneCamera2);
-		//mCurrentSceneCameraIndex = 0;// Current Scene Camera
-
-		// Default ground
-		//auto groundNode = Factory::GetInstance()->InstantiateQuad("Ground", mSceneNode);
-		//groundNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\raw_plank_wall_diff_4k.jpg"));
-		//groundNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMapTiling(Vector2(2, 2));
-		//groundNode->GetTransform()->SetLocalEulerAngles(-90.0f, 0.0f, 0.0f);
-		//groundNode->GetTransform()->SetLocalScale(10.0f, 10.0f, 10.0f);
-		
-		// Cube
-		//auto cubeNode = Factory::GetInstance()->InstantiateCube("Cube", mSceneNode);		
-		//cubeNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\crate.png"));
-		//cubeNode->GetTransform()->SetLocalPosition(2.75f, 0.312f, 0.0f);		
-		//cubeNode->GetTransform()->SetLocalScale(0.62f, 0.62f, 0.62f);
-		
-		// Cube1
-		//auto cube1Node = Factory::GetInstance()->InstantiateCube("Cube1", cubeNode);
-		//cube1Node->GetMeshes()[0]->GetMaterial()->SetAmbientColor(Vector4(1, 0, 0, 1));
-		//cube1Node->GetTransform()->SetLocalPosition(1.0f, 1.0f, -1.0f);
-		//cube1Node->GetTransform()->SetLocalScale(0.3f, 0.3f, 0.3f);
-		//cube1Node->GetTransform()->SetLocalEulerAngles(30.0f, 60.0f, 10.0f);
-
-		//Model
-		//auto modelNode = Factory::GetInstance()->InstantiateModel("D:/Documents/ThinkSideways/WorkInProgress/TS_ENGINE Related/TS_ENGINE_Editor/Assets/Models/LamborginiAventador/Chassis.obj", mSceneNode));
-		//auto modelNode = Factory::GetInstance()->InstantiateModel("D:/Documents/ThinkSideways/WorkInProgress/TS_ENGINE Related/TS_ENGINE_Editor/Assets/Models/buster_drone.glb", mSceneNode);
-		//auto modelNode = Factory::GetInstance()->InstantiateModel("D:/Documents/ThinkSideways/WorkInProgress/TS_ENGINE Related/TS_ENGINE_Editor/Assets/Models/monk_character.glb", mSceneNode);
-		//auto modelNode = Factory::GetInstance()->InstantiateModel("D:/Downloads/Ely By K.Atienza.fbx", mSceneNode);
-		//modelNode->GetTransform()->SetLocalScale(0.01f, 0.01f, 0.01f);
-#pragma endregion 
 
 		mSceneNode->Initialize(name, EntityType::SCENE);//Needs to be done at the end to initialize the hierarchy once
 	}
@@ -98,7 +49,7 @@ namespace TS_ENGINE
 
 #pragma region DefaultNewScene
 		mSkyboxNode = Factory::GetInstance()->InstantiateSphere("SkyboxSphere", nullptr);
-		mSkyboxNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create("Assets\\Textures\\industrial_sunset_puresky.jpg"));
+		mSkyboxNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create(Application::s_AssetsDir.string() + "\\Textures\\industrial_sunset_puresky.jpg"));
 		mSkyboxNode->GetTransform()->SetLocalScale(1600.0f, 1600.0f, 1600.0f);
 		mSkyboxNode->GetTransform()->SetLocalEulerAngles(90.0f, 235.0f, 0.0f);
 		mSkyboxNode->InitializeTransformMatrices();
