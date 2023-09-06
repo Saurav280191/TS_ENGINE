@@ -58,6 +58,11 @@ namespace TS_ENGINE {
 				//internalFormat = GL_RGB32F;//For Gamma Correction;
 				//dataFormat = GL_RGB;//For Gamma Correction
 			}
+			else if (channels == 1)
+			{
+				internalFormat = GL_R;
+				dataFormat = GL_RED;
+			}
 
 			//Copy pixels data to mPixels vector
 			mPixels.resize(width * height * channels);

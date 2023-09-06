@@ -213,6 +213,21 @@ namespace TS_ENGINE
 		}
 	}
 
+	const int Node::GetSiblingIndex(Ref<Node> node)
+	{
+		for (int i = 0; i < mChildren.size(); i++)
+		{
+			if (mChildren[i] == node)
+			{
+				TS_CORE_ERROR("Sibling index for: {0} is: {1}", node->GetEntity()->GetName().c_str(), i);
+				return i;
+			}
+		}
+
+		TS_CORE_ERROR("Could not find sibling index for: {0}", node->GetEntity()->GetName().c_str());
+		return 0;
+	}
+
 	void Node::UpdateSiblings()
 	{
 		if (mParentNode)
@@ -228,6 +243,29 @@ namespace TS_ENGINE
 		else
 		{
 			TS_CORE_ERROR("There is no parent for {0}", mNodeRef->mEntity->GetName().c_str());
+		}
+	}
+
+	void Node::SetSiblingIndex(int index)
+	{
+		if (mParentNode)
+		{
+			int siblingIndex = mParentNode->GetSiblingIndex(mNodeRef);
+
+			if (siblingIndex == index)
+			{
+				TS_CORE_INFO("Sibling index for: {0} is already {1}", mNodeRef->GetEntity()->GetName().c_str(), index);
+			}
+			else
+			{
+				auto elementToMove = mNodeRef->mChildren[index];
+				mNodeRef->mChildren.erase(mNodeRef->mChildren.begin() + siblingIndex);
+				mNodeRef->mChildren.insert(mNodeRef->mChildren.begin() + index, elementToMove);
+			}
+		}
+		else
+		{
+			TS_CORE_ERROR("There is no parent!");
 		}
 	}
 

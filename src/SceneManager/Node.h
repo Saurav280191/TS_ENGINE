@@ -40,6 +40,7 @@ namespace TS_ENGINE
 		void RemoveChild(Ref<Node> child);
 		void RemoveAllChildren();
 		void UpdateSiblings();
+		void SetSiblingIndex(int index);
 
 		/// <summary>
 		/// Updates local and global model matrices for it's self and for children
@@ -85,6 +86,7 @@ namespace TS_ENGINE
 		std::vector<Ref<Mesh>> GetMeshes() const { return mMeshes; }
 		Ref<SceneCamera> GetSceneCamera() { return mSceneCamera; }
 		std::string GetModelPath() { return mModelPath; }
+		const int GetSiblingIndex(Ref<Node> node);
 #pragma endregion
 
 	public:
