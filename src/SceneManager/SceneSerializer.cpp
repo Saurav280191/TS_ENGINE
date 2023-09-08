@@ -246,7 +246,7 @@ namespace TS_ENGINE
 				jsonNode["Meshes"][i]["Material"]["Ambient"]["Color"] = { ambientColor.x, ambientColor.y, ambientColor.z, ambientColor.w };
 
 				jsonNode["Meshes"][i]["Material"]["Diffuse"]["Color"] = { diffuseColor.x, diffuseColor.y, diffuseColor.z, diffuseColor.w };
-				if (node->GetMeshes()[i]->GetMaterial()->GetDiffuseMap())
+				if (node->GetMeshes()[i]->GetMaterial()->GetDiffuseMap() && node->GetMeshes()[i]->GetMaterial()->GetDiffuseMap()->GetPath() != "")
 				{
 					jsonNode["Meshes"][i]["Material"]["Diffuse"]["TexturePath"] = node->GetMeshes()[i]->GetMaterial()->GetDiffuseMap()->GetPath();
 				}
@@ -254,7 +254,7 @@ namespace TS_ENGINE
 				jsonNode["Meshes"][i]["Material"]["Diffuse"]["TextureTiling"] = { node->GetMeshes()[i]->GetMaterial()->GetDiffuseMapTiling().x, node->GetMeshes()[i]->GetMaterial()->GetDiffuseMapTiling().y };
 
 				jsonNode["Meshes"][i]["Material"]["Specular"]["Color"] = { specularColor.x, specularColor.y, specularColor.z, specularColor.w };
-				if (node->GetMeshes()[i]->GetMaterial()->GetSpecularMap())
+				if (node->GetMeshes()[i]->GetMaterial()->GetSpecularMap() && node->GetMeshes()[i]->GetMaterial()->GetSpecularMap()->GetPath() != "")
 				{
 					jsonNode["Meshes"][i]["Material"]["Specular"]["TexturePath"] = node->GetMeshes()[i]->GetMaterial()->GetSpecularMap()->GetPath();
 				}
@@ -262,7 +262,7 @@ namespace TS_ENGINE
 				jsonNode["Meshes"][i]["Material"]["Specular"]["TextureTiling"] = { node->GetMeshes()[i]->GetMaterial()->GetSpecularMapTiling().x, node->GetMeshes()[i]->GetMaterial()->GetSpecularMapTiling().y };
 				jsonNode["Meshes"][i]["Material"]["Specular"]["Shininess"] = node->GetMeshes()[i]->GetMaterial()->GetShininess();
 
-				if (node->GetMeshes()[i]->GetMaterial()->GetNormalMap())
+				if (node->GetMeshes()[i]->GetMaterial()->GetNormalMap() && node->GetMeshes()[i]->GetMaterial()->GetNormalMap()->GetPath() != "")
 				{
 					jsonNode["Meshes"][i]["Material"]["Normal"]["TexturePath"] = node->GetMeshes()[i]->GetMaterial()->GetNormalMap()->GetPath();
 				}
@@ -523,9 +523,12 @@ namespace TS_ENGINE
 			node->GetMeshes()[i]->GetMaterial()->SetDiffuseColor(diffuseColor);
 			node->GetMeshes()[i]->GetMaterial()->SetSpecularColor(specularColor);
 
-			node->GetMeshes()[i]->GetMaterial()->SetDiffuseMap(diffuseTexture);
-			node->GetMeshes()[i]->GetMaterial()->SetSpecularMap(specularTexture);
-			node->GetMeshes()[i]->GetMaterial()->SetNormalMap(normalTexture);
+			if(diffuseTexture)
+				node->GetMeshes()[i]->GetMaterial()->SetDiffuseMap(diffuseTexture);
+			if(specularTexture)
+				node->GetMeshes()[i]->GetMaterial()->SetSpecularMap(specularTexture);
+			if(normalTexture)
+				node->GetMeshes()[i]->GetMaterial()->SetNormalMap(normalTexture);
 
 			node->GetMeshes()[i]->GetMaterial()->SetDiffuseMapOffset(diffuseTextureOffset);
 			node->GetMeshes()[i]->GetMaterial()->SetDiffuseMapTiling(diffuseTextureTiling);
