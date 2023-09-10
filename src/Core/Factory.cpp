@@ -15,6 +15,16 @@ namespace TS_ENGINE
 		return mInstance;
 	}
 
+	Ref<Node> Factory::InstantitateEmptyNode(const std::string& name, Ref<Node> parentNode)
+	{
+		Ref<Node> emptyNode = CreateRef<Node>();
+		emptyNode->SetNodeRef(emptyNode);
+		emptyNode->SetParent(parentNode);
+		emptyNode->Initialize(name, EntityType::EMPTY);
+
+		return emptyNode;
+	}
+
 	Ref<Node> Factory::InstantitateSceneCamera(const std::string& name, Ref<EditorCamera> editorCamera)
 	{
 #ifdef TS_ENGINE_EDITOR
@@ -186,6 +196,11 @@ namespace TS_ENGINE
 
 		mesh->SetMaterial(firstMeshMaterial);
 		node->AddMesh(mesh);
+	}
+
+	void Factory::Flush()
+	{
+		mLoadedModelNodeMap.clear();
 	}
 
 	//Ref<Light> Factory::CreateLight(Light::Type type)

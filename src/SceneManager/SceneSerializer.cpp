@@ -380,18 +380,27 @@ namespace TS_ENGINE
 			Ref<Node> node = Factory::GetInstance()->InstantitateSceneCamera(name, editorCamera);// No need to set parent for camera. It gets set during scene creation process			
 			ApplyAndDeserializeChildrenNode(node, jsonNode, editorCamera);
 		}
+		else if (entityType == EntityType::EMPTY)
+		{
+			Ref<Node> node = Factory::GetInstance()->InstantitateEmptyNode(name, parentNode);
+			ApplyAndDeserializeChildrenNode(node, jsonNode, editorCamera);
+		}
 		else
 		{
-			Ref<Node> node = CreateRef<Node>();
+			TS_CORE_ERROR("Attempted to load unknown node type");
+			/*Ref<Node> node = CreateRef<Node>();
 			node->SetNodeRef(node);
 			parentNode->AddChild(node);
-			ApplyAndDeserializeChildrenNode(node, jsonNode, editorCamera);
+			ApplyAndDeserializeChildrenNode(node, jsonNode, editorCamera);*/
 		}
 	}
 
 	void SceneSerializer::DeserializeModelNode(Ref<Node> node, Ref<Node> parentNode, nlohmann::json& jsonNode, Ref<EditorCamera> editorCamera)
 	{
-		std::string name = jsonNode["Name"];
+		std::string name = "";
+		if (jsonNode.contains("Name") && jsonNode["Name"] != NULL)
+			name = jsonNode["Name"];
+	
 		EntityType entityType = (EntityType)jsonNode["EntityType"];
 		
 		ApplyAndDeserializeChildrenNode(node, jsonNode, editorCamera);
@@ -443,10 +452,9 @@ namespace TS_ENGINE
 			jsonNode["Transform"]["LocalScale"][1],
 			jsonNode["Transform"]["LocalScale"][2]);
 
-		node->GetTransform()->SetLocalPosition(transformPosition);
-		node->GetTransform()->SetLocalEulerAngles(transformEulerAngles);
-		node->GetTransform()->SetLocalScale(transformScale);
-		
+		// Set local transforms
+		node->GetTransform()->SetLocalTransforms(transformPosition, transformEulerAngles, transformScale);
+
 		// Apply Material
 		for (int i = 0; i < jsonNode["Meshes"].size(); i++)
 		{

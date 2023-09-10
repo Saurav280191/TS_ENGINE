@@ -67,10 +67,15 @@ namespace TS_ENGINE
 
 	Scene::~Scene()
 	{
+		Flush();
+	}
+
+	void Scene::Flush()
+	{
+		EntityManager::GetInstance()->Flush();
+		Factory::GetInstance()->Flush();
 		mSceneNode.reset();
-		//mSceneNode->Destroy();
-		//mSceneNode = nullptr;
-		//delete mSceneNode;
+		//ModelLoader::GetInstance()->Flush();
 	}
 
 	/*void Scene::OnBatched()

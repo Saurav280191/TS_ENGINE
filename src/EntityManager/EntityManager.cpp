@@ -61,6 +61,12 @@ namespace TS_ENGINE
 			TS_CORE_ERROR("Could not find an entity with ID: {0}", id);
 		}
 	}
+
+	void EntityManager::Flush()
+	{
+		mEntityLookUp.clear();
+		mEntities.clear();
+	}
 	
 	void EntityManager::PrintEntities()
 	{

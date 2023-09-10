@@ -76,6 +76,8 @@ namespace TS_ENGINE {
 		Scene(std::string name, Ref<EditorCamera> editorCamera, std::vector<Ref<SceneCamera>> sceneCameras);
 		~Scene();
 
+		void Flush();
+
 		//BatchButton m_BatchButton;
 		//bool m_BatchingEnabled;
 		//void OnBatched();

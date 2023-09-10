@@ -24,6 +24,8 @@ namespace TS_ENGINE
 	public:
 		static Factory* GetInstance();
 
+		Ref<Node> InstantitateEmptyNode(const std::string& name, Ref<Node> parentNode);
+
 		Ref<Node> InstantitateSceneCamera(const std::string& name, Ref<EditorCamera> editorCamera);
 		Ref<Node> InstantitateDuplicateSceneCamera(Ref<SceneCamera> sceneCamera);
 		
@@ -37,6 +39,7 @@ namespace TS_ENGINE
 
 		void ChangeMeshForNode(Ref<Node> node, PrimitiveType primitive);
 		//Ref<Light> CreateLight(Light::Type lightType);
+		void Flush();
 	private:
 		static Factory* mInstance;
 		std::unordered_map<std::string, Ref<Node>> mLoadedModelNodeMap;//Model path and Model Node map

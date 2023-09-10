@@ -21,9 +21,12 @@ namespace TS_ENGINE
 
 	SceneManager::~SceneManager()
 	{
+		mSceneSerializer.reset();
+		
 		if (mCurrentScene)
 		{
 			mCurrentScene->~Scene();
+			mCurrentScene.reset();
 			mCurrentScene = nullptr;
 		}
 

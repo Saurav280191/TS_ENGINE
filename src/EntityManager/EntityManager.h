@@ -18,7 +18,7 @@ namespace TS_ENGINE
 		Ref<Entity> Register(const std::string& name, const EntityType& entityType);
 		Ref<Entity> Get(EntityID id);
 		void Remove(EntityID id);
-
+		void Flush();
 		void PrintEntities();//Only for testing
 	};
 }
