@@ -31,11 +31,11 @@ namespace TS_ENGINE {
 	Ref<Texture2D> Texture2D::Create(const char* name, const unsigned char* pixelData, uint32_t len)
 	{
 		//TODO: Add support for more APIs
-		if (mTextureStrAndIdMap.find(name) != mTextureStrAndIdMap.end())
+		/*if (mTextureStrAndIdMap.find(name) != mTextureStrAndIdMap.end())
 		{
 			TS_CORE_INFO("Texture from path {0} already loaded", name);
 			return mTextureIdAndTexture2DMap[mTextureStrAndIdMap[name]];
-		}
+		}*/
 
 		Ref<OpenGLTexture2D> tex2D = CreateRef<OpenGLTexture2D>(name, pixelData, len);
 		mTextureStrAndIdMap[name] = tex2D->GetRendererID();

@@ -98,7 +98,7 @@ namespace TS_ENGINE {
 		data = nullptr;
 		{
 			data = stbi_load_from_memory(pixelData, len, &width, &height, &channels, 0);
-			TS_CORE_INFO("Embedded texture loaded with name: {0}, length: {1}, width: {2}, height: {3}, channel: {4}", name, len, width, height, channels);
+			//TS_CORE_INFO("Embedded texture loaded with name: {0}, length: {1}, width: {2}, height: {3}, channel: {4}", name, len, width, height, channels);
 		}
 
 		if (data)
@@ -110,9 +110,11 @@ namespace TS_ENGINE {
 			mChannels = channels;
 
 			GLenum internalFormat = 0, dataFormat = 0;
+			
 			if (channels == 4)
 			{
-				internalFormat = GL_RGBA8;
+				//internalFormat = GL_RGBA8;
+				internalFormat = GL_RGBA32F;
 				dataFormat = GL_RGBA;
 			}
 			else if (channels == 3)
@@ -121,10 +123,22 @@ namespace TS_ENGINE {
 				dataFormat = GL_RGB;
 
 			}
+			else if (channels == 2)
+			{
+				internalFormat = GL_RG;
+				dataFormat = GL_RG8;
+
+			}
+			else if (channels == 1)
+			{
+				internalFormat = GL_R;
+				dataFormat = GL_RED;
+
+			}
 
 			//Copy pixels data to mPixels vector
-			mPixels.resize(width * height * 3);
-			std::memcpy(mPixels.data(), data, width * height * 3);
+			mPixels.resize(width * height * channels);
+			std::memcpy(mPixels.data(), data, width * height * channels);
 
 			mInternalFormat = internalFormat;
 			mDataFormat = dataFormat;

@@ -13,7 +13,7 @@ namespace TS_ENGINE {
 		~Model();		
 		
 		void LoadModel(const std::string& modelPath);
-		void ProcessEmbeddedTextures();
+		//void ProcessEmbeddedTextures();
 		void CopyFrom(Ref<Model> model);
 		
 		Ref<Node> GetRootNode() { return mRootNode; }
@@ -21,6 +21,7 @@ namespace TS_ENGINE {
 		Ref<Node> ProcessNode(aiNode* aiNode, const aiScene* scene);
 		void AddMaterialToDictionary(Ref<Material> material);
 		Ref<Mesh> ProcessMesh(aiMesh* aiMesh, const aiScene* scene);
+		void ProcessTexture(aiMaterial* aiMat, Ref<TS_ENGINE::Material> tsMaterial, aiTextureType textureType, int numMaps);
 		void ProcessMaterial(aiMaterial* aiMat);
 	private:
 		const aiScene* mAssimpScene;
@@ -31,9 +32,9 @@ namespace TS_ENGINE {
 		Ref<Node> mRootNode;
 		Ref<Shader> mDefaultShader;
 		std::vector<Ref<Node>> mProcessedNodes = {};
-		std::vector<Ref<Mesh>> mProcessedMeshes = {};
+		//std::vector<Ref<Mesh>> mProcessedMeshes = {};
 		std::unordered_map<std::string, Ref<Material>> mProcessedMaterials = {};
-		std::unordered_map<std::string, Ref<Texture2D>> mProcessedEmbeddedTextures = {};
+		//std::unordered_map<std::string, Ref<Texture2D>> mProcessedEmbeddedTextures = {};
 		Ref<Texture2D> mTexture;
 	};
 }
