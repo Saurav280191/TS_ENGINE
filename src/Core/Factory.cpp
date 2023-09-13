@@ -51,7 +51,12 @@ namespace TS_ENGINE
 #else
 		Ref<SceneCamera> duplicateSceneCamera = CreateRef<SceneCamera>("SceneCamera");
 #endif
-		duplicateSceneCamera->SetPerspective(sceneCamera->GetPerspective());
+		if(sceneCamera->GetProjectionType() == SceneCamera::ProjectionType::PERSPECTIVE)
+			duplicateSceneCamera->SetPerspective(sceneCamera->GetPerspective());
+		else if(sceneCamera->GetProjectionType() == SceneCamera::ProjectionType::ORTHOGRAPHIC)
+			duplicateSceneCamera->SetOrthographic(sceneCamera->GetOrthographic().top, sceneCamera->GetOrthographic().zNear, sceneCamera->GetOrthographic().zFar);
+
+		//duplicateSceneCamera->SetPerspective(sceneCamera->GetPerspective());
 		duplicateSceneCamera->CreateFramebuffer(sceneCamera->GetFramebuffer()->GetSpecification().Width, sceneCamera->GetFramebuffer()->GetSpecification().Height);
 		duplicateSceneCamera->Initialize();
 		duplicateSceneCamera->GetNode()->SetSceneCamera(duplicateSceneCamera);
