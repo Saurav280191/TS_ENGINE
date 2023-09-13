@@ -86,10 +86,14 @@ namespace TS_ENGINE
 
 	void OpenGLRendererAPI::EnableDepthTest(bool enable)
 	{
-		if(enable)
-			glEnable(GL_DEPTH_TEST);
+		if (enable)
+		{
+			glEnable(GL_DEPTH_TEST);			
+		}
 		else
+		{
 			glDisable(GL_DEPTH_TEST);
+		}
 	}
 
 	void OpenGLRendererAPI::EnableAlphaBlending(bool enable)
@@ -100,7 +104,9 @@ namespace TS_ENGINE
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
 		else
+		{
 			glDisable(GL_BLEND);
+		}
 	}
 
 	

@@ -29,6 +29,31 @@ namespace TS_ENGINE {
 
 	}
 
+	void Material::CloneMaterialProperties(Ref<Material> material)
+	{
+		this->mName = material->mName;
+		this->mAlphaBlendingEnabled = material->mAlphaBlendingEnabled;
+		this->mDepthTestEnabled = material->mDepthTestEnabled;
+		
+		this->mAmbientColor = material->mAmbientColor;
+		
+		this->mDiffuseColor = material->mDiffuseColor;
+		this->mDiffuseMap = material->mDiffuseMap;
+		this->mDiffuseMapOffset = material->mDiffuseMapOffset;
+		this->mDiffuseMapTiling = material->mDiffuseMapTiling;
+
+		this->mSpecularColor = material->mSpecularColor;
+		this->mSpecularMap = material->mSpecularMap;
+		this->mSpecularMapOffset = material->mSpecularMapOffset;
+		this->mSpecularMapTiling = material->mSpecularMapTiling;
+		this->mShininess = material->mShininess;
+
+		this->mNormalMap = material->mNormalMap;
+		this->mNormalMapOffset = material->mNormalMapOffset;
+		this->mNormalMapTiling = material->mNormalMapTiling;
+		this->mBumpValue = material->mBumpValue;
+	}
+
 	void Material::Render(int entityID)
 	{
 		RenderCommand::EnableDepthTest(mDepthTestEnabled);

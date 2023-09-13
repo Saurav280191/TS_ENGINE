@@ -53,7 +53,7 @@ namespace TS_ENGINE
 	{
 		Ref<Node> duplicateNode = CreateRef<Node>();	
 		duplicateNode->mNodeRef = duplicateNode;		
-		duplicateNode->mNodeRef->mMeshes = mNodeRef->mMeshes;
+		duplicateNode->mNodeRef->CloneMeshes(mNodeRef->mMeshes);
 		duplicateNode->mNodeRef->mModelPath = mNodeRef->mModelPath;
 		
 		duplicateNode->mNodeRef->mTransform = CreateRef<Transform>();
@@ -371,6 +371,17 @@ namespace TS_ENGINE
 			TS_CORE_TRACE("{0} ", child->mEntity->GetName().c_str());
 			child->PrintChildrenName();
 		}
+	}
+
+	void Node::CloneMeshes(std::vector<Ref<Mesh>> meshes)
+	{
+		for (auto mesh : meshes)
+		{
+			Ref<Mesh> clonedMesh = CreateRef<Mesh>();
+			clonedMesh->CloneMesh(mesh);
+			mNodeRef->AddMesh(clonedMesh);
+		}
+
 	}
 
 #ifdef TS_ENGINE_EDITOR

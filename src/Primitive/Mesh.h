@@ -79,6 +79,8 @@ namespace TS_ENGINE {
 		void AddVertex(Vertex vertex);
 		void AddIndex(uint32_t index);
 
+		void CloneMesh(Ref<Mesh> mesh);
+
 		/// <summary>
 		/// 1. Sets draw mode(Triangle/Line)
 		/// 2. Creates vertex array

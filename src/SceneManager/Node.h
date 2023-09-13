@@ -69,6 +69,8 @@ namespace TS_ENGINE
 
 		void PrintChildrenName();//Only for testing
 
+		void CloneMeshes(std::vector<Ref<Mesh>> meshes);
+
 #ifdef TS_ENGINE_EDITOR
 		const bool IsVisibleInEditor() const { return mIsVisibleInEditor; }
 		void HideInEditor();					

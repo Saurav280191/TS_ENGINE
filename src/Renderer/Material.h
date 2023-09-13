@@ -40,6 +40,8 @@ namespace TS_ENGINE {
 		Material(const std::string& name, Ref<Shader> shader);		
 		virtual ~Material() = default;
 
+		void CloneMaterialProperties(Ref<Material> material);
+
 		const std::string& GetName() const { return mName;  }
 
 		// Ambient

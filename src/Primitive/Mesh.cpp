@@ -122,6 +122,19 @@ namespace TS_ENGINE {
 		mStatsRegistered = false;
 	}
 
+	void Mesh::CloneMesh(Ref<Mesh> mesh)
+	{
+		this->mName = mesh->mName;
+		this->mVertices = mesh->GetVertices();
+		this->mIndices = mesh->GetIndices();
+		this->mPrimitiveType = mesh->mPrimitiveType;
+		this->mDrawMode = mesh->mDrawMode;
+
+		Create(this->mDrawMode);
+
+		this->mMaterial->CloneMaterialProperties(mesh->GetMaterial());
+	}
+
 	std::vector<Vertex> Mesh::GetWorldSpaceVertices(Vector3 position = Vector3(0, 0, 0), Vector3 eulerAngles = Vector3(0, 0, 0), Vector3 scale = Vector3(1, 1, 1))
 	{
 		Matrix4 modelMatrix =
