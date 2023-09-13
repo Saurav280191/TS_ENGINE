@@ -16,6 +16,8 @@ namespace TS_ENGINE
 		void SaveCurrentScene();
 		void LoadScene(const std::string& savedScenePath);
 		Ref<Scene> GetCurrentScene();
+
+		void FlushCurrentScene();
 	private:
 		static SceneManager* mInstance;
 		Ref<Scene> mCurrentScene;

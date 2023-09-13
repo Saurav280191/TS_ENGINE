@@ -24,6 +24,11 @@ namespace TS_ENGINE {
 		mProjectionType = ProjectionType::PERSPECTIVE;
 	}
 
+	void Camera::Flush()
+	{
+		mFramebuffer.reset();
+	}
+
 	void Camera::CreateFramebuffer(uint32_t _width, uint32_t _height)
 	{
 		//Setup framebuffer

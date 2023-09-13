@@ -72,6 +72,10 @@ namespace TS_ENGINE
 
 	void Scene::Flush()
 	{
+		mEditorCamera->Flush();
+		for (auto sceneCamera : mSceneCameras)
+			sceneCamera->Flush();
+
 		EntityManager::GetInstance()->Flush();
 		Factory::GetInstance()->Flush();
 		mSceneNode.reset();

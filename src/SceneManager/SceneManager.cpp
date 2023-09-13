@@ -44,6 +44,14 @@ namespace TS_ENGINE
 		return mCurrentScene;
 	}
 
+	void SceneManager::FlushCurrentScene()
+	{
+		if(mCurrentScene)
+			mCurrentScene->Flush();
+
+		mCurrentScene.reset();
+	}
+
 	Ref<Node> SceneManager::GetCurrentSceneNode()
 	{
 		if (mCurrentScene)
