@@ -9,7 +9,7 @@ namespace TS_ENGINE {
 		mStatsRegistered(false)
 	{
 		mPrimitiveType = PrimitiveType::MODEL;
-		std::string shaderDir = Application::s_AssetsDir.string() + "\\Shaders\\";
+		std::string shaderDir = Application::s_ResourcesDir.string() + "\\Shaders\\";
 		Ref<Shader> shader = Shader::Create("DefaultShader", shaderDir + "HDRLighting.vert", shaderDir + "HDRLighting.frag");
 		mMaterial = CreateRef<Material>("DefaultMaterial", shader);
 	}
