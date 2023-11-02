@@ -244,7 +244,7 @@ namespace TS_ENGINE {
 
 	void Model::ProcessMaterial(aiMaterial* aiMat)
 	{
-		std::string shaderDir = Application::s_AssetsDir.string() + "\\Shaders\\";
+		std::string shaderDir = Application::s_ResourcesDir.string() + "\\Shaders\\";
 		mDefaultShader = Shader::Create("DefaultShader", shaderDir + "HDRLighting.vert", shaderDir + "HDRLighting.frag");
 		mTsMaterial = CreateRef<Material>(aiMat->GetName().C_Str(), mDefaultShader);
 
