@@ -15,8 +15,6 @@ namespace TS_ENGINE {
 			Vector4 mAmbientColor = Vector4(1, 1, 1, 1);
 			Vector4 mDiffuseColor = Vector4(1, 1, 1, 1);
 			Ref<Texture2D> mDiffuseMap = nullptr;
-			float testFloat = 0.0f;
-			float testFloat1 = 0.0f;
 			float* mDiffuseMapOffset = nullptr;
 			float* mDiffuseMapTiling = nullptr;
 			Vector4 mSpecularColor = Vector4(1, 1, 1, 1);

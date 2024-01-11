@@ -98,7 +98,7 @@ namespace TS_ENGINE
 
 	void Scene::Render(Ref<Shader> shader, float deltaTime)
 	{
-		//Scene camera pass
+		// Scene camera pass
 		if (mSceneCameras[mCurrentSceneCameraIndex])
 		{
 			UpdateCameraRT(mSceneCameras[mCurrentSceneCameraIndex], shader, deltaTime, false);

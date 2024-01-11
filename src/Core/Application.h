@@ -32,8 +32,6 @@ namespace TS_ENGINE
 		void Close();
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
-
-		float mLastFrame;
 		
 		void AddDrawCalls(uint32_t drawcalls);
 		void AddVertices(uint32_t vertices);
@@ -68,7 +66,9 @@ namespace TS_ENGINE
 		Scope<Window> mWindow;
 		ImGuiLayer* mImGuiLayer;
 
+		float mLastFrame;
 		float mDeltaTime;
+
 		uint32_t mDrawCalls;
 		uint32_t mTotalVertices;
 		uint32_t mTotalIndices;
