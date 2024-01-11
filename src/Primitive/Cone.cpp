@@ -26,13 +26,15 @@ namespace TS_ENGINE {
             pos.x = 0.0f;
             pos.y = height / 2.0f;
             pos.z = 0.0f;
-            normal.x = 0.0f;
-            normal.y = 1.0f;
-            normal.z = 0.0f;
+            
             texCoord.x = 0.5f;
             texCoord.y = 0.5f;
 
-            mesh->AddVertex(Vertex(pos, normal, texCoord));
+            normal.x = 0.0f;
+            normal.y = 1.0f;
+            normal.z = 0.0f;
+
+            mesh->AddVertex(Vertex(pos, texCoord, normal));
         }
 
         // Generate base vertices
@@ -49,13 +51,15 @@ namespace TS_ENGINE {
             pos.x = x;
             pos.y = -height / 2.0f;
             pos.z = z;
-            normal.x = 0.0f;
-            normal.y = -1.0f;
-            normal.z = 0.0f;
+            
             texCoord.x = (x / radius + 1.0f) * 0.5f;
             texCoord.y = (z / radius + 1.0f) * 0.5f;
 
-            mesh->AddVertex(Vertex(pos, normal, texCoord));
+            normal.x = 0.0f;
+            normal.y = -1.0f;
+            normal.z = 0.0f;
+
+            mesh->AddVertex(Vertex(pos, texCoord, normal));
         }
 
 		// Generate indices for base

@@ -10,8 +10,8 @@ namespace TS_ENGINE {
 	{
 		mPrimitiveType = PrimitiveType::MODEL;
 		std::string shaderDir = Application::s_ResourcesDir.string() + "\\Shaders\\";
-		Ref<Shader> shader = Shader::Create("DefaultShader", shaderDir + "HDRLighting.vert", shaderDir + "HDRLighting.frag");
-		mMaterial = CreateRef<Material>("DefaultMaterial", shader);
+		Ref<Shader> unlitShader = Shader::Create("UnlitShader", shaderDir + "Unlit.vert", shaderDir + "Unlit.frag");
+		mMaterial = CreateRef<Material>("UnlitMaterial", unlitShader);
 	}
 
 	Mesh::~Mesh()
@@ -69,8 +69,8 @@ namespace TS_ENGINE {
 
 		vertexBuffer->SetLayout({
 			{ShaderDataType::FLOAT4, "a_Position"},
-			{ShaderDataType::FLOAT3, "a_Normal"},
-			{ShaderDataType::FLOAT2, "a_TexCoord"}
+			{ShaderDataType::FLOAT2, "a_TexCoord"},
+			{ShaderDataType::FLOAT3, "a_Normal"}
 			});
 
 		mVertexArray->AddVertexBuffer(vertexBuffer);

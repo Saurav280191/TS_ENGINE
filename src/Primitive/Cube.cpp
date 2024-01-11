@@ -19,40 +19,40 @@ namespace TS_ENGINE {
 		mesh->SetPrimitiveType(PrimitiveType::CUBE);
 
 		//Front
-		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), Vector3(0, 0, -1), Vector2(1, 1)));
-		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), Vector3(0, 0, -1), Vector2(1, 0)));
-		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), Vector3(0, 0, -1), Vector2(0, 0)));
-		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), Vector3(0, 0, -1), Vector2(0, 1)));
+		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), Vector2(1, 1), Vector3(0, 0, -1)));
+		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), Vector2(1, 0), Vector3(0, 0, -1)));
+		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), Vector2(0, 0), Vector3(0, 0, -1)));
+		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), Vector2(0, 1), Vector3(0, 0, -1) ));
 
 		//Back
-		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), Vector3(0, 0, 1), Vector2(1, 1)));
-		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), Vector3(0, 0, 1), Vector2(1, 0)));
-		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), Vector3(0, 0, 1), Vector2(0, 0)));
-		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), Vector3(0, 0, 1), Vector2(0, 1)));
+		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f),  Vector2(1, 1), Vector3(0, 0, 1)));
+		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f),  Vector2(1, 0), Vector3(0, 0, 1)));
+		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f),  Vector2(0, 0), Vector3(0, 0, 1)));
+		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f),  Vector2(0, 1), Vector3(0, 0, 1)));
 
 		//Top
-		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), Vector3(0, 1, 0), Vector2(1, 1)));
-		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), Vector3(0, 1, 0), Vector2(1, 0)));
-		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), Vector3(0, 1, 0), Vector2(0, 0)));
-		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), Vector3(0, 1, 0), Vector2(0, 1)));
+		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), Vector2(1, 1), Vector3(0, 1, 0)));
+		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f),  Vector2(1, 0), Vector3(0, 1, 0)));
+		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f),  Vector2(0, 0), Vector3(0, 1, 0)));
+		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f),  Vector2(0, 1), Vector3(0, 1, 0)));
 
 		//Bottom
-		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), Vector3(0, -1, 0), Vector2(1, 1)));
-		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), Vector3(0, -1, 0), Vector2(1, 0)));
-		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), Vector3(0, -1, 0), Vector2(0, 0)));
-		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), Vector3(0, -1, 0), Vector2(0, 1)));
+		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), Vector2(1, 1), Vector3(0, -1, 0)));
+		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), Vector2(1, 0), Vector3(0, -1, 0)));
+		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), Vector2(0, 0), Vector3(0, -1, 0)));
+		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), Vector2(0, 1), Vector3(0, -1, 0)));
 
 		//Left
-		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), Vector3(-1, 0, 0), Vector2(1, 1)));
-		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), Vector3(-1, 0, 0), Vector2(1, 0)));
-		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), Vector3(-1, 0, 0), Vector2(0, 0)));
-		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), Vector3(-1, 0, 0), Vector2(0, 1)));
+		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), Vector2(1, 1), Vector3(-1, 0, 0)));
+		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), Vector2(1, 0), Vector3(-1, 0, 0)));
+		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), Vector2(0, 0), Vector3(-1, 0, 0)));
+		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), Vector2(0, 1), Vector3(-1, 0, 0)));
 
 		//Right
-		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), Vector3(1, 0, 0), Vector2(1, 1)));
-		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), Vector3(1, 0, 0), Vector2(1, 0)));
-		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), Vector3(1, 0, 0), Vector2(0, 0)));
-		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), Vector3(1, 0, 0), Vector2(0, 1)));
+		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), Vector2(1, 1), Vector3(1, 0, 0)));
+		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), Vector2(1, 0), Vector3(1, 0, 0)));
+		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), Vector2(0, 0), Vector3(1, 0, 0)));
+		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), Vector2(0, 1), Vector3(1, 0, 0)));
 
 		//Front
 		mesh->AddIndex(0);
@@ -113,40 +113,40 @@ namespace TS_ENGINE {
 		mesh->SetPrimitiveType(PrimitiveType::CUBE);
 
 		//Front
-		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), Vector3(0, 0, -1), Vector2(1, 1), transformationMatrix));
-		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), Vector3(0, 0, -1), Vector2(1, 0), transformationMatrix));
-		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), Vector3(0, 0, -1), Vector2(0, 0), transformationMatrix));
-		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), Vector3(0, 0, -1), Vector2(0, 1), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), Vector2(1, 1), Vector3(0, 0, -1), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), Vector2(1, 0), Vector3(0, 0, -1), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), Vector2(0, 0), Vector3(0, 0, -1), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), Vector2(0, 1), Vector3(0, 0, -1), transformationMatrix));
 
 		//Back
-		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), Vector3(0, 0, 1), Vector2(1, 1), transformationMatrix));
-		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), Vector3(0, 0, 1), Vector2(1, 0), transformationMatrix));
-		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), Vector3(0, 0, 1), Vector2(0, 0), transformationMatrix));
-		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), Vector3(0, 0, 1), Vector2(0, 1), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), Vector2(1, 1), Vector3(0, 0, 1), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), Vector2(1, 0), Vector3(0, 0, 1), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), Vector2(0, 0), Vector3(0, 0, 1), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), Vector2(0, 1), Vector3(0, 0, 1), transformationMatrix));
 
 		//Top
-		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), Vector3(0, 1, 0), Vector2(1, 1), transformationMatrix));
-		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), Vector3(0, 1, 0), Vector2(1, 0), transformationMatrix));
-		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), Vector3(0, 1, 0), Vector2(0, 0), transformationMatrix));
-		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), Vector3(0, 1, 0), Vector2(0, 1), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), Vector2(1, 1), Vector3(0, 1, 0), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), Vector2(1, 0), Vector3(0, 1, 0), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), Vector2(0, 0), Vector3(0, 1, 0), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), Vector2(0, 1), Vector3(0, 1, 0), transformationMatrix));
 
 		//Bottom
-		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), Vector3(0, -1, 0), Vector2(1, 1), transformationMatrix));
-		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), Vector3(0, -1, 0), Vector2(1, 0), transformationMatrix));
-		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), Vector3(0, -1, 0), Vector2(0, 0), transformationMatrix));
-		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), Vector3(0, -1, 0), Vector2(0, 1), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), Vector2(1, 1), Vector3(0, -1, 0), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), Vector2(1, 0), Vector3(0, -1, 0), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), Vector2(0, 0), Vector3(0, -1, 0), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), Vector2(0, 1), Vector3(0, -1, 0), transformationMatrix));
 
 		//Left
-		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), Vector3(-1, 0, 0), Vector2(1, 1), transformationMatrix));
-		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), Vector3(-1, 0, 0), Vector2(1, 0), transformationMatrix));
-		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), Vector3(-1, 0, 0), Vector2(0, 0), transformationMatrix));
-		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), Vector3(-1, 0, 0), Vector2(0, 1), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.5f), Vector2(1, 1), Vector3(-1, 0, 0), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.5f), Vector2(1, 0), Vector3(-1, 0, 0), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, -0.5f), Vector2(0, 0), Vector3(-1, 0, 0), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, -0.5f), Vector2(0, 1), Vector3(-1, 0, 0), transformationMatrix));
 
 		//Right
-		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), Vector3(1, 0, 0), Vector2(1, 1), transformationMatrix));
-		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), Vector3(1, 0, 0), Vector2(1, 0), transformationMatrix));
-		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), Vector3(1, 0, 0), Vector2(0, 0), transformationMatrix));
-		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), Vector3(1, 0, 0), Vector2(0, 1), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, 0.5f), Vector2(1, 1), Vector3(1, 0, 0), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, 0.5f), Vector2(1, 0), Vector3(1, 0, 0), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(0.5, 0.5f, -0.5f), Vector2(0, 0), Vector3(1, 0, 0), transformationMatrix));
+		mesh->AddVertex(Vertex(Vector3(0.5, -0.5f, -0.5f), Vector2(0, 1), Vector3(1, 0, 0), transformationMatrix));
 
 		//Front
 		mesh->AddIndex(0);

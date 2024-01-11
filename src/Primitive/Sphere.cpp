@@ -39,16 +39,16 @@ namespace TS_ENGINE {
 				x = xy * cosf(sectorAngle);             // r * cos(u) * cos(v)
 				y = xy * sinf(sectorAngle);             // r * cos(u) * sin(v)
 
+				// vertex tex coord (s, t) range between [0, 1]
+				s = (float)j / mSectorCount;
+				t = (float)i / mStackCount;
+				
 				// normalized vertex normal (nx, ny, nz)
 				nx = x * lengthInv;
 				ny = y * lengthInv;
 				nz = z * lengthInv;
 
-				// vertex tex coord (s, t) range between [0, 1]
-				s = (float)j / mSectorCount;
-				t = (float)i / mStackCount;
-
-				Vertex vertex = Vertex(Vector3(x, y, z), Vector3(nx, ny, nz), Vector2(s, t));
+				Vertex vertex = Vertex(Vector3(x, y, z), Vector2(s, t), Vector3(nx, ny, nz));
 				mesh->AddVertex(vertex);
 			}
 		}

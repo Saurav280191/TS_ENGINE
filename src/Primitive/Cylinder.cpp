@@ -32,19 +32,21 @@ namespace TS_ENGINE {
 				float t = static_cast<float>(j);
 				
 				Vector3 pos;
-				Vector3 normal;
 				Vector2 texCoord;
+				Vector3 normal;
 
 				pos.x = x;
 				pos.y = y;
 				pos.z = z;
-				normal.x = x;
-				normal.y = 0.0f;
-				normal.z = z;
+				
 				texCoord.x = s;
 				texCoord.y = t;
 
-				mesh->AddVertex(Vertex(pos, normal, texCoord));
+				normal.x = x;
+				normal.y = 0.0f;
+				normal.z = z;
+
+				mesh->AddVertex(Vertex(pos, texCoord, normal));
 			}
 		}
 

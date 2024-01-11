@@ -29,8 +29,8 @@ namespace TS_ENGINE {
 	struct Vertex
 	{
 		Vector4 position = Vector4(0, 0, 0, 0);
-		Vector3 normal = Vector3(0, 0, -1);
 		Vector2 texCoord = Vector2(0, 0);
+		Vector3 normal = Vector3(0, 0, -1);
 
 		Vertex()
 		{
@@ -42,19 +42,19 @@ namespace TS_ENGINE {
 			position = Vector4(_position, 1);
 		}
 
-		Vertex(Vector3 _position, Vector3 _normal, Vector2 _texCoord)
+		Vertex(Vector3 _position, Vector2 _texCoord, Vector3 _normal)
 		{
 			position = Vector4(_position, 1);
-			normal = _normal;
 			texCoord = _texCoord;
+			normal = _normal;
 		}
 
-		Vertex(Vector3 _position, Vector3 _normal, Vector2 _texCoord, const Matrix4& transformationMatrix)
+		Vertex(Vector3 _position, Vector2 _texCoord, Vector3 _normal, const Matrix4& transformationMatrix)
 		{
 			Vector4 tranformedVertexPos = transformationMatrix * Vector4(_position.x, _position.y, _position.z, 1);
 			position = Vector4(tranformedVertexPos.x, tranformedVertexPos.y, tranformedVertexPos.z, tranformedVertexPos.w);
-			normal = _normal;
 			texCoord = _texCoord;
+			normal = _normal;
 		}
 	};
 
