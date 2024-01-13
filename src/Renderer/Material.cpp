@@ -54,15 +54,20 @@ namespace TS_ENGINE {
 		this->mBumpValue = material->mBumpValue;
 	}
 
+#ifdef  TS_ENGINE_EDITOR
 	void Material::Render(int entityID)
+#elif
+	void Material::Render()
+#endif //  TS_ENGINE_EDITOR
 	{
 		RenderCommand::EnableDepthTest(mDepthTestEnabled);
 		RenderCommand::EnableAlphaBlending(mAlphaBlendingEnabled);
 
 		if (mShader)
 		{
-			//Send EntityID to fragment shader
+#ifdef  TS_ENGINE_EDITOR
 			mShader->SetInt("u_EntityID", entityID);
+#endif //  TS_ENGINE_EDITOR
 
 			mShader->SetVec4("u_AmbientColor", mAmbientColor);
 			mShader->SetVec4("u_DiffuseColor", mDiffuseColor);

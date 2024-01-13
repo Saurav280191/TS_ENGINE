@@ -90,7 +90,13 @@ namespace TS_ENGINE {
 		/// </summary>
 		/// <param name="drawMode"></param>
 		void Create(DrawMode drawMode = DrawMode::TRIANGLE);
+
+#ifdef TS_ENGINE_EDITOR
 		void Render(int entityID);
+#elif
+		void Render();
+#endif // TS_ENGINE_EDITOR
+
 		void Destroy();
 
 		const std::string GetName() const { return mName; }

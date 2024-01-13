@@ -84,10 +84,19 @@ namespace TS_ENGINE {
 		mVertexArray->Unbind();
 	}
 
+#ifdef TS_ENGINE_EDITOR
 	void Mesh::Render(int entityID)
+#elif
+	void Mesh::Render()
+#endif // TS_ENGINE_EDITOR
 	{
 		//To Fragment Shader
+#ifdef TS_ENGINE_EDITOR
 		mMaterial->Render(entityID);
+#elif
+		mMaterial->Render();
+#endif // TS_ENGINE_EDITOR
+
 
 		if (mDrawMode == DrawMode::TRIANGLE)
 			RenderCommand::DrawIndexed(mVertexArray, (uint32_t)mIndices.size());
