@@ -139,6 +139,8 @@ src/Renderer/Shader.h
 src/Renderer/Shader.cpp
 src/Renderer/Material.h
 src/Renderer/Material.cpp
+src/Renderer/MaterialManager.h
+src/Renderer/MaterialManager.cpp
 src/Renderer/Image.h
 src/Renderer/Image.cpp
 src/Renderer/Texture.h
