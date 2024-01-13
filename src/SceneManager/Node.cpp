@@ -51,16 +51,16 @@ namespace TS_ENGINE
 
 	Ref<Node> Node::Duplicate()
 	{
-		Ref<Node> duplicateNode = CreateRef<Node>();	
-		duplicateNode->mNodeRef = duplicateNode;		
+		Ref<Node> duplicateNode = CreateRef<Node>();
+		duplicateNode->mNodeRef = duplicateNode;
 		duplicateNode->mNodeRef->CloneMeshes(mNodeRef->mMeshes);
 		duplicateNode->mNodeRef->mModelPath = mNodeRef->mModelPath;
-		
+
 		duplicateNode->mNodeRef->mTransform = CreateRef<Transform>();
 		duplicateNode->mNodeRef->mTransform->m_Pos = mNodeRef->mTransform->m_Pos;
 		duplicateNode->mNodeRef->mTransform->m_EulerAngles = mNodeRef->mTransform->m_EulerAngles;
 		duplicateNode->mNodeRef->mTransform->m_Scale = mNodeRef->mTransform->m_Scale;
-		
+
 #ifdef TS_ENGINE_EDITOR
 		duplicateNode->mNodeRef->mIsVisibleInEditor = mNodeRef->mIsVisibleInEditor;
 #endif
@@ -76,7 +76,7 @@ namespace TS_ENGINE
 		duplicateNode->mNodeRef->UpdateSiblings();
 
 		duplicateNode->mNodeRef->mSceneCamera = mNodeRef->mSceneCamera;
-		
+
 		return duplicateNode;
 	}
 
@@ -117,7 +117,7 @@ namespace TS_ENGINE
 				mNodeRef->mParentNode->RemoveChild(mNodeRef);
 			}
 
-			parentNode->AddChild(mNodeRef);			
+			parentNode->AddChild(mNodeRef);
 		}
 	}
 
@@ -290,10 +290,10 @@ namespace TS_ENGINE
 	}
 
 	void Node::Initialize(const std::string& name, const EntityType& entityType)
-	{		
+	{
 		mNodeRef->mEntity = EntityManager::GetInstance()->Register(name, entityType);
 		InitializeTransformMatrices();
-		
+
 		mIsInitialized = true;
 	}
 
@@ -310,7 +310,11 @@ namespace TS_ENGINE
 			//Draw Meshes
 			for (auto& mesh : mMeshes)
 			{
+#ifdef TS_ENGINE_EDITOR
 				mesh->Render(mEntity->GetEntityID());
+#elif
+				mesh->Render();
+#endif
 			}
 
 			//Send children modelMatrix to shader and draw gameobject with attached to child
@@ -333,8 +337,8 @@ namespace TS_ENGINE
 	}
 
 	void Node::ChangeMesh(PrimitiveType primitiveType)
-	{		
-		Factory::GetInstance()->ChangeMeshForNode(mNodeRef, primitiveType);		
+	{
+		Factory::GetInstance()->ChangeMeshForNode(mNodeRef, primitiveType);
 	}
 
 	void Node::AddMesh(Ref<Mesh> mesh)
