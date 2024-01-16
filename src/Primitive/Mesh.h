@@ -67,7 +67,7 @@ namespace TS_ENGINE {
 	class Mesh
 	{
 	public:
-		Mesh();
+		Mesh();		
 		~Mesh();
 
 		void SetName(const std::string& name);

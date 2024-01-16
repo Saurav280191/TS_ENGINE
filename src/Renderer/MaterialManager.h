@@ -13,9 +13,14 @@ namespace TS_ENGINE {
 		static Ref<MaterialManager> GetInstance();
 		void LoadAllShadersAndCreateMaterials();
 
-		Ref<Material> GetDefaultMaterial();
 		Ref<Material> GetUnlitMaterial();
 		Ref<Material> GetLitMaterial();
+		
+		const char* mMaterialNameList[2] = {
+			"Unlit",
+			"Lit"
+		};
+
 	private:
 		static Ref<MaterialManager> mInstance;		
 		

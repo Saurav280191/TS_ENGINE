@@ -11,8 +11,25 @@
 
 namespace TS_ENGINE {
 
-	Material::Material(const std::string& name, Ref<Shader> shader) :
-		mName(name),
+	Material::Material()
+		:mAmbientColor(1.0f),
+		mDiffuseColor(1.0f),
+		mDiffuseMapOffset(0),
+		mDiffuseMapTiling(1),
+		mSpecularColor(1.0f),
+		mSpecularMapOffset(0),
+		mSpecularMapTiling(1),
+		mShininess(16.0f),
+		mNormalMapOffset(0),
+		mNormalMapTiling(1),
+		mBumpValue(1.0f),
+		mDepthTestEnabled(true)
+	{
+
+	}
+
+	Material::Material(const std::string& name, Ref<Shader> shader)
+		: mName(name),
 		mShader(shader),
 		mAmbientColor(1.0f),
 		mDiffuseColor(1.0f),
@@ -24,17 +41,44 @@ namespace TS_ENGINE {
 		mShininess(16.0f),
 		mNormalMapOffset(0),
 		mNormalMapTiling(1),
-		mBumpValue(1.0f)
+		mBumpValue(1.0f),
+		mDepthTestEnabled(true)
 	{
 
+	}
+
+	Material::Material(const Ref<Material>& material)
+	{
+		this->mName = material->mName;
+		this->mShader = material->mShader;
+
+		this->mAmbientColor = material->mAmbientColor;
+
+		this->mDiffuseColor = material->mDiffuseColor;
+		this->mDiffuseMap = material->mDiffuseMap;
+		this->mDiffuseMapOffset = material->mDiffuseMapOffset;
+		this->mDiffuseMapTiling = material->mDiffuseMapTiling;
+
+		this->mSpecularColor = material->mSpecularColor;
+		this->mSpecularMap = material->mSpecularMap;
+		this->mSpecularMapOffset = material->mSpecularMapOffset;
+		this->mSpecularMapTiling = material->mSpecularMapTiling;
+		this->mShininess = material->mShininess;
+
+		this->mNormalMap = material->mNormalMap;
+		this->mNormalMapOffset = material->mNormalMapOffset;
+		this->mNormalMapTiling = material->mNormalMapTiling;
+		this->mBumpValue = material->mBumpValue;
+
+		this->mAlphaBlendingEnabled = material->mAlphaBlendingEnabled;
+		this->mDepthTestEnabled = material->mDepthTestEnabled;
 	}
 
 	void Material::CloneMaterialProperties(Ref<Material> material)
 	{
 		this->mName = material->mName;
-		this->mAlphaBlendingEnabled = material->mAlphaBlendingEnabled;
-		this->mDepthTestEnabled = material->mDepthTestEnabled;
-		
+		this->mShader = material->mShader;
+
 		this->mAmbientColor = material->mAmbientColor;
 		
 		this->mDiffuseColor = material->mDiffuseColor;
@@ -52,6 +96,9 @@ namespace TS_ENGINE {
 		this->mNormalMapOffset = material->mNormalMapOffset;
 		this->mNormalMapTiling = material->mNormalMapTiling;
 		this->mBumpValue = material->mBumpValue;
+
+		this->mAlphaBlendingEnabled = material->mAlphaBlendingEnabled;
+		this->mDepthTestEnabled = material->mDepthTestEnabled;
 	}
 
 #ifdef  TS_ENGINE_EDITOR
@@ -94,7 +141,7 @@ namespace TS_ENGINE {
 	}
 
 	void Material::ShowGUI(int meshIndex, bool treeOpen)
-	{		
+	{	
 		//Material name		
 		if (ImGui::TreeNodeEx(mName.c_str(), treeOpen ? ImGuiTreeNodeFlags_DefaultOpen : ImGuiTreeNodeFlags_None))
 		{

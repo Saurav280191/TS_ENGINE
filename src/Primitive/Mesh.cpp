@@ -2,16 +2,16 @@
 #include "Mesh.h"
 #include "Application.h"
 #include "Renderer/RenderCommand.h"
+#include "Renderer/MaterialManager.h"
 
 namespace TS_ENGINE {
 
-	Mesh::Mesh() :
-		mStatsRegistered(false)
-	{
-		mPrimitiveType = PrimitiveType::MODEL;
-		std::string shaderDir = Application::s_ResourcesDir.string() + "\\Shaders\\";
-		Ref<Shader> unlitShader = Shader::Create("UnlitShader", shaderDir + "Unlit.vert", shaderDir + "Unlit.frag");
-		mMaterial = CreateRef<Material>("UnlitMaterial", unlitShader);
+	Mesh::Mesh() 
+		: mStatsRegistered(false),
+		mDrawMode(TS_ENGINE::DrawMode::TRIANGLE),
+		mPrimitiveType(PrimitiveType::MODEL)
+	{		
+		mMaterial = CreateRef<Material>(MaterialManager::GetInstance()->GetUnlitMaterial());
 	}
 
 	Mesh::~Mesh()
@@ -96,7 +96,6 @@ namespace TS_ENGINE {
 #elif
 		mMaterial->Render();
 #endif // TS_ENGINE_EDITOR
-
 
 		if (mDrawMode == DrawMode::TRIANGLE)
 			RenderCommand::DrawIndexed(mVertexArray, (uint32_t)mIndices.size());

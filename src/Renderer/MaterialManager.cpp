@@ -28,14 +28,9 @@ namespace TS_ENGINE {
 
 		// Materials
 		mUnlitMat = CreateRef<Material>("UnlitMaterial", mUnlitShader);// Create default material
-		mLitMat = CreateRef<Material>("LitMaterial", mLitShader);
+		mLitMat = CreateRef<Material>("LitMaterial", mLitShader); 
 		//mHdrLitMat = CreateRef<Material>("UnlitMaterial", mUnlitShader);
 		//mBatchLitMat = CreateRef<Material>("BatchMaterial", mBatchLitShader);
-	}
-
-	Ref<Material> MaterialManager::GetDefaultMaterial()
-	{
-		return mUnlitMat;
 	}
 
 	Ref<Material> MaterialManager::GetUnlitMaterial()

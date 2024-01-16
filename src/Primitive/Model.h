@@ -26,11 +26,11 @@ namespace TS_ENGINE {
 	private:
 		const aiScene* mAssimpScene;
 		uint32_t mRendererID;
-		AssimpMaterial mMaterial;
-		Ref<Material> mTsMaterial;
+		AssimpMaterial mAssimpMaterial;
+		Ref<Material> mMaterial;
 		std::string mModelDirectory;
 		Ref<Node> mRootNode;
-		Ref<Shader> mDefaultShader;
+		
 		std::vector<Ref<Node>> mProcessedNodes = {};
 		//std::vector<Ref<Mesh>> mProcessedMeshes = {};
 		std::unordered_map<std::string, Ref<Material>> mProcessedMaterials = {};
