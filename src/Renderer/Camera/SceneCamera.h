@@ -19,11 +19,11 @@ namespace TS_ENGINE {
 #endif
 		// Inherited via Camera
 		virtual void Initialize() override;
-		virtual void Update(float deltaTime) override;
+		virtual void Update(Ref<Shader> shader, float deltaTime) override;
 		virtual void DeleteMeshes() override;
 
-		void ShowCameraGUI(float deltaTime);
-		void ShowFrustrumGUI(float deltaTime);
+		void ShowCameraGUI(Ref<Shader> shader, float deltaTime);
+		void ShowFrustrumGUI(Ref<Shader> shader, float deltaTime);
 
 		bool IsSceneCameraGuiSelected(int entityID);
 		void RefreshFrustrumGUI();

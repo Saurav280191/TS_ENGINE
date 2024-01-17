@@ -3,7 +3,6 @@
 #include "Input.h"
 #include <GLM/gtx/quaternion.hpp>
 #include "Core/Factory.h"
-#include "Renderer/MaterialManager.h"
 
 namespace TS_ENGINE {
 
@@ -158,28 +157,25 @@ namespace TS_ENGINE {
 		mSceneCameraFrustrumNode->GetMeshes()[0]->Create(DrawMode::LINE);
 	}
 
-	void SceneCamera::Update(float deltaTime)
+	void SceneCamera::Update(Ref<Shader> shader, float deltaTime)
 	{
 		mViewMatrix = mCameraNode->GetTransform()->GetGlobalTransformationMatrix();
 		mViewMatrix = glm::inverse(mViewMatrix);
 
-		for (auto& material : MaterialManager::GetInstance()->GetAllMaterials())
-		{
-			material->GetShader()->SetVec3("u_ViewPos", mCameraNode->GetTransform()->GetLocalPosition());
+		shader->SetVec3("u_ViewPos", mCameraNode->GetTransform()->GetLocalPosition());
 
-			if (mIsDistanceIndependent)
-			{
-				material->GetShader()->SetMat4("u_View", (Matrix4)((Matrix3)mViewMatrix));
-			}
-			else
-			{
-				material->GetShader()->SetMat4("u_View", mViewMatrix);
-				material->GetShader()->SetMat4("u_Projection", mProjectionMatrix);
-			}
+		if (mIsDistanceIndependent)
+		{
+			shader->SetMat4("u_View", (Matrix4)((Matrix3)mViewMatrix));
+		}
+		else
+		{
+			shader->SetMat4("u_View", mViewMatrix);
+			shader->SetMat4("u_Projection", mProjectionMatrix);
 		}
 	}
 
-	void SceneCamera::ShowCameraGUI(float deltaTime)
+	void SceneCamera::ShowCameraGUI(Ref<Shader> shader, float deltaTime)
 	{
 #ifdef TS_ENGINE_EDITOR
 		if (mEditorCamera)
@@ -188,12 +184,12 @@ namespace TS_ENGINE {
 			mSceneCameraGuiNode->GetTransform()->LookAt(mCameraNode, mEditorCamera->GetNode()->GetTransform());// CameraGUI
 		}
 #endif
-		mSceneCameraGuiNode->Update(deltaTime);		
+		mSceneCameraGuiNode->Update(shader, deltaTime);		
 	}
 
-	void SceneCamera::ShowFrustrumGUI(float deltaTime)
+	void SceneCamera::ShowFrustrumGUI(Ref<Shader> shader, float deltaTime)
 	{
-		mSceneCameraFrustrumNode->Update(deltaTime);
+		mSceneCameraFrustrumNode->Update(shader, deltaTime);
 	}
 
 	bool SceneCamera::IsSceneCameraGuiSelected(int entityID)

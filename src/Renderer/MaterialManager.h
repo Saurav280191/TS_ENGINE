@@ -21,8 +21,6 @@ namespace TS_ENGINE {
 			"Lit"
 		};
 
-		const std::vector<Ref<Material>> GetAllMaterials() { return mAllMaterials; }
-
 	private:
 		static Ref<MaterialManager> mInstance;		
 		
@@ -36,7 +34,6 @@ namespace TS_ENGINE {
 		Ref<Material> mHdrLitMat;
 		Ref<Material> mBatchLitMat;
 
-		std::vector<Ref<Material>> mAllMaterials;
 	};
 }
 

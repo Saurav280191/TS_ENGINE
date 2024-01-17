@@ -3,7 +3,6 @@
 #include "Core/Input.h"
 #include "Primitive/Sphere.h"
 #include "SceneManager/Node.h"
-#include "Renderer/MaterialManager.h"
 
 namespace TS_ENGINE {
 
@@ -33,26 +32,23 @@ namespace TS_ENGINE {
 
 	}
 
-	void EditorCamera::Update(float deltaTime)
+	void EditorCamera::Update(Ref<TS_ENGINE::Shader> shader, float deltaTime)
 	{
 		mViewMatrix = mCameraNode->GetTransform()->GetGlobalTransformationMatrix();;
 		mViewMatrix = glm::inverse(mViewMatrix);
 
-		for (auto& material : MaterialManager::GetInstance()->GetAllMaterials())
-		{
-			material->GetShader()->SetVec3("u_ViewPos", mCameraNode->GetTransform()->GetLocalPosition());
+		shader->SetVec3("u_ViewPos", mCameraNode->GetTransform()->GetLocalPosition());
 
-			if (mIsDistanceIndependent) // ProjectionMatrix is send to shader in both the cases of this if condition. 						
-			{							// This difference from scene camera in this case. 
-				material->GetShader()->SetMat4("u_View", Matrix4((Matrix3)mViewMatrix));
-			}
-			else
-			{
-				material->GetShader()->SetMat4("u_View", mViewMatrix);
-			}
-
-			material->GetShader()->SetMat4("u_Projection", mProjectionMatrix);
+		if (mIsDistanceIndependent) // ProjectionMatrix is send to shader in both the cases of this if condition. 						
+		{							// This difference from scene camera in this case. 
+			shader->SetMat4("u_View", Matrix4((Matrix3)mViewMatrix));
 		}
+		else
+		{
+			shader->SetMat4("u_View", mViewMatrix);
+		}
+
+		shader->SetMat4("u_Projection", mProjectionMatrix);
 	}
 
 	void EditorCamera::DeleteMeshes()

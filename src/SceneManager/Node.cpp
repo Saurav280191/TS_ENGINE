@@ -1,7 +1,6 @@
 #include "tspch.h"
 #include "SceneManager/Node.h"
 #include "Core/Factory.h"
-#include "Renderer/MaterialManager.h"
 
 #ifdef TS_ENGINE_EDITOR
 #include <imgui.h>
@@ -299,15 +298,12 @@ namespace TS_ENGINE
 	}
 
 	//If there is no parent set parentTransformModelMatrix to identity
-	void Node::Update(float deltaTime)
+	void Node::Update(Ref<Shader> shader, float deltaTime)
 	{
 		TS_CORE_ASSERT(mIsInitialized, "Node is not initialized!");
 
 		//Send modelMatrix to shader
-		for (auto& material : MaterialManager::GetInstance()->GetAllMaterials())
-		{
-			material->GetShader()->SetMat4("u_Model", mTransform->GetGlobalTransformationMatrix());
-		}
+		shader->SetMat4("u_Model", mTransform->GetGlobalTransformationMatrix());
 
 		if (m_Enabled)
 		{
@@ -324,7 +320,7 @@ namespace TS_ENGINE
 			//Send children modelMatrix to shader and draw gameobject with attached to child
 			for (auto& child : mChildren)
 			{
-				child->Update(deltaTime);
+				child->Update(shader, deltaTime);
 			}
 		}
 	}

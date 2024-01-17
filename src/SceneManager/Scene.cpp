@@ -101,7 +101,7 @@ namespace TS_ENGINE
 		// Scene camera pass
 		if (mSceneCameras[mCurrentSceneCameraIndex])
 		{
-			UpdateCameraRT(mSceneCameras[mCurrentSceneCameraIndex], deltaTime, false);
+			UpdateCameraRT(mSceneCameras[mCurrentSceneCameraIndex], shader, deltaTime, false);
 			mSceneCameras[mCurrentSceneCameraIndex]->GetFramebuffer()->Unbind();
 		}
 	}
@@ -148,15 +148,15 @@ namespace TS_ENGINE
 		}
 	}
 
-	void Scene::ShowSceneCameraGUI(float deltaTime)
+	void Scene::ShowSceneCameraGUI(Ref<Shader> shader, float deltaTime)
 	{
 		for (auto& sceneCamera : mSceneCameras)
-			sceneCamera->ShowCameraGUI(deltaTime);//Render Scene camera's GUI
+			sceneCamera->ShowCameraGUI(shader, deltaTime);//Render Scene camera's GUI
 
-		mSceneCameras[mCurrentSceneCameraIndex]->ShowFrustrumGUI(deltaTime);
+		mSceneCameras[mCurrentSceneCameraIndex]->ShowFrustrumGUI(shader, deltaTime);
 	}
 
-	void Scene::UpdateCameraRT(Ref<Camera> camera, float deltaTime, bool isEditorCamera)
+	void Scene::UpdateCameraRT(Ref<Camera> camera, Ref<Shader> shader, float deltaTime, bool isEditorCamera)
 	{
 		// Resize
 		//if (TS_ENGINE::FramebufferSpecification spec = camera->GetFramebuffer()->GetSpecification();
@@ -187,16 +187,16 @@ namespace TS_ENGINE
 
 		// Camera And Skybox Render (To render skybox without distance dependency)		
 		camera->SetIsDistanceIndependent(true);
-		camera->Update(deltaTime);				
-		mSkyboxNode->Update(deltaTime);
+		camera->Update(shader, deltaTime);				
+		mSkyboxNode->Update(shader, deltaTime);
 
 		// Camera And Scene Render		
 		camera->SetIsDistanceIndependent(false);
-		camera->Update(deltaTime);
+		camera->Update(shader, deltaTime);
 
 		// Scene-Tree Render
 		if (mSceneNode)
-			mSceneNode->Update(deltaTime);
+			mSceneNode->Update(shader, deltaTime);
 		else
 			TS_CORE_ERROR("Scene node not set");
 
