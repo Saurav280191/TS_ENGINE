@@ -31,6 +31,9 @@ namespace TS_ENGINE {
 		mLitMat = CreateRef<Material>("LitMaterial", mLitShader); 
 		//mHdrLitMat = CreateRef<Material>("UnlitMaterial", mUnlitShader);
 		//mBatchLitMat = CreateRef<Material>("BatchMaterial", mBatchLitShader);
+
+		mAllMaterials.push_back(mUnlitMat);
+		mAllMaterials.push_back(mLitMat);
 	}
 
 	Ref<Material> MaterialManager::GetUnlitMaterial()

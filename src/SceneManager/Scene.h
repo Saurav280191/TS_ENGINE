@@ -83,14 +83,14 @@ namespace TS_ENGINE {
 		//void OnBatched();
 		//void OnUnBatched();
 
-		void UpdateCameraRT(Ref<Camera> camera, Ref<Shader> shader, float deltaTime, bool isEditorCamera);
+		void UpdateCameraRT(Ref<Camera> camera, float deltaTime, bool isEditorCamera);
 		void Render(Ref<Shader> shader, float deltaTime);
 		int GetSkyboxEntityID() { return mSkyboxNode->GetEntity()->GetEntityID(); }
 		void SetCurrentSceneCamera(Ref<SceneCamera> sceneCamera);
 		void SwitchToAnotherSceneCamera(Ref<SceneCamera> sceneCamera);
 		void AddSceneCamera(Ref<SceneCamera> sceneCamera);
 		void RemoveSceneCamera(Ref<SceneCamera> sceneCamera);
-		void ShowSceneCameraGUI(Ref<Shader> shader, float deltaTime);
+		void ShowSceneCameraGUI(float deltaTime);
 
 		Ref<Node> GetSceneNode() const { return mSceneNode; }
 		Ref<SceneCamera> GetCurrentSceneCamera() { return mSceneCameras[mCurrentSceneCameraIndex]; }
