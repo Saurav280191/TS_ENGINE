@@ -23,6 +23,7 @@ namespace TS_ENGINE
 
 		json["Scene"]["Name"] = sceneName;
 
+#ifdef TS_ENGINE_EDITOR
 		// Editor Camera
 		{
 			//Transform
@@ -57,6 +58,7 @@ namespace TS_ENGINE
 				};
 			}
 		}
+#endif
 
 		// Scene cameras
 		{
@@ -216,7 +218,9 @@ namespace TS_ENGINE
 	void SceneSerializer::SerializeNode(Ref<Node> node, nlohmann::json& jsonNode)
 	{
 		jsonNode["Name"] = node->GetEntity()->GetName().c_str();
+#ifdef TS_ENGINE_EDITOR
 		jsonNode["Enabled"] = node->m_Enabled;
+#endif
 		jsonNode["EntityType"] = node->GetEntity()->GetEntityType();
 
 		// EntityType And PrimitiveType
@@ -551,6 +555,8 @@ namespace TS_ENGINE
 		
 		// Apply Enabled
 		bool enabled = jsonNode["Enabled"];
+#ifdef TS_ENGINE_EDITOR
 		node->m_Enabled = enabled;
+#endif
 	}
 }

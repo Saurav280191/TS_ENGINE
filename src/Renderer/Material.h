@@ -35,12 +35,17 @@ namespace TS_ENGINE {
 			NORMAL
 		};
 
-		Material(const std::string& name, Ref<Shader> shader);		
+		Material();
+		Material(const std::string& name, Ref<Shader> shader);
+		Material(const Ref<Material>& material);
 		virtual ~Material() = default;
 
 		void CloneMaterialProperties(Ref<Material> material);
 
 		const std::string& GetName() const { return mName;  }
+
+		// Name
+		void SetName(std::string name) { mName = name; }
 
 		// Ambient
 		void SetAmbientColor(const Vector4& ambientColor) { mAmbientColor = ambientColor; }
@@ -78,17 +83,21 @@ namespace TS_ENGINE {
 		Vector2 GetNormalMapTiling() const { return mNormalMapTiling; }
 		float GetBumpValue() const { return mBumpValue; }
 
-		//Shader
+		// Shader
 		const Ref<Shader>& GetShader() { return mShader; }
 
-		//Other material properties
+		// Other material properties
 		void EnableDepthTest() { mDepthTestEnabled = true; }
 		void DisableDepthTest() { mDepthTestEnabled = false; }
 		void EnableAlphaBlending() { mAlphaBlendingEnabled = true; }
 		void DisableAlphaBlending() { mAlphaBlendingEnabled = false; }
 
-		//Material Render
+		// Material Render
+#ifdef  TS_ENGINE_EDITOR
 		void Render(int entityID);
+#else
+		void Render();
+#endif //  TS_ENGINE_EDITOR
 
 #ifdef TS_ENGINE_EDITOR
 		void SetMaterialGui(MaterialGui materialGui);		

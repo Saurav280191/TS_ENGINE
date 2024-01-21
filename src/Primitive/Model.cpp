@@ -2,6 +2,7 @@
 #include "Model.h"
 #include "Utils/Utility.h"
 #include "Core/Application.h"
+#include "Renderer/MaterialManager.h"
 
 //#define AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS
 
@@ -26,11 +27,10 @@ namespace TS_ENGINE {
 	{
 		mAssimpScene = model->mAssimpScene;
 		mRendererID = model->mRendererID;
+		mAssimpMaterial = model->mAssimpMaterial;
 		mMaterial = model->mMaterial;
-		mTsMaterial = model->mTsMaterial;
 		mModelDirectory = model->mModelDirectory;
 		mRootNode = model->mRootNode;
-		mDefaultShader = model->mDefaultShader;
 		mProcessedNodes = model->mProcessedNodes;
 		//mProcessedMeshes = model->mProcessedMeshes;
 		mProcessedMaterials = model->mProcessedMaterials;
@@ -44,7 +44,6 @@ namespace TS_ENGINE {
 		mRendererID = -1;
 		mModelDirectory = "";
 		mRootNode = nullptr;
-		mDefaultShader = nullptr;
 		mProcessedNodes.clear();
 		//mProcessedMeshes.clear();
 		mTexture = nullptr;
@@ -189,7 +188,7 @@ namespace TS_ENGINE {
 		mesh->SetName(aiMesh->mName.C_Str());
 		mesh->SetVertices(vertices);
 		mesh->SetIndices(indices);
-		mesh->SetMaterial(mTsMaterial);
+		mesh->SetMaterial(mMaterial);
 		mesh->Create();
 
 		return mesh;
@@ -244,16 +243,15 @@ namespace TS_ENGINE {
 
 	void Model::ProcessMaterial(aiMaterial* aiMat)
 	{
-		std::string shaderDir = Application::s_ResourcesDir.string() + "\\Shaders\\";
-		mDefaultShader = Shader::Create("DefaultShader", shaderDir + "HDRLighting.vert", shaderDir + "HDRLighting.frag");
-		mTsMaterial = CreateRef<Material>(aiMat->GetName().C_Str(), mDefaultShader);
+		mMaterial = CreateRef<Material>(MaterialManager::GetInstance()->GetUnlitMaterial());
+		mMaterial->SetName(aiMat->GetName().C_Str());
 
-		aiMat->Get(AI_MATKEY_NAME, this->mMaterial.name);
+		aiMat->Get(AI_MATKEY_NAME, this->mAssimpMaterial.name);
 		//aiMat->Get(AI_MATKEY_COLOR_AMBIENT, this->mMaterial.ambient);
-		aiMat->Get(AI_MATKEY_COLOR_DIFFUSE, this->mMaterial.diffuse);
-		aiMat->Get(AI_MATKEY_COLOR_SPECULAR, this->mMaterial.specular);
-		aiMat->Get(AI_MATKEY_OPACITY, this->mMaterial.opacity);
-		aiMat->Get(AI_MATKEY_SHININESS, this->mMaterial.shininess);
+		aiMat->Get(AI_MATKEY_COLOR_DIFFUSE, this->mAssimpMaterial.diffuse);
+		aiMat->Get(AI_MATKEY_COLOR_SPECULAR, this->mAssimpMaterial.specular);
+		aiMat->Get(AI_MATKEY_OPACITY, this->mAssimpMaterial.opacity);
+		aiMat->Get(AI_MATKEY_SHININESS, this->mAssimpMaterial.shininess);
 
 		//TS_CORE_INFO("Material {0} has {1} diffuse textures", this->material.name.C_Str(), diffTexCount);
 
@@ -266,10 +264,10 @@ namespace TS_ENGINE {
 		uint32_t lightMapTexCount = material->GetTextureCount(aiTextureType_LIGHTMAP);
 		uint32_t reflectionTexCount = material->GetTextureCount(aiTextureType_REFLECTION);*/
 
-		mTsMaterial->SetAmbientColor(Vector4(this->mMaterial.ambient.r, this->mMaterial.ambient.g, this->mMaterial.ambient.b, 1));
-		mTsMaterial->SetDiffuseColor(Vector4(this->mMaterial.diffuse.r, this->mMaterial.diffuse.g, this->mMaterial.diffuse.b, 1));
-		mTsMaterial->SetSpecularColor(Vector4(this->mMaterial.specular.r, this->mMaterial.specular.g, this->mMaterial.specular.b, 1));
-		mTsMaterial->SetShininess(this->mMaterial.shininess);
+		mMaterial->SetAmbientColor(Vector4(this->mAssimpMaterial.ambient.r, this->mAssimpMaterial.ambient.g, this->mAssimpMaterial.ambient.b, 1));
+		mMaterial->SetDiffuseColor(Vector4(this->mAssimpMaterial.diffuse.r, this->mAssimpMaterial.diffuse.g, this->mAssimpMaterial.diffuse.b, 1));
+		mMaterial->SetSpecularColor(Vector4(this->mAssimpMaterial.specular.r, this->mAssimpMaterial.specular.g, this->mAssimpMaterial.specular.b, 1));
+		mMaterial->SetShininess(this->mAssimpMaterial.shininess);
 
 		uint32_t numDiffuseMaps = aiMat->GetTextureCount(aiTextureType_DIFFUSE);
 		uint32_t numSpecularMaps = aiMat->GetTextureCount(aiTextureType_SPECULAR);
@@ -277,13 +275,13 @@ namespace TS_ENGINE {
 		uint32_t numMetallicMaps = aiMat->GetTextureCount(aiTextureType_METALNESS);
 		uint32_t numEmissiveMaps = aiMat->GetTextureCount(aiTextureType_EMISSIVE);
 
-		ProcessTexture(aiMat, mTsMaterial, aiTextureType_DIFFUSE, numDiffuseMaps);
-		ProcessTexture(aiMat, mTsMaterial, aiTextureType_SPECULAR, numSpecularMaps);
-		ProcessTexture(aiMat, mTsMaterial, aiTextureType_NORMALS, numNormalMaps);
-		ProcessTexture(aiMat, mTsMaterial, aiTextureType_METALNESS, numMetallicMaps);
-		ProcessTexture(aiMat, mTsMaterial, aiTextureType_EMISSIVE, numEmissiveMaps);
+		ProcessTexture(aiMat, mMaterial, aiTextureType_DIFFUSE, numDiffuseMaps);
+		ProcessTexture(aiMat, mMaterial, aiTextureType_SPECULAR, numSpecularMaps);
+		ProcessTexture(aiMat, mMaterial, aiTextureType_NORMALS, numNormalMaps);
+		ProcessTexture(aiMat, mMaterial, aiTextureType_METALNESS, numMetallicMaps);
+		ProcessTexture(aiMat, mMaterial, aiTextureType_EMISSIVE, numEmissiveMaps);
 
 		// Add processed material
-		AddMaterialToDictionary(mTsMaterial);
+		AddMaterialToDictionary(mMaterial);
 	}
 }

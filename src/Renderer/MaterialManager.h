@@ -13,9 +13,16 @@ namespace TS_ENGINE {
 		static Ref<MaterialManager> GetInstance();
 		void LoadAllShadersAndCreateMaterials();
 
-		Ref<Material> GetDefaultMaterial();
 		Ref<Material> GetUnlitMaterial();
 		Ref<Material> GetLitMaterial();
+		
+		const char* mMaterialNameList[2] = {
+			"Unlit",
+			"Lit"
+		};
+
+		const std::vector<Ref<Material>> GetAllMaterials() { return mAllMaterials; }
+
 	private:
 		static Ref<MaterialManager> mInstance;		
 		
@@ -29,6 +36,7 @@ namespace TS_ENGINE {
 		Ref<Material> mHdrLitMat;
 		Ref<Material> mBatchLitMat;
 
+		std::vector<Ref<Material>> mAllMaterials;
 	};
 }
 
