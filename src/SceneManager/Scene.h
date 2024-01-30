@@ -91,21 +91,17 @@ namespace TS_ENGINE {
 		void AddSceneCamera(Ref<SceneCamera> sceneCamera);
 		void RemoveSceneCamera(Ref<SceneCamera> sceneCamera);
 
-#ifdef TS_ENGINE_EDITOR
-		void ShowSceneCameraGUI(Ref<Shader> shader, float deltaTime);
-#endif
-
 		Ref<Node> GetSceneNode() const { return mSceneNode; }
 		Ref<SceneCamera> GetCurrentSceneCamera() { return mSceneCameras[mCurrentSceneCameraIndex]; }
 		int GetCurrentSceneCameraIndex() { return mCurrentSceneCameraIndex; }
 		std::vector<Ref<SceneCamera>> GetSceneCameras() { return mSceneCameras; }
 		size_t GetNumSceneCameras() { return mSceneCameras.size(); }		
+
 #ifdef TS_ENGINE_EDITOR
+		void ShowSceneCameraGUI(Ref<Shader> shader, float deltaTime);
 		Ref<EditorCamera> GetEditorCamera() { return mEditorCamera; }
 #endif
-
 	private:
-
 		// Editor camera
 #ifdef TS_ENGINE_EDITOR
 		Ref<EditorCamera> mEditorCamera = nullptr;
