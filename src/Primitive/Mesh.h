@@ -93,7 +93,7 @@ namespace TS_ENGINE {
 
 #ifdef TS_ENGINE_EDITOR
 		void Render(int entityID);
-#elif
+#else
 		void Render();
 #endif // TS_ENGINE_EDITOR
 
