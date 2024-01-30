@@ -31,7 +31,10 @@ namespace TS_ENGINE
 		TS_CORE_INFO("Deleting node named: {0}", mNodeRef->GetEntity()->GetName().c_str());
 		EntityManager::GetInstance()->Remove(mNodeRef->GetEntity()->GetEntityID());
 
+#ifdef TS_ENGINE_EDITOR
 		m_Enabled = false;
+#endif
+
 		mParentNode->RemoveChild(mNodeRef);
 
 		mMeshes.clear();
@@ -305,14 +308,16 @@ namespace TS_ENGINE
 		//Send modelMatrix to shader
 		shader->SetMat4("u_Model", mTransform->GetGlobalTransformationMatrix());
 
+#ifdef TS_ENGINE_EDITOR
 		if (m_Enabled)
+#endif
 		{
 			//Draw Meshes
 			for (auto& mesh : mMeshes)
 			{
 #ifdef TS_ENGINE_EDITOR
 				mesh->Render(mEntity->GetEntityID());
-#elif
+#else
 				mesh->Render();
 #endif
 			}

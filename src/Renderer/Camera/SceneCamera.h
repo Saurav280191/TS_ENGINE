@@ -23,12 +23,16 @@ namespace TS_ENGINE {
 		virtual void DeleteMeshes() override;
 
 		void ShowCameraGUI(Ref<Shader> shader, float deltaTime);
-		void ShowFrustrumGUI(Ref<Shader> shader, float deltaTime);
 
+#ifdef TS_ENGINE_EDITOR
+		void ShowFrustrumGUI(Ref<Shader> shader, float deltaTime);
 		bool IsSceneCameraGuiSelected(int entityID);
 		void RefreshFrustrumGUI();
+#endif
 
+#ifdef TS_ENGINE_EDITOR
 		Ref<Node> GetSceneCameraGui() { return mSceneCameraGuiNode; }
+#endif
 		virtual Ref<Node> GetNode() override { return mCameraNode; }
 	private:
 	private:

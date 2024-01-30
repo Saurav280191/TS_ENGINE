@@ -86,14 +86,14 @@ namespace TS_ENGINE {
 
 #ifdef TS_ENGINE_EDITOR
 	void Mesh::Render(int entityID)
-#elif
+#else
 	void Mesh::Render()
 #endif // TS_ENGINE_EDITOR
 	{
 		//To Fragment Shader
 #ifdef TS_ENGINE_EDITOR
 		mMaterial->Render(entityID);
-#elif
+#else
 		mMaterial->Render();
 #endif // TS_ENGINE_EDITOR
 

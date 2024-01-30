@@ -97,6 +97,51 @@ namespace TS_ENGINE {
 #endif
 	}
 
+
+	void SceneCamera::Update(Ref<Shader> shader, float deltaTime)
+	{
+		mViewMatrix = mCameraNode->GetTransform()->GetGlobalTransformationMatrix();
+		mViewMatrix = glm::inverse(mViewMatrix);
+
+		shader->SetVec3("u_ViewPos", mCameraNode->GetTransform()->GetLocalPosition());
+
+		if (mIsDistanceIndependent)
+		{
+			shader->SetMat4("u_View", (Matrix4)((Matrix3)mViewMatrix));
+		}
+		else
+		{
+			shader->SetMat4("u_View", mViewMatrix);
+			shader->SetMat4("u_Projection", mProjectionMatrix);
+		}
+	}
+
+#ifdef TS_ENGINE_EDITOR
+	void SceneCamera::ShowCameraGUI(Ref<Shader> shader, float deltaTime)
+	{
+		if (mEditorCamera)
+		{
+			mSceneCameraFrustrumNode->GetTransform()->Follow(mCameraNode);// Frustrum
+			mSceneCameraGuiNode->GetTransform()->LookAt(mCameraNode, mEditorCamera->GetNode()->GetTransform());// CameraGUI
+		}
+
+		mSceneCameraGuiNode->Update(shader, deltaTime);
+	}
+
+	void SceneCamera::ShowFrustrumGUI(Ref<Shader> shader, float deltaTime)
+	{
+		mSceneCameraFrustrumNode->Update(shader, deltaTime);
+	}
+	
+
+	bool SceneCamera::IsSceneCameraGuiSelected(int entityID)
+	{
+		if (entityID == mSceneCameraGuiNode->GetEntity()->GetEntityID())
+			return true;
+		else
+			return false;
+	}
+
 	void SceneCamera::RefreshFrustrumGUI()
 	{
 		Matrix4 projViewIMat = glm::inverse(GetProjectionViewMatrix());
@@ -156,49 +201,7 @@ namespace TS_ENGINE {
 		mSceneCameraFrustrumNode->GetMeshes()[0]->SetVertices(nonHomogeneousFrustrumVertices);
 		mSceneCameraFrustrumNode->GetMeshes()[0]->Create(DrawMode::LINE);
 	}
-
-	void SceneCamera::Update(Ref<Shader> shader, float deltaTime)
-	{
-		mViewMatrix = mCameraNode->GetTransform()->GetGlobalTransformationMatrix();
-		mViewMatrix = glm::inverse(mViewMatrix);
-
-		shader->SetVec3("u_ViewPos", mCameraNode->GetTransform()->GetLocalPosition());
-
-		if (mIsDistanceIndependent)
-		{
-			shader->SetMat4("u_View", (Matrix4)((Matrix3)mViewMatrix));
-		}
-		else
-		{
-			shader->SetMat4("u_View", mViewMatrix);
-			shader->SetMat4("u_Projection", mProjectionMatrix);
-		}
-	}
-
-	void SceneCamera::ShowCameraGUI(Ref<Shader> shader, float deltaTime)
-	{
-#ifdef TS_ENGINE_EDITOR
-		if (mEditorCamera)
-		{
-			mSceneCameraFrustrumNode->GetTransform()->Follow(mCameraNode);// Frustrum
-			mSceneCameraGuiNode->GetTransform()->LookAt(mCameraNode, mEditorCamera->GetNode()->GetTransform());// CameraGUI
-		}
 #endif
-		mSceneCameraGuiNode->Update(shader, deltaTime);		
-	}
-
-	void SceneCamera::ShowFrustrumGUI(Ref<Shader> shader, float deltaTime)
-	{
-		mSceneCameraFrustrumNode->Update(shader, deltaTime);
-	}
-
-	bool SceneCamera::IsSceneCameraGuiSelected(int entityID)
-	{
-		if (entityID == mSceneCameraGuiNode->GetEntity()->GetEntityID())
-			return true;
-		else
-			return false;
-	}
 
 	void SceneCamera::DeleteMeshes()
 	{

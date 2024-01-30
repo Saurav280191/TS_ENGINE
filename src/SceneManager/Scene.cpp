@@ -20,7 +20,11 @@ namespace TS_ENGINE
 	{
 		mSceneNode = CreateRef<Node>();
 		mSceneNode->SetNodeRef(mSceneNode);
+
+#ifdef TS_ENGINE_EDITOR
 		mEditorCamera = editorCamera;
+#endif
+
 		mCurrentSceneCameraIndex = 0;
 		//m_BatchButton.RegisterClickHandler(std::bind(&ButtonHandler::OnButtonClicked, &mBatchButtonHandler, std::placeholders::_1, std::placeholders::_2));
 		
@@ -43,7 +47,9 @@ namespace TS_ENGINE
 	{
 		mSceneNode = CreateRef<Node>();
 		mSceneNode->SetNodeRef(mSceneNode);
+#ifdef TS_ENGINE_EDITOR
 		mEditorCamera = editorCamera;
+#endif
 		mCurrentSceneCameraIndex = 0;
 		//m_BatchButton.RegisterClickHandler(std::bind(&ButtonHandler::OnButtonClicked, &mBatchButtonHandler, std::placeholders::_1, std::placeholders::_2));
 
@@ -72,7 +78,10 @@ namespace TS_ENGINE
 
 	void Scene::Flush()
 	{
+#ifdef TS_ENGINE_EDITOR
 		mEditorCamera->Flush();
+#endif
+
 		for (auto sceneCamera : mSceneCameras)
 			sceneCamera->Flush();
 
@@ -148,6 +157,7 @@ namespace TS_ENGINE
 		}
 	}
 
+#ifdef TS_ENGINE_EDITOR
 	void Scene::ShowSceneCameraGUI(Ref<Shader> shader, float deltaTime)
 	{
 		for (auto& sceneCamera : mSceneCameras)
@@ -155,6 +165,7 @@ namespace TS_ENGINE
 
 		mSceneCameras[mCurrentSceneCameraIndex]->ShowFrustrumGUI(shader, deltaTime);
 	}
+#endif
 
 	void Scene::UpdateCameraRT(Ref<Camera> camera, Ref<Shader> shader, float deltaTime, bool isEditorCamera)
 	{
