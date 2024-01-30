@@ -28,9 +28,6 @@ namespace TS_ENGINE {
 		void ShowFrustrumGUI(Ref<Shader> shader, float deltaTime);
 		bool IsSceneCameraGuiSelected(int entityID);
 		void RefreshFrustrumGUI();
-#endif
-
-#ifdef TS_ENGINE_EDITOR
 		Ref<Node> GetSceneCameraGui() { return mSceneCameraGuiNode; }
 #endif
 		virtual Ref<Node> GetNode() override { return mCameraNode; }
