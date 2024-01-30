@@ -230,7 +230,7 @@ ${UtilsSrc} # Utils Filter
 add_compile_definitions(
     TS_PLATFORM_WINDOWS
     TS_DEBUG
-	#TS_ENGINE_EDITOR#Only for editor
+	TS_ENGINE_EDITOR#Only for editor
     _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
      WIN32
      _DEBUG
