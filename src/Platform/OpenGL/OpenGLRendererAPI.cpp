@@ -108,6 +108,4 @@ namespace TS_ENGINE
 			glDisable(GL_BLEND);
 		}
 	}
-
-	
 }

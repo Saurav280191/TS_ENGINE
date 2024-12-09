@@ -21,7 +21,7 @@ namespace TS_ENGINE {
 		Ref<Node> ProcessNode(aiNode* aiNode, const aiScene* scene);
 		void AddMaterialToDictionary(Ref<Material> material);
 		Ref<Mesh> ProcessMesh(aiMesh* aiMesh, const aiScene* scene);
-		void ProcessTexture(aiMaterial* aiMat, Ref<TS_ENGINE::Material> tsMaterial, aiTextureType textureType, int numMaps);
+		void ProcessTexture(aiMaterial* aiMat, Ref<TS_ENGINE::Material> tsMaterial, aiTextureType textureType, uint32_t numMaps);
 		void ProcessMaterial(aiMaterial* aiMat);
 	private:
 		const aiScene* mAssimpScene;

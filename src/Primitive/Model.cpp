@@ -194,7 +194,7 @@ namespace TS_ENGINE {
 		return mesh;
 	}
 	
-	void Model::ProcessTexture(aiMaterial* aiMat, Ref<TS_ENGINE::Material> tsMaterial, aiTextureType textureType, int numMaps)
+	void Model::ProcessTexture(aiMaterial* aiMat, Ref<TS_ENGINE::Material> tsMaterial, aiTextureType textureType, uint32_t numMaps)
 	{
 		for (uint32_t i = 0; i < numMaps; i++)
 		{

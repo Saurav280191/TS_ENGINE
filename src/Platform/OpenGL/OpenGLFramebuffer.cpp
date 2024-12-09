@@ -108,7 +108,7 @@ namespace TS_ENGINE {
 	OpenGLFramebuffer::~OpenGLFramebuffer()
 	{
 		glDeleteFramebuffers(1, &mRendererID);
-		glDeleteTextures(mColorAttachments.size(), mColorAttachments.data());
+		glDeleteTextures((GLsizei)mColorAttachments.size(), mColorAttachments.data());
 		glDeleteTextures(1, &mDepthAttachment);
 	}
 
@@ -117,7 +117,7 @@ namespace TS_ENGINE {
 		if (mRendererID)
 		{
 			glDeleteFramebuffers(1, &mRendererID);
-			glDeleteTextures(mColorAttachments.size(), mColorAttachments.data());
+			glDeleteTextures((GLsizei)mColorAttachments.size(), mColorAttachments.data());
 			glDeleteTextures(1, &mDepthAttachment);
 
 			mColorAttachments.clear();
@@ -133,9 +133,9 @@ namespace TS_ENGINE {
 		if (mColorAttachmentSpecifications.size())
 		{
 			mColorAttachments.resize(mColorAttachmentSpecifications.size());
-			Utils::CreateTextures(multisample, mColorAttachments.data(), mColorAttachments.size());
+			Utils::CreateTextures(multisample, mColorAttachments.data(), static_cast<uint32_t>(mColorAttachments.size()));
 
-			for (size_t i = 0; i < mColorAttachments.size(); i++)
+			for (int i = 0; i < mColorAttachments.size(); i++)
 			{
 				Utils::BindTexture(multisample, mColorAttachments[i]);
 
@@ -168,7 +168,7 @@ namespace TS_ENGINE {
 		{
 			TS_CORE_ASSERT(mColorAttachments.size() <= 4);
 			GLenum buffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
-			glDrawBuffers(mColorAttachments.size(), buffers);
+			glDrawBuffers((GLsizei)mColorAttachments.size(), buffers);
 		}
 		else if (mColorAttachments.empty())
 		{

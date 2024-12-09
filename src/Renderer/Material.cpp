@@ -12,7 +12,7 @@
 namespace TS_ENGINE {
 
 	Material::Material()
-		:mAmbientColor(1.0f),
+		: mAmbientColor(1.0f),
 		mDiffuseColor(1.0f),
 		mDiffuseMapOffset(0),
 		mDiffuseMapTiling(1),
