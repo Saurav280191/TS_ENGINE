@@ -457,7 +457,7 @@ namespace TS_ENGINE
 			jsonNode["Transform"]["LocalScale"][2]);
 
 		// Set local transforms
-		node->GetTransform()->SetLocalTransforms(transformPosition, transformEulerAngles, transformScale);
+		node->GetTransform()->SetLocalTransform(transformPosition, transformEulerAngles, transformScale);
 
 		// Apply Material
 		for (int i = 0; i < jsonNode["Meshes"].size(); i++)
