@@ -26,8 +26,8 @@ namespace TS_ENGINE {
 		
 		GetSmallestTextureSize();
 
-		mNumHorizontalSlots = mAtlasWidth / mSmallestTextureWidth;
-		mNumVerticalSlots = mAtlasHeight / mSmallestTextureHeight;
+		mNumHorizontalSlots = (int)(mAtlasWidth / mSmallestTextureWidth);
+		mNumVerticalSlots = (int)(mAtlasHeight / mSmallestTextureHeight);
 
 		//Slot creation
 		for (uint32_t y = 0; y < mNumVerticalSlots; y++)
@@ -307,7 +307,7 @@ namespace TS_ENGINE {
 		}
 	}
 
-	GLuint TextureAtlas::CreateTextureForAtlas(std::vector<SlotBundle> slotBundles, float atlasWidth, float atlasHeight)
+	GLuint TextureAtlas::CreateTextureForAtlas(std::vector<SlotBundle> slotBundles, uint32_t atlasWidth, uint32_t atlasHeight)
 	{
 		GLuint atlasTexture;
 		glGenTextures(1, &atlasTexture);

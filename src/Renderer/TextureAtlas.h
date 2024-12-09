@@ -46,7 +46,7 @@ namespace TS_ENGINE {
 		/// <param name="atlasHeight"></param>
 		/// <param name="atlasData"></param>
 		void AddTextureToAtlas(TS_ENGINE::Rect rect, int channels, std::vector<unsigned char> texData, std::vector<GLubyte>& atlasData);		
-		GLuint CreateTextureForAtlas(std::vector<SlotBundle> slotBundles, float atlasWidth, float atlasHeight);
+		GLuint CreateTextureForAtlas(std::vector<SlotBundle> slotBundles, uint32_t atlasWidth, uint32_t atlasHeight);
 	private:		
 		float mAtlasWidth;
 		float mAtlasHeight;
