@@ -103,7 +103,7 @@ namespace TS_ENGINE
 		m_Forward = GetForward();
 	}
 
-	void Transform::SetLocalTransformationMatrix(Matrix4 transformationMatrix)
+	void Transform::SetLocalTransformationMatrix(const Matrix4& transformationMatrix)
 	{
 		m_LocalTransformationMatrix = transformationMatrix;
 		
@@ -112,7 +112,7 @@ namespace TS_ENGINE
 		m_Forward = GetForward();
 	}
 
-	void Transform::SetGlobalTransformationMatrix(Matrix4 transformationMatrix)
+	void Transform::SetGlobalTransformationMatrix(const Matrix4& transformationMatrix)
 	{
 		m_GlobalTransformationMatrix = transformationMatrix;
 
@@ -164,7 +164,7 @@ namespace TS_ENGINE
 		
 	}
 
-	void Transform::SetLocalTransforms(Vector3 pos, Vector3 eulerAngles, Vector3 scale)
+	void Transform::SetLocalTransform(Vector3 pos, Vector3 eulerAngles, Vector3 scale)
 	{
 		m_Pos = pos;
 		m_EulerAngles = eulerAngles;

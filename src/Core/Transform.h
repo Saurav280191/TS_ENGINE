@@ -5,6 +5,7 @@
 namespace TS_ENGINE
 {
 	class Node;
+
 	class Transform
 	{
 	public:
@@ -13,7 +14,7 @@ namespace TS_ENGINE
 		~Transform();
 
 		Vector3 m_Pos;
-		Vector3 m_EulerAngles;//This is in degree to readability
+		Vector3 m_EulerAngles;//This is in degree for readability
 		Vector3 m_Scale;
 		Vector3 m_Right;
 		Vector3 m_Up;
@@ -26,20 +27,26 @@ namespace TS_ENGINE
 
 		Matrix4 GetLocalTransformationMatrix();
 		void ComputeTransformationMatrix(Ref<Node> parentNode);
-		void SetLocalTransformationMatrix(Matrix4 transformationMatrix);
-		void SetGlobalTransformationMatrix(Matrix4 transformationMatrix);
+		void SetLocalTransformationMatrix(const Matrix4& transformationMatrix);
+		void SetGlobalTransformationMatrix(const Matrix4& transformationMatrix);
 
+		// Sets local position
 		void SetLocalPosition(const Vector3& newPosition);
 		void SetLocalPosition(float x, float y, float z);
 		void SetLocalPosition(const float* newPosition);
+
+		// Sets local euler angles
 		void SetLocalEulerAngles(const Vector3& newLocalEulerAngles);
 		void SetLocalEulerAngles(float x, float y, float z);
 		void SetLocalEulerAngles(const float* newLocalEulerAngles);
+		
+		// Sets local scale
 		void SetLocalScale(const Vector3& newScale);
 		void SetLocalScale(float x, float y, float z);
 		void SetLocalScale(const float* newScale);
 
-		void SetLocalTransforms(Vector3 pos, Vector3 eulerAngles, Vector3 scale);
+		// Sets local transform
+		void SetLocalTransform(Vector3 pos, Vector3 eulerAngles, Vector3 scale);
 
 		void Reset();
 
