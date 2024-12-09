@@ -21,6 +21,12 @@ src/stb_image.h
 #src/stb_image_resize.h
 )
 
+set_source_files_properties(
+    glad.c
+    imgui.cpp
+    PROPERTIES COMPILE_FLAGS "-w"  # For GCC/Clang; suppress all warnings
+)
+
 #Core Filter
 file (GLOB CoreSrc 
 src/Core/Application.h
