@@ -77,7 +77,9 @@ namespace TS_ENGINE
 		sceneCameraNode->GetTransform()->SetLocalPosition(7.156f, 2.951f, 8.770f);
 		sceneCameraNode->GetTransform()->SetLocalEulerAngles(-13.235f, 38.064f, 0.0f);
 
-		Ref<Scene> scene = CreateRef<Scene>(sceneName, editorCamera, sceneCameraNode->GetSceneCamera());
+		Ref<Scene> scene = CreateRef<Scene>(sceneName);
+		scene->AddEditorCamera(editorCamera);
+		scene->AddSceneCamera(sceneCameraNode->GetSceneCamera());
 
 		// Default Ground
 		auto groundNode = Factory::GetInstance()->InstantiateQuad("Ground", scene->GetSceneNode());

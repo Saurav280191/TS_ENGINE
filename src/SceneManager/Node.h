@@ -53,6 +53,7 @@ namespace TS_ENGINE
 		/// </summary>
 		/// <param name="name"></param>
 		void Initialize(const std::string& name, const EntityType& entityType);
+		void ReInitializeTransforms();
 		void Update(Ref<Shader> shader, float deltaTime);
 
 		void LookAt(Ref<Node> targetNode);

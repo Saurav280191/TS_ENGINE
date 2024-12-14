@@ -8,7 +8,7 @@ namespace TS_ENGINE
 {
 	SceneSerializer::SceneSerializer()
 	{
-
+		
 	}
 
 	SceneSerializer::~SceneSerializer()
@@ -101,7 +101,7 @@ namespace TS_ENGINE
 		}
 
 		// Nodes (Recursively iterate through scene node children and serialize them)	
-		SerializeNode(scene->GetSceneNode(), json["Scene"]["RootNode"]);
+		json["Scene"]["SceneData"] = SerializeNode(scene->GetSceneNode());
 
 		std::string filePath = Application::s_SaveSceneDir.string() + "\\" + sceneName + ".scene";
 		std::ofstream o(filePath);
@@ -109,6 +109,7 @@ namespace TS_ENGINE
 
 		//auto framebufferImage = scene->GetEditorCamera()->GetFramebuffer()->GetFrameBufferImage(0, 219);
 		//WritePixelsToFile(framebufferImage, "..\\..\\..\\Resources\\SavedSceneThumbnails\\" + std::string(sceneName) + ".png");
+		TS_CORE_INFO("*** Scene saved ***");
 	}
 
 	void SceneSerializer::Load(const std::string& savedScenePath)
@@ -201,26 +202,39 @@ namespace TS_ENGINE
 			sceneCameras.push_back(sceneCamera);
 		}
 
-		Ref<Scene> scene = CreateRef<Scene>(sceneName, editorCamera, sceneCameras);
-		SceneManager::GetInstance()->SetCurrentScene(scene);
+		Ref<Scene> scene = CreateRef<Scene>(sceneName);					// Create new scene
+		scene->AddEditorCamera(editorCamera);							// Add editor camera to scene
+
+		for (auto& sceneCamera : sceneCameras)							// Add scene cameras to scene
+		{
+			scene->AddSceneCamera(sceneCamera);
+			sceneCamera->GetNode()->SetParent(scene->GetSceneNode());
+		}
 
 		// Iterate through all the children nodes for root node
 		{
-			int numRootChildren = jsonData["Scene"]["RootNode"]["Children"].size();
-			for (int i = 0; i < numRootChildren; i++)
+			size_t numRootChildren = jsonData["Scene"]["SceneData"]["Children"].size();
+			
+			for (size_t i = 0; i < numRootChildren; i++)
 			{
-				nlohmann::json jsonNode = jsonData["Scene"]["RootNode"]["Children"][i];
+				nlohmann::json jsonNode = jsonData["Scene"]["SceneData"]["Children"][i];
 				DeserializeNode(scene->GetSceneNode(), jsonNode, editorCamera);
 			}
 		}
+
+		SceneManager::GetInstance()->SetCurrentScene(scene);
 	}
 
-	void SceneSerializer::SerializeNode(Ref<Node> node, nlohmann::json& jsonNode)
+	nlohmann::json SceneSerializer::SerializeNode(Ref<Node> node)
 	{
+		nlohmann::json jsonNode;
+
 		jsonNode["Name"] = node->GetEntity()->GetName().c_str();
+
 #ifdef TS_ENGINE_EDITOR
 		jsonNode["Enabled"] = node->m_Enabled;
 #endif
+		
 		jsonNode["EntityType"] = node->GetEntity()->GetEntityType();
 
 		// EntityType And PrimitiveType
@@ -285,12 +299,18 @@ namespace TS_ENGINE
 		};
 
 		// Children
+		nlohmann::json childrenJson = nlohmann::json::array();
 		for (Ref<Node> childNode : node->GetChildren())
 		{
-			nlohmann::json childJson;
-			SerializeNode(childNode, childJson);
-			jsonNode["Children"].push_back(childJson);
+			childrenJson.push_back(SerializeNode(childNode));
 		}
+		
+		if(node->GetChildren().size() > 0)
+			jsonNode["Children"] = childrenJson;
+
+		TS_CORE_INFO(node->GetEntity()->GetName() + " node serialized!");
+		
+		return jsonNode;
 	}
 
 	nlohmann::json SceneSerializer::GetJsonDataFromFile(const std::string& filePath)
@@ -324,6 +344,11 @@ namespace TS_ENGINE
 	{
 		std::string name = jsonNode["Name"];
 		EntityType entityType = (EntityType)jsonNode["EntityType"];
+
+		if (name == "Ground")
+		{
+			TS_CORE_INFO("DeserializeNode called -> Instantiating ground!");
+		}
 
 		if (entityType == EntityType::PRIMITIVE)
 		{
@@ -374,15 +399,16 @@ namespace TS_ENGINE
 				
 				for (int i = 0; i < modelRootNode->GetChildCount(); i++)
 				{
-					nlohmann::json childJsonNode = jsonNode["Children"][i];
-					DeserializeModelNode(modelRootNode->GetChildAt(i), modelRootNode, childJsonNode, editorCamera);
+					//nlohmann::json childJsonNode = jsonNode["Children"][i];
+					//DeserializeModelNode(modelRootNode->GetChildAt(i), modelRootNode, childJsonNode, editorCamera);
 				}				
 			}
 		}
 		else if (entityType == EntityType::CAMERA)
 		{
-			Ref<Node> node = Factory::GetInstance()->InstantitateSceneCamera(name, editorCamera);// No need to set parent for camera. It gets set during scene creation process			
-			ApplyAndDeserializeChildrenNode(node, jsonNode, editorCamera);
+			Ref<Node> sceneCameraNode = Factory::GetInstance()->InstantitateSceneCamera(name, editorCamera);// No need to set parent for camera. It gets set during scene creation process			
+			ApplyAndDeserializeChildrenNode(sceneCameraNode, jsonNode, editorCamera);
+			//mSceneCameraNodes.push_back(sceneCameraNode);
 		}
 		else if (entityType == EntityType::EMPTY)
 		{
@@ -405,6 +431,8 @@ namespace TS_ENGINE
 		if (jsonNode.contains("Name") && jsonNode["Name"] != NULL)
 			name = jsonNode["Name"];
 	
+		TS_CORE_ASSERT(name != "");
+
 		EntityType entityType = (EntityType)jsonNode["EntityType"];
 		
 		ApplyAndDeserializeChildrenNode(node, jsonNode, editorCamera);
@@ -423,13 +451,20 @@ namespace TS_ENGINE
 			std::string name = jsonNode["Name"];
 			EntityType entityType = (EntityType)jsonNode["EntityType"];
 
+			if (name == "Ground")
+			{
+				TS_CORE_INFO("ApplyAndDeserializeChildrenNode called -> Instantiating ground!");
+			}
+
 			ApplyTransformAndMaterialForNode(node, jsonNode);
-			node->Initialize(name, entityType);
+
+			//node->Initialize(name, entityType);
+			node->ReInitializeTransforms();
 
 			// Deserialize children
-			if (jsonNode["Children"] != nullptr)//Making sure Children exist 
+			if (jsonNode["Children"] != nullptr)						// Making sure Children json node exists 
 			{
-				for (int i = 0; i < jsonNode["Children"].size(); i++)
+				for (int i = 0; i < jsonNode["Children"].size(); i++)	// Iterate through all the children
 				{
 					nlohmann::json childJsonNode = jsonNode["Children"][i];
 					DeserializeNode(node, childJsonNode, editorCamera);

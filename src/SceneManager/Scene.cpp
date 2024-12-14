@@ -15,41 +15,11 @@
 
 namespace TS_ENGINE
 {
-	Scene::Scene(std::string name, Ref<EditorCamera> editorCamera, Ref<SceneCamera> sceneCamera)
-		//: m_BatchingEnabled(false)
+	Scene::Scene(std::string name)
 	{
 		mSceneNode = CreateRef<Node>();
 		mSceneNode->SetNodeRef(mSceneNode);
 
-#ifdef TS_ENGINE_EDITOR
-		mEditorCamera = editorCamera;
-#endif
-
-		mCurrentSceneCameraIndex = 0;
-		//m_BatchButton.RegisterClickHandler(std::bind(&ButtonHandler::OnButtonClicked, &mBatchButtonHandler, std::placeholders::_1, std::placeholders::_2));
-		
-#pragma region DefaultNewScene
-		mSkyboxNode = Factory::GetInstance()->InstantiateSphere("SkyboxSphere", nullptr);
-		mSkyboxNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create(Application::s_AssetsDir.string() + "\\Textures\\Skybox\\industrial_sunset_puresky.jpg"));
-		mSkyboxNode->GetTransform()->SetLocalScale(1600.0f, 1600.0f, 1600.0f);
-		mSkyboxNode->GetTransform()->SetLocalEulerAngles(90.0f, 235.0f, 0.0f);
-		mSkyboxNode->InitializeTransformMatrices();
-
-		sceneCamera->GetNode()->SetParent(mSceneNode);
-		mSceneCameras.push_back(sceneCamera);
-#pragma endregion
-
-		mSceneNode->Initialize(name, EntityType::SCENE);//Needs to be done at the end to initialize the hierarchy once
-	}
-
-	Scene::Scene(std::string name, Ref<EditorCamera> editorCamera, std::vector<Ref<SceneCamera>> sceneCameras)
-		//: m_BatchingEnabled(false)
-	{
-		mSceneNode = CreateRef<Node>();
-		mSceneNode->SetNodeRef(mSceneNode);
-#ifdef TS_ENGINE_EDITOR
-		mEditorCamera = editorCamera;
-#endif
 		mCurrentSceneCameraIndex = 0;
 		//m_BatchButton.RegisterClickHandler(std::bind(&ButtonHandler::OnButtonClicked, &mBatchButtonHandler, std::placeholders::_1, std::placeholders::_2));
 
@@ -60,20 +30,80 @@ namespace TS_ENGINE
 		mSkyboxNode->GetTransform()->SetLocalEulerAngles(90.0f, 235.0f, 0.0f);
 		mSkyboxNode->InitializeTransformMatrices();
 
-		//Add multiple camera
-		for (auto& sceneCamera : sceneCameras)
-		{
-			sceneCamera->GetNode()->SetParent(mSceneNode);
-			mSceneCameras.push_back(sceneCamera);
-		}
+		//sceneCamera->GetNode()->SetParent(mSceneNode);
+		//mSceneCameras.push_back(sceneCamera);
 #pragma endregion
 
 		mSceneNode->Initialize(name, EntityType::SCENE);//Needs to be done at the end to initialize the hierarchy once
 	}
+
+//	Scene::Scene(std::string name, Ref<EditorCamera> editorCamera)
+//		//: m_BatchingEnabled(false)
+//	{
+//		mSceneNode = CreateRef<Node>();
+//		mSceneNode->SetNodeRef(mSceneNode);
+//
+//#ifdef TS_ENGINE_EDITOR
+//		mEditorCamera = editorCamera;
+//#endif
+//
+//		mCurrentSceneCameraIndex = 0;
+//		//m_BatchButton.RegisterClickHandler(std::bind(&ButtonHandler::OnButtonClicked, &mBatchButtonHandler, std::placeholders::_1, std::placeholders::_2));
+//		
+//#pragma region DefaultNewScene
+//		mSkyboxNode = Factory::GetInstance()->InstantiateSphere("SkyboxSphere", nullptr);
+//		mSkyboxNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create(Application::s_AssetsDir.string() + "\\Textures\\Skybox\\industrial_sunset_puresky.jpg"));
+//		mSkyboxNode->GetTransform()->SetLocalScale(1600.0f, 1600.0f, 1600.0f);
+//		mSkyboxNode->GetTransform()->SetLocalEulerAngles(90.0f, 235.0f, 0.0f);
+//		mSkyboxNode->InitializeTransformMatrices();
+//
+//		//sceneCamera->GetNode()->SetParent(mSceneNode);
+//		//mSceneCameras.push_back(sceneCamera);
+//#pragma endregion
+//
+//		mSceneNode->Initialize(name, EntityType::SCENE);//Needs to be done at the end to initialize the hierarchy once
+//	}
+
+//	Scene::Scene(std::string name, Ref<EditorCamera> editorCamera, std::vector<Ref<SceneCamera>> sceneCameras)
+//		//: m_BatchingEnabled(false)
+//	{
+//		mSceneNode = CreateRef<Node>();
+//		mSceneNode->SetNodeRef(mSceneNode);
+//#ifdef TS_ENGINE_EDITOR
+//		mEditorCamera = editorCamera;
+//#endif
+//		mCurrentSceneCameraIndex = 0;
+//		//m_BatchButton.RegisterClickHandler(std::bind(&ButtonHandler::OnButtonClicked, &mBatchButtonHandler, std::placeholders::_1, std::placeholders::_2));
+//
+//#pragma region DefaultNewScene
+//		mSkyboxNode = Factory::GetInstance()->InstantiateSphere("SkyboxSphere", nullptr);
+//		mSkyboxNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create(Application::s_AssetsDir.string() + "\\Textures\\Skybox\\industrial_sunset_puresky.jpg"));
+//		mSkyboxNode->GetTransform()->SetLocalScale(1600.0f, 1600.0f, 1600.0f);
+//		mSkyboxNode->GetTransform()->SetLocalEulerAngles(90.0f, 235.0f, 0.0f);
+//		mSkyboxNode->InitializeTransformMatrices();
+//
+//		//Add multiple camera
+//		for (auto& sceneCamera : sceneCameras)
+//		{
+//			sceneCamera->GetNode()->SetParent(mSceneNode);
+//			mSceneCameras.push_back(sceneCamera);
+//		}
+//#pragma endregion
+//
+//		mSceneNode->Initialize(name, EntityType::SCENE);//Needs to be done at the end to initialize the hierarchy once
+//	}
+
 
 	Scene::~Scene()
 	{
 		Flush();
+	}
+
+	void Scene::AddEditorCamera(Ref<EditorCamera> editorCamera)
+	{
+#ifdef TS_ENGINE_EDITOR
+		mEditorCamera = editorCamera;
+#endif
 	}
 
 	void Scene::Flush()
@@ -108,10 +138,13 @@ namespace TS_ENGINE
 	void Scene::Render(Ref<Shader> shader, float deltaTime)
 	{
 		// Scene camera pass
-		if (mSceneCameras[mCurrentSceneCameraIndex])
+		if (mSceneCameras.size() > 0)
 		{
-			UpdateCameraRT(mSceneCameras[mCurrentSceneCameraIndex], shader, deltaTime, false);
-			mSceneCameras[mCurrentSceneCameraIndex]->GetFramebuffer()->Unbind();
+			if (mSceneCameras[mCurrentSceneCameraIndex])
+			{
+				UpdateCameraRT(mSceneCameras[mCurrentSceneCameraIndex], shader, deltaTime, false);
+				mSceneCameras[mCurrentSceneCameraIndex]->GetFramebuffer()->Unbind();
+			}
 		}
 	}
 
@@ -142,6 +175,7 @@ namespace TS_ENGINE
 	
 	void Scene::AddSceneCamera(Ref<SceneCamera> sceneCamera)
 	{
+		sceneCamera->GetNode()->SetParent(mSceneNode);
 		mSceneCameras.push_back(sceneCamera);
 	}
 
@@ -163,7 +197,8 @@ namespace TS_ENGINE
 		for (auto& sceneCamera : mSceneCameras)
 			sceneCamera->ShowCameraGUI(shader, deltaTime);//Render Scene camera's GUI
 
-		mSceneCameras[mCurrentSceneCameraIndex]->ShowFrustrumGUI(shader, deltaTime);
+		if(mSceneCameras.size() > 0)
+			mSceneCameras[mCurrentSceneCameraIndex]->ShowFrustrumGUI(shader, deltaTime);
 	}
 #endif
 

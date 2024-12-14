@@ -72,9 +72,13 @@ namespace TS_ENGINE {
 	class Scene
 	{
 	public:
-		Scene(std::string name, Ref<EditorCamera> editorCamera, Ref<SceneCamera> sceneCamera);
-		Scene(std::string name, Ref<EditorCamera> editorCamera, std::vector<Ref<SceneCamera>> sceneCameras);
+		Scene(std::string name);
+		//Scene(std::string name, Ref<EditorCamera> editorCamera, Ref<SceneCamera> sceneCamera);
+		//Scene(std::string name, Ref<EditorCamera> editorCamera, std::vector<Ref<SceneCamera>> sceneCameras);
 		~Scene();
+		
+		void AddEditorCamera(Ref<EditorCamera> editorCamera);
+		void AddSceneCamera(Ref<SceneCamera> sceneCamera);
 
 		void Flush();
 
@@ -83,12 +87,12 @@ namespace TS_ENGINE {
 		//void OnBatched();
 		//void OnUnBatched();
 
+
 		void UpdateCameraRT(Ref<Camera> camera, Ref<Shader> shader, float deltaTime, bool isEditorCamera);
 		void Render(Ref<Shader> shader, float deltaTime);
 		int GetSkyboxEntityID() { return mSkyboxNode->GetEntity()->GetEntityID(); }
 		void SetCurrentSceneCamera(Ref<SceneCamera> sceneCamera);
 		void SwitchToAnotherSceneCamera(Ref<SceneCamera> sceneCamera);
-		void AddSceneCamera(Ref<SceneCamera> sceneCamera);
 		void RemoveSceneCamera(Ref<SceneCamera> sceneCamera);
 
 		Ref<Node> GetSceneNode() const { return mSceneNode; }

@@ -300,6 +300,11 @@ namespace TS_ENGINE
 		mIsInitialized = true;
 	}
 
+	void Node::ReInitializeTransforms()
+	{
+		InitializeTransformMatrices();
+	}
+
 	//If there is no parent set parentTransformModelMatrix to identity
 	void Node::Update(Ref<Shader> shader, float deltaTime)
 	{

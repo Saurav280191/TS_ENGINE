@@ -12,6 +12,7 @@ namespace TS_ENGINE
 		static SceneManager* GetInstance();
 		void SetCurrentScene(Ref<Scene> scene);
 
+		// Create a new scene with an editor camera, a scene camera and a ground 
 		void CreateNewScene(const std::string& sceneName);
 		void SaveCurrentScene();
 		void LoadScene(const std::string& savedScenePath);
