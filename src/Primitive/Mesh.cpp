@@ -49,6 +49,11 @@ namespace TS_ENGINE {
 		mIndices = indices;
 	}
 
+	void Mesh::SetBones(std::vector<Bone> bones)
+	{
+		mBones = bones;
+	}
+
 	void Mesh::AddVertex(Vertex vertex)
 	{
 		mVertices.push_back(vertex);

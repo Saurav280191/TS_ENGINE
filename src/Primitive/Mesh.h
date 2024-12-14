@@ -58,6 +58,19 @@ namespace TS_ENGINE {
 		}
 	};
 
+	struct VertexWeight
+	{
+		unsigned int vertexID;
+		float weight;
+	};
+
+	struct Bone
+	{
+		std::string name;
+		std::vector<VertexWeight> vertexWeights;
+		Matrix4 offsetMatrix;
+	};
+
 	enum DrawMode
 	{
 		TRIANGLE,
@@ -75,6 +88,7 @@ namespace TS_ENGINE {
 		void SetMaterial(Ref<Material> material);
 		void SetVertices(std::vector<Vertex> vertices);
 		void SetIndices(std::vector<uint32_t> indices);
+		void SetBones(std::vector<Bone> bones);
 
 		void AddVertex(Vertex vertex);
 		void AddIndex(uint32_t index);
@@ -84,7 +98,7 @@ namespace TS_ENGINE {
 		/// <summary>
 		/// 1. Sets draw mode(Triangle/Line)
 		/// 2. Creates vertex array
-		/// 3. Create vertex buffer and sets layout for it 
+		/// 3. Creates vertex buffer and sets layout for it 
 		/// 4. Sets vertex buffer in created vertex array
 		/// 5. Creates index buffer and sets that in vertex array
 		/// </summary>
@@ -110,6 +124,7 @@ namespace TS_ENGINE {
 		PrimitiveType mPrimitiveType;
 		std::vector<Vertex> mVertices;
 		std::vector<uint32_t> mIndices;
+		std::vector<Bone> mBones;
 		Ref<VertexArray> mVertexArray;
 		bool mStatsRegistered;
 		DrawMode mDrawMode;

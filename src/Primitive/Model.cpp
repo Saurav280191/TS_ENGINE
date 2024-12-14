@@ -52,7 +52,8 @@ namespace TS_ENGINE {
 	void Model::LoadModel(const std::string& modelPath)
 	{
 		Assimp::Importer importer;
-		mAssimpScene = importer.ReadFile(modelPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_PreTransformVertices);
+		importer.SetPropertyInteger(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, 0);
+		mAssimpScene = importer.ReadFile(modelPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices | aiProcess_OptimizeGraph | aiProcess_OptimizeMeshes);
 
 		if (!mAssimpScene || mAssimpScene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !mAssimpScene->mRootNode)
 		{
@@ -62,6 +63,22 @@ namespace TS_ENGINE {
 
 		//ProcessEmbeddedTextures();
 		mRootNode = this->ProcessNode(mAssimpScene->mRootNode, mAssimpScene);
+		
+		// TODO: Process animations
+		if (mAssimpScene->HasAnimations())
+		{
+			for (unsigned int i = 0; i < mAssimpScene->mNumAnimations; ++i)
+			{
+				aiAnimation* animation = mAssimpScene->mAnimations[i];
+				TS_CORE_TRACE("Animation " + std::to_string(i) + ": " + animation->mName.C_Str());
+				TS_CORE_TRACE("Duration: " + std::to_string(animation->mDuration));
+				TS_CORE_TRACE("Ticks per second: " + std::to_string(animation->mTicksPerSecond));
+			}
+		}
+		else
+		{
+			TS_CORE_TRACE("No animations found!");
+		}
 	}
 
 	/*void Model::ProcessEmbeddedTextures()//Don't use this. This can cause issues
@@ -90,14 +107,16 @@ namespace TS_ENGINE {
 		node->SetEulerAngles(Vector3(rot.x, rot.y, rot.z));
 		node->SetScale(Vector3(scale.x, scale.y, scale.z));
 
+		// Process meshes
 		for (GLuint i = 0; i < aiNode->mNumMeshes; i++)
 		{
-			aiMesh* mesh = scene->mMeshes[aiNode->mMeshes[i]];
-			Ref<Mesh> processedMesh = ProcessMesh(mesh, scene);
+			aiMesh* assimpMesh = scene->mMeshes[aiNode->mMeshes[i]];
+			Ref<Mesh> processedMesh = ProcessMesh(assimpMesh, scene);
 			//mProcessedMeshes.push_back(processedMesh);
 			node->AddMesh(processedMesh);
 		}
-		
+
+		// Process node
 		for (GLuint i = 0; i < aiNode->mNumChildren; i++)
 		{
 			node->AddChild(ProcessNode(aiNode->mChildren[i], scene));
@@ -123,6 +142,7 @@ namespace TS_ENGINE {
 		std::vector<GLuint> indices;
 		std::vector<Texture> textures;
 		
+		// Fetch Vertices from assimpMesh
 		for (GLuint i = 0; i < aiMesh->mNumVertices; i++)
 		{
 			Vertex vertex;
@@ -161,6 +181,7 @@ namespace TS_ENGINE {
 			vertices.push_back(vertex);
 		}
 		
+		// Fetch Indices from assimpMesh
 		for (GLuint i = 0; i < aiMesh->mNumFaces; i++)
 		{
 			aiFace face = aiMesh->mFaces[i];
@@ -169,7 +190,46 @@ namespace TS_ENGINE {
 				indices.push_back(face.mIndices[j]);
 		}
 
-		// Process materials
+		// Fetch Bone info from assimpMesh
+		std::vector<Bone> bones = {};
+		TS_CORE_INFO("Number of bones in " + std::string(aiMesh->mName.C_Str()) + ": " + std::to_string(aiMesh->mNumBones));
+		
+		if (aiMesh->HasBones())
+		{
+			unsigned int numBones = aiMesh->mNumBones;
+			Bone bone;
+
+			for (unsigned int boneIndex = 0; boneIndex < numBones; boneIndex++)
+			{
+				aiBone* assimpBone = aiMesh->mBones[boneIndex];
+				bone.name = assimpBone->mName.C_Str();								// Name
+				
+				unsigned int numWeights = assimpBone->mNumWeights;				
+				for (unsigned int weightIndex = 0; weightIndex < numWeights; weightIndex++)
+				{
+					aiVertexWeight assimpWeight = assimpBone->mWeights[weightIndex];
+					VertexWeight vertexWeight;										
+					vertexWeight.vertexID = assimpWeight.mVertexId;					
+					vertexWeight.weight = assimpWeight.mWeight;						
+					
+					bone.vertexWeights.push_back(vertexWeight);						// Vertex weights
+				}
+
+				Matrix4 offsetMatrix = Matrix4(
+					assimpBone->mOffsetMatrix.a1, assimpBone->mOffsetMatrix.a2, assimpBone->mOffsetMatrix.a2, assimpBone->mOffsetMatrix.a3,
+					assimpBone->mOffsetMatrix.b1, assimpBone->mOffsetMatrix.b2, assimpBone->mOffsetMatrix.b2, assimpBone->mOffsetMatrix.b3,
+					assimpBone->mOffsetMatrix.c1, assimpBone->mOffsetMatrix.c2, assimpBone->mOffsetMatrix.c2, assimpBone->mOffsetMatrix.c3,
+					assimpBone->mOffsetMatrix.d1, assimpBone->mOffsetMatrix.d2, assimpBone->mOffsetMatrix.d2, assimpBone->mOffsetMatrix.d3
+				);
+
+				bone.offsetMatrix = offsetMatrix;									// OffsetMatrix
+				
+				// Add bone to vector
+				bones.push_back(bone);
+			}
+		}
+
+		// Fetch material info from assimpMEsh
 		if (aiMesh->mMaterialIndex >= 0)
 		{
 			aiMaterial* aiMat = scene->mMaterials[aiMesh->mMaterialIndex];
@@ -185,11 +245,14 @@ namespace TS_ENGINE {
 		}
 
 		Ref<Mesh> mesh = CreateRef<Mesh>();
-		mesh->SetName(aiMesh->mName.C_Str());
-		mesh->SetVertices(vertices);
-		mesh->SetIndices(indices);
-		mesh->SetMaterial(mMaterial);
-		mesh->Create();
+		mesh->SetName(aiMesh->mName.C_Str());	// Name
+		mesh->SetVertices(vertices);			// Vertices
+		mesh->SetIndices(indices);				// Indices
+		mesh->SetBones(bones);					// Bones
+		mesh->SetMaterial(mMaterial);			// Materials
+
+		// Create mesh
+		mesh->Create();						
 
 		return mesh;
 	}
