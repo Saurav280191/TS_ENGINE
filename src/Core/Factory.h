@@ -24,10 +24,15 @@ namespace TS_ENGINE
 	public:
 		static Factory* GetInstance();
 
-		Ref<Node> InstantitateEmptyNode(const std::string& name, Ref<Node> parentNode);
+		Ref<Node> InstantiateEmptyNode(const std::string& name, Ref<Node> parentNode);
 
-		Ref<Node> InstantitateSceneCamera(const std::string& name, Ref<EditorCamera> editorCamera);
-		Ref<Node> InstantitateDuplicateSceneCamera(Ref<SceneCamera> sceneCamera);
+		Ref<Node> InstantiateSceneCamera(const std::string& name);
+
+#ifdef TS_ENGINE_EDITOR
+		Ref<Node> InstantiateSceneCamera(const std::string& name, Ref<EditorCamera> editorCamera);
+#endif
+
+		Ref<Node> InstantiateDuplicateSceneCamera(Ref<SceneCamera> sceneCamera);
 		
 		Ref<Node> InstantiateLine(const std::string& name, Ref<Node> parentNode, const std::vector<Vector3>& points);
 		Ref<Node> InstantiateQuad(const std::string& name, Ref<Node> parentNode);

@@ -15,7 +15,7 @@ namespace TS_ENGINE
 		return mInstance;
 	}
 
-	Ref<Node> Factory::InstantitateEmptyNode(const std::string& name, Ref<Node> parentNode)
+	Ref<Node> Factory::InstantiateEmptyNode(const std::string& name, Ref<Node> parentNode)
 	{
 		Ref<Node> emptyNode = CreateRef<Node>();
 		emptyNode->SetNodeRef(emptyNode);
@@ -25,13 +25,25 @@ namespace TS_ENGINE
 		return emptyNode;
 	}
 
-	Ref<Node> Factory::InstantitateSceneCamera(const std::string& name, Ref<EditorCamera> editorCamera)
+	Ref<Node> Factory::InstantiateSceneCamera(const std::string& name)
 	{
-#ifdef TS_ENGINE_EDITOR
-		Ref<SceneCamera> sceneCamera = CreateRef<SceneCamera>("SceneCamera", editorCamera);
-#else
 		Ref<SceneCamera> sceneCamera = CreateRef<SceneCamera>("SceneCamera");
-#endif
+
+		sceneCamera->SetPerspective(Camera::Perspective(60.0f, 1.77f, 0.1f, 1000.0f));
+		//sceneCamera->CreateFramebuffer(800, 600);
+		sceneCamera->Initialize();
+		sceneCamera->GetNode()->SetSceneCamera(sceneCamera);
+		sceneCamera->GetNode()->Initialize(name, EntityType::CAMERA);
+		sceneCamera->GetNode()->SetNodeRef(sceneCamera->GetNode());
+
+		return sceneCamera->GetNode();
+	}
+
+#ifdef TS_ENGINE_EDITOR
+	Ref<Node> Factory::InstantiateSceneCamera(const std::string& name, Ref<EditorCamera> editorCamera)
+	{
+		Ref<SceneCamera> sceneCamera = CreateRef<SceneCamera>("SceneCamera", editorCamera);
+
 		sceneCamera->SetPerspective(Camera::Perspective(60.0f, 1.77f, 0.5f, 50.0f));
 		sceneCamera->CreateFramebuffer(800, 600);
 		sceneCamera->Initialize();
@@ -41,8 +53,9 @@ namespace TS_ENGINE
 
 		return sceneCamera->GetNode();
 	}
+#endif
 
-	Ref<Node> Factory::InstantitateDuplicateSceneCamera(Ref<SceneCamera> sceneCamera)
+	Ref<Node> Factory::InstantiateDuplicateSceneCamera(Ref<SceneCamera> sceneCamera)
 	{
 		Scene* scene = SceneManager::GetInstance()->GetCurrentScene().get();
 
