@@ -14,7 +14,7 @@ foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
     set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_SOURCE_DIR}/build/$(platform)/$(Configuration)/bin )
 endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 
-#SOURCE_FILES
+# SOURCE_FILES
 set (SOURCE_FILES
 src/stb_image.h
 #src/stb_image_write.h
@@ -27,7 +27,7 @@ set_source_files_properties(
     PROPERTIES COMPILE_FLAGS "-w"  # For GCC/Clang; suppress all warnings
 )
 
-#Core Filter
+# Core Filter
 file (GLOB CoreSrc 
 src/Core/Application.h
 src/Core/Application.cpp
@@ -60,7 +60,7 @@ src/Core/Factory.cpp
 )
 source_group("Core" FILES ${CoreSrc})
 
-#Events Filter
+# Events Filter
 file(GLOB EventsSrc
 src/Events/ApplicationEvent.h
 src/Events/Event.h
@@ -69,7 +69,7 @@ src/Events/MouseEvent.h
 )
 source_group("Events" FILES ${EventsSrc})
 
-#ImGui Filter
+# ImGui Filter
 file(GLOB ImGuiSrc 
 src/ImGui/ImGuiBuild.cpp
 src/ImGui/ImGuiLayer.h
@@ -77,7 +77,7 @@ src/ImGui/ImGuiLayer.cpp
 )
 source_group("ImGui" FILES ${ImGuiSrc})
 
-#Platform/OpenGL Filter
+# Platform/OpenGL Filter
 file(GLOB PlatformOpenGLSrc
 src/Platform/OpenGL/OpenGLBuffer.h
 src/Platform/OpenGL/OpenGLBuffer.cpp
@@ -106,7 +106,7 @@ src/Platform/Windows/WindowsWindow.cpp
 )
 source_group("Platform\\Windows" FILES ${PlatformWindowsSrc})
 
-#Primitive Filter
+# Primitive Filter
 file (GLOB PrimitiveSrc 
 src/Primitive/Line.h
 src/Primitive/Line.cpp
@@ -127,7 +127,7 @@ src/Primitive/Model.cpp
 )
 source_group("Primitive" FILES ${PrimitiveSrc})
 
-#Renderer Filter
+# Renderer Filter
 file(GLOB RendererSrc
 #src/Renderer/Batcher.h
 #src/Renderer/Batcher.cpp
@@ -166,7 +166,7 @@ src/Renderer/Framebuffer.cpp
 )
 source_group("Renderer" FILES ${RendererSrc})
 
-#Renderer/Lighting Filter
+# Renderer/Lighting Filter
 file(GLOB LightingSrc
 src/Renderer/Lighting/Light.h
 src/Renderer/Lighting/Light.cpp
@@ -175,7 +175,7 @@ src/Renderer/Lighting/DirectionalLight.cpp
 )
 source_group("Renderer/Lighting" FILES ${LightingSrc})
 
-#Renderer/Camera Filter
+# Renderer/Camera Filter
 file(GLOB CameraSrc
 src/Renderer/Camera/Camera.h
 src/Renderer/Camera/Camera.cpp
@@ -186,7 +186,7 @@ src/Renderer/Camera/SceneCamera.cpp
 )
 source_group("Renderer/Camera" FILES ${CameraSrc})
 
-#SceneManager Filter
+# SceneManager Filter
 file(GLOB SceneManagerSrc
 src/SceneManager/Node.h
 src/SceneManager/Node.cpp
@@ -199,7 +199,7 @@ src/SceneManager/SceneSerializer.cpp
 )
 source_group("SceneManager" FILES ${SceneManagerSrc})
 
-#EntityManager Filter
+# EntityManager Filter
 file(GLOB EntityManagerSrc
 src/EntityManager/Entity.h
 src/EntityManager/Entity.cpp
@@ -208,36 +208,35 @@ src/EntityManager/EntityManager.cpp
 )
 source_group("EntityManager" FILES ${EntityManagerSrc})
 
-#Utils Filter
+# Utils Filter
 file(GLOB UtilsSrc
 src/Utils/MyMath.h
 src/Utils/Utility.h
 )
 source_group("Utils" FILES ${UtilsSrc})
 
-#Setting type of TS_Engine project ie. .lib in this case
+# Setting type of TS_Engine project ie. .lib in this case
 add_library (TS_ENGINE
-${SOURCE_FILES} #Source Files Default Filter
-${CoreSrc} #Core Filter
-${EventsSrc} #Events Filter
-${ImGuiSrc} #ImGui Filter
-${PlatformOpenGLSrc} #Platform OpenGL Filter
-${PlatformWindowsSrc} #Platform Windows Filter
-${PrimitiveSrc} #Primitives Filter
-${RendererSrc} #Renderer Filter
-${LightingSrc} #Renderer/Lighting Filter
-${CameraSrc} #Renderer/Camera Filter
-${SceneManagerSrc} # SceneManager Filter
-${EntityManagerSrc} # EntityManager Filter
-${UtilsSrc} # Utils Filter
+${SOURCE_FILES} 		# Source Files Default Filter
+${CoreSrc} 				# Core Filter
+${EventsSrc} 			# Events Filter
+${ImGuiSrc}				# ImGui Filter
+${PlatformOpenGLSrc} 	# Platform OpenGL Filter
+${PlatformWindowsSrc}	# Platform Windows Filter
+${PrimitiveSrc} 		# Primitives Filter
+${RendererSrc} 			# Renderer Filter
+${LightingSrc} 			# Renderer/Lighting Filter
+${CameraSrc} 			# Renderer/Camera Filter
+${SceneManagerSrc} 		# SceneManager Filter
+${EntityManagerSrc} 	# EntityManager Filter
+${UtilsSrc} 			# Utils Filter
 )
 
-#Add definations
+# Add definations
 add_compile_definitions(
     TS_PLATFORM_WINDOWS
     TS_DEBUG
-	TS_ENGINE_EDITOR#Only for editor
-    _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+	_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
      WIN32
      _DEBUG
      _WIN64
@@ -247,20 +246,25 @@ add_compile_definitions(
      _CRT_SECURE_NO_DEPRECATE
      _SCL_SECURE_NO_WARNINGS
 	 IMGUI_DEFINE_MATH_OPERATORS
+	 _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING
      )
 
- #Include directories
+# Include directories
 target_include_directories (TS_ENGINE PUBLIC 
 ${CMAKE_CURRENT_SOURCE_DIR}/src
 ${CMAKE_CURRENT_SOURCE_DIR}/src/Core
+)
+
+# Suppress warnings for external libraries
+target_include_directories (TS_ENGINE SYSTEM PUBLIC
 ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include
+${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/glad
 ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/imgui
 ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/imgui/backends
 ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/ImGuizmo
-${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/glad
 ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/assimp/include
 ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/assimp/build/x64/include
-${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/json/include
+${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/include/json/include	
 )
 
 target_precompile_headers(TS_ENGINE PRIVATE src/Core/tspch.h) 
