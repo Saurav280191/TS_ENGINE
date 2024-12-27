@@ -30,11 +30,11 @@ namespace TS_ENGINE {
 		mNumVerticalSlots = (int)(mAtlasHeight / mSmallestTextureHeight);
 
 		//Slot creation
-		for (uint32_t y = 0; y < mNumVerticalSlots; y++)
+		for (int y = 0; y < mNumVerticalSlots; y++)
 		{
-			for (uint32_t x = 0; x < mNumHorizontalSlots; x++)
+			for (int x = 0; x < mNumHorizontalSlots; x++)
 			{
-				uint32_t id = x + y * mNumHorizontalSlots;
+				int id = x + y * mNumHorizontalSlots;
 				Rect rect = Rect(x * mSmallestTextureWidth, y * mSmallestTextureHeight, mSmallestTextureWidth, mSmallestTextureHeight);
 
 				Slot slot = Slot();
@@ -60,10 +60,14 @@ namespace TS_ENGINE {
 		for (auto& texturePair : mTexturePairs)
 		{
 			if (Texture2D::GetTextureFromID(texturePair.texID)->GetWidth() < mSmallestTextureWidth)
-				mSmallestTextureWidth = Texture2D::GetTextureFromID(texturePair.texID)->GetWidth();
-
+			{
+				mSmallestTextureWidth = (float)(Texture2D::GetTextureFromID(texturePair.texID)->GetWidth());
+			}
+		
 			if (Texture2D::GetTextureFromID(texturePair.texID)->GetHeight() < mSmallestTextureHeight)
-				mSmallestTextureHeight = Texture2D::GetTextureFromID(texturePair.texID)->GetWidth();
+			{
+				mSmallestTextureHeight = (float)(Texture2D::GetTextureFromID(texturePair.texID)->GetWidth());
+			}
 		}
 	}
 
@@ -92,8 +96,8 @@ namespace TS_ENGINE {
 
 		mCurrentSlotBundle.GetCurrentSlot().Checked();
 		
-		int requiredHorizontalSlots = Texture2D::GetTextureFromID(texturePair.texID)->GetHeight() / mSmallestTextureWidth;
-		int requiredVerticalSlots = Texture2D::GetTextureFromID(texturePair.texID)->GetHeight() / mSmallestTextureHeight;
+		int requiredHorizontalSlots = Texture2D::GetTextureFromID(texturePair.texID)->GetHeight() / (int)mSmallestTextureWidth;
+		int requiredVerticalSlots = Texture2D::GetTextureFromID(texturePair.texID)->GetHeight() / (int)mSmallestTextureHeight;
 
 		//First check texture can't be placed in Atlas condition
 		if (mCurrentSlotBundle.GetCurrentSlot().rect.x + Texture2D::GetTextureFromID(texturePair.texID)->GetWidth() > mAtlasWidth &&
@@ -107,9 +111,9 @@ namespace TS_ENGINE {
 		{
 			if (mCurrentSlotBundle.GetCurrentSlot().rect.x + Texture2D::GetTextureFromID(texturePair.texID)->GetWidth() <= (float)mAtlasWidth)
 			{
-				for (uint32_t y = 0; y < requiredVerticalSlots; y++)
+				for (int y = 0; y < requiredVerticalSlots; y++)
 				{
-					for (uint32_t x = 0; x < requiredHorizontalSlots; x++)
+					for (int x = 0; x < requiredHorizontalSlots; x++)
 					{
 						Slot* neighbourSlotToOccupyPtr = GetSlot(mCurrentSlotBundle.GetCurrentSlot().x + x, mCurrentSlotBundle.GetCurrentSlot().y + y);
 						Slot neighbourSlotToOccupy = *neighbourSlotToOccupyPtr;						
@@ -150,8 +154,8 @@ namespace TS_ENGINE {
 				mCurrentSlotBundle.SetTexture(Texture2D::GetTextureFromID(texturePair.texID));
 				
 				mCurrentSlotBundle.CalculateRectForTexture(
-					Texture2D::GetTextureFromID(texturePair.texID)->GetWidth(),
-					Texture2D::GetTextureFromID(texturePair.texID)->GetHeight(),
+					(float)(Texture2D::GetTextureFromID(texturePair.texID)->GetWidth()),
+					(float)(Texture2D::GetTextureFromID(texturePair.texID)->GetHeight()),
 					mAtlasWidth, 
 					mAtlasHeight);
 
@@ -209,10 +213,12 @@ namespace TS_ENGINE {
 	{
 		uint32_t index = x + y * mNumHorizontalSlots;
 
-		for (auto slot : mAvailableSlots)
+		for (auto& slot : mAvailableSlots)
 		{
 			if (slot.id == index)
+			{
 				return &slot;
+			}
 		}
 
 		return nullptr;
@@ -220,10 +226,12 @@ namespace TS_ENGINE {
 
 	Slot* TextureAtlas::GetNextVacantSlotIndex()
 	{
-		for (auto slot : mAvailableSlots)
+		for (auto& slot : mAvailableSlots)
 		{
 			if (!slot.checkedSlot)
+			{
 				return &slot;
+			}
 		}
 
 		return nullptr;
@@ -259,12 +267,14 @@ namespace TS_ENGINE {
 		{
 			TS_CORE_ERROR("Could not find texture ID: {0}", texID);
 		}
+
+		return AtlasSizeAndTextureRectPair();
 	}
 	
 	void TextureAtlas::CreateTextureAtlasTexture()
 	{
 		mAtlasTexture = Texture2D::Create((uint32_t)mAtlasWidth, (uint32_t)mAtlasHeight);
-		GLuint texID = CreateTextureForAtlas(mSlotBundles, mAtlasWidth, mAtlasHeight);
+		GLuint texID = CreateTextureForAtlas(mSlotBundles, (uint32_t)mAtlasWidth, (uint32_t)mAtlasHeight);
 		mAtlasTexture->OverrideTextureID(texID);
 	}
 
@@ -273,14 +283,14 @@ namespace TS_ENGINE {
 	{
 		if (channels == 3)
 		{
-			std::vector<unsigned char> paddedTexData(rect.w * rect.h * 4);
+			std::vector<unsigned char> paddedTexData((uint32_t)rect.w * (uint32_t)rect.h * 4);
 
 			for (int row = 0; row < rect.h; row++)
 			{
 				for (int col = 0; col < rect.w; col++)
 				{
-					int srcIndex = (row * rect.w + col) * channels;
-					int dstIndex = ((rect.y + row) * mAtlasWidth + (rect.x + col)) * 4;
+					int srcIndex = (int)((row * rect.w + col) * channels);
+					int dstIndex = (int)(((rect.y + row) * mAtlasWidth + (rect.x + col)) * 4);
 
 					atlasData[dstIndex + 0] = texData[srcIndex + 0];
 					atlasData[dstIndex + 1] = texData[srcIndex + 1];
@@ -295,8 +305,8 @@ namespace TS_ENGINE {
 			{
 				for (int col = 0; col < rect.w; col++)
 				{
-					int srcIndex = (row * rect.w + col) * channels;
-					int dstIndex = ((rect.y + row) * mAtlasWidth + (rect.x + col)) * channels;
+					int srcIndex = (int)((row * rect.w + col) * channels);
+					int dstIndex = (int)(((rect.y + row) * mAtlasWidth + (rect.x + col)) * channels);
 
 					atlasData[dstIndex + 0] = texData[srcIndex + 0];
 					atlasData[dstIndex + 1] = texData[srcIndex + 1];

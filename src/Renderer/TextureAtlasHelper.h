@@ -31,12 +31,12 @@ namespace TS_ENGINE {
 
 	struct Slot
 	{
-		int id;
-		int x;
-		int y;
+		int id = 0;
+		int x = 0;
+		int y = 0;
 		Rect rect;
-		bool vacant;
-		bool checkedSlot;
+		bool vacant = true;
+		bool checkedSlot = false;
 
 		void Occupy()
 		{
@@ -190,15 +190,32 @@ namespace TS_ENGINE {
 		Vector2 atlasSize;
 		Rect rect;
 	public:
+		AtlasSizeAndTextureRectPair()
+		{
+
+		}
+
 		AtlasSizeAndTextureRectPair(Vector2 _textureAtlasSize, Rect _rect)
 		{
 			atlasSize = _textureAtlasSize;
 			rect = _rect;
 		}
+
+		void SetSize(Vector2 _textureAtlasSize)
+		{
+			atlasSize = _textureAtlasSize;
+		}
+
+		void SetRect(Rect _rect)
+		{
+			rect = _rect;
+		}
+
 		const Vector2 GetAtlasSize()
 		{
 			return atlasSize;
 		}
+		
 		const Rect GetRect()
 		{
 			return rect;
