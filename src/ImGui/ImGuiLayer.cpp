@@ -22,9 +22,9 @@ namespace TS_ENGINE
 	{
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		io.ConfigFlags != ImGuiConfigFlags_NavEnableKeyboard;
-		io.ConfigFlags != ImGuiConfigFlags_DockingEnable;
-		io.ConfigFlags != ImGuiConfigFlags_ViewportsEnable;
+		//io.ConfigFlags != ImGuiConfigFlags_NavEnableKeyboard;
+		//io.ConfigFlags != ImGuiConfigFlags_DockingEnable;
+		//io.ConfigFlags != ImGuiConfigFlags_ViewportsEnable;
 
 		float fontSize = 18.0f;
 		//io.Fonts->AddFontFromFileTTF("Assets/Fonts/OpenSans/OpenSans-Bold.ttf", fontSize);
