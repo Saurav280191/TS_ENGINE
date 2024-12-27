@@ -7,11 +7,11 @@ namespace TS_ENGINE {
 
 	Ref<VertexArray> VertexArray::Create()
 	{
-		switch (RendererAPI::GetAPI())
+		/*switch (RendererAPI::GetAPI())
 		{
 		default:
 			break;
-		}
+		}*/
 		//TODO: Add support for more APIs
 		return CreateRef<OpenGLVertexArray>();
 	}
