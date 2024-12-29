@@ -102,16 +102,16 @@ namespace TS_ENGINE {
 		mMaterial->Render();
 #endif
 
+		// Render Command To Draw Geometry
 		if (mDrawMode == DrawMode::TRIANGLE)
 			RenderCommand::DrawIndexed(mVertexArray, (uint32_t)mIndices.size());
 		else if (mDrawMode == DrawMode::LINE)
 			RenderCommand::DrawLines(mVertexArray, (uint32_t)mVertices.size());
 
-#pragma region STATS
+		// Add DrawCalls, Vertices and Indices for Stats
 		TS_ENGINE::Application::Get().AddDrawCalls(1);
 		TS_ENGINE::Application::Get().AddVertices((uint32_t)mVertices.size());
 		TS_ENGINE::Application::Get().AddIndices((uint32_t)mIndices.size());
-#pragma endregion
 	}
 
 	void Mesh::Destroy()
