@@ -253,131 +253,6 @@ namespace TS_ENGINE
 			return truncatedStr;
 		}
 
-		static const char* GetCstr(const wchar_t* wcs)
-		{
-			char* cStr = NULL;
-			size_t cStrsCharSize = (wcslen(wcs) + 1) * sizeof(wchar_t);
-			cStr = (char*)malloc(cStrsCharSize);
-			memset(cStr, 0, cStrsCharSize);
-			wcstombs(cStr, wcs, cStrsCharSize);
-			wcs = NULL;
-			delete wcs;
-			return cStr;
-		}
-		static const char* GetConcatCStrs(const char* cStr, const char* cStr1)
-		{
-			char* fullPath = NULL;
-			size_t cStrsCharSize = 0;
-
-			cStrsCharSize = (strlen(cStr) + strlen(cStr1) + 1) * sizeof(char);
-
-			fullPath = (char*)malloc(cStrsCharSize );
-			memset(fullPath, 0, cStrsCharSize);
-			strcat(fullPath, cStr);
-			strcat(fullPath, cStr1);			
-			cStr = NULL;
-			delete cStr;
-			cStr1 = NULL;
-			delete cStr1;
-			return fullPath;
-		}
-		static const char* GetConcatCStrs(const char* cStr, const char* cStr1, const char* cStr2)
-		{
-			char* fullPath = NULL;
-			size_t cStrsCharSize = 0;
-
-			cStrsCharSize = (strlen(cStr) + strlen(cStr1) + strlen(cStr2) + 1) * sizeof(char);
-
-			fullPath = (char*)malloc(cStrsCharSize);
-			memset(fullPath, 0, cStrsCharSize);
-			strcat(fullPath, cStr);
-			strcat(fullPath, cStr1);
-			strcat(fullPath, cStr2);
-			cStr = NULL;
-			delete cStr;
-			cStr1 = NULL;
-			delete cStr1;
-			cStr2 = NULL;
-			delete cStr2;
-
-			return fullPath;
-		}
-		static const char* GetConcatCStrs(const char* cStr, const char* cStr1, const char* cStr2, const char* cStr3)
-		{
-			char* fullPath = NULL;
-			size_t cStrsCharSize = 0;
-
-			cStrsCharSize = (strlen(cStr) + strlen(cStr1) + strlen(cStr2) + strlen(cStr3) + 1) * sizeof(char);
-
-			fullPath = (char*)malloc(cStrsCharSize);
-			memset(fullPath, 0, cStrsCharSize);
-			strcat(fullPath, cStr);
-			strcat(fullPath, cStr1);
-			strcat(fullPath, cStr2);
-			strcat(fullPath, cStr3);
-			cStr = NULL;
-			delete cStr;
-			cStr1 = NULL;
-			delete cStr1;
-			cStr2 = NULL;
-			delete cStr2;
-			cStr3 = NULL;
-			delete cStr3;
-
-			return fullPath;
-		}
-		static const char* GetConcatCStrs(const char* cStrs[], unsigned int numCStrs)
-		{
-			char* fullPath = NULL;
-			size_t cStrsCharSize = 0;
-
-			for (size_t i = 0; i < numCStrs; i++)
-			{
-				cStrsCharSize = strlen(cStrs[i]);
-			}
-
-			fullPath = (char*)malloc((cStrsCharSize + 1) * sizeof(char));
-			memset(fullPath, 0, (cStrsCharSize + 1) * sizeof(char));
-
-			for (unsigned int i = 0; i < numCStrs; i++)
-			{
-				strcat(fullPath, cStrs[i]);
-				cStrs[i] = NULL;
-				delete cStrs[i];
-			}
-			
-			return fullPath;
-		}
-		static const char* GetConcatCStrs(const wchar_t* wcs, const char* cStr1)
-		{
-			char* cStr = NULL;
-			size_t len = (wcslen(wcs) + 1) * sizeof(wchar_t);
-			cStr = (char*)malloc(len);
-			memset(cStr, 0, len);
-			wcstombs(cStr, wcs, len);
-			
-			len = 0;
-			wcs = NULL;
-			delete wcs;
-
-			char* fullPath = NULL;
-			size_t cStrsCharSize = 0;
-
-			cStrsCharSize = (strlen(cStr) + strlen(cStr1) + 1) * sizeof(char);
-
-			fullPath = (char*)malloc(cStrsCharSize);
-			memset(fullPath, NULL, cStrsCharSize);
-			strcat(fullPath, cStr);
-			strcat(fullPath, cStr1);
-
-			cStr = NULL;
-			delete cStr;
-			cStr1 = NULL;
-			delete cStr1;
-
-			return fullPath;
-		}
-		
 		static const char* GetVec3CStr(Vector3 vec3)
 		{
 			int arr_len = 3;
@@ -387,94 +262,42 @@ namespace TS_ENGINE
 
 			return bytes;
 		}
-
-		/*static const char* GetConcatCStrs(std::string strs[], unsigned int n)
+		
+		static const char* ConvertWideToChar(const wchar_t* wideStr) 
 		{
-			char* fullPath = NULL;
-			size_t cStrsCharSize = 0;
+			if (!wideStr) 
+				return nullptr;
 
-			for (size_t i = 0; i < n; i++)
+			// Get the required size for the buffer
+			size_t len = std::wcstombs(nullptr, wideStr, 0);
+
+			if (len == static_cast<size_t>(-1)) 
 			{
-				cStrsCharSize = strlen(strs[i].c_str());				
+				TS_CORE_ERROR("Conversion error");
+				return nullptr;
 			}
 
-			fullPath = (char*)malloc((cStrsCharSize + 1) * sizeof(char));
-			memset(fullPath, NULL, (cStrsCharSize + 1) * sizeof(char));
+			// Allocate memory for the narrow string
+			char* charStr = new char[len + 1]; // +1 for the null terminator
+			std::wcstombs(charStr, wideStr, len + 1);
 
-			for (unsigned int i = 0; i < n; i++)
-			{
-				strcat(fullPath, strs[i].c_str());
-			}
+			return charStr; // Caller is responsible for freeing the memory
+		}
 
-			return fullPath;
-		}*/
 		static const char* GetResourcePath()
 		{
-			//D:\\Documents\\ThinkSideways\\ThinkSideways\\ExternalDependencies\\resources\\Textures
 			static std::filesystem::path path = std::filesystem::current_path();
 
 			if (!resourcesInitialized)
 			{
-				auto root = path.parent_path().parent_path().parent_path().parent_path();
-				const wchar_t* parentPathWcs = root.c_str();
-				resourcePath = GetConcatCStrs(parentPathWcs, "\\ExternalDependencies\\resources");
+				std::filesystem::path root = path.parent_path().parent_path().parent_path().parent_path();
+				std::wstring resourcePathWString = std::wstring(root.c_str()) + L"\\ExternalDependencies\\resources";
+				resourcePath = ConvertWideToChar(resourcePathWString.c_str());
+
 				resourcesInitialized = true;
 			}
 
 			return resourcePath;
-		}
-		static std::wstring GetConcatStr(std::wstring* wStrs, unsigned int n)
-		{
-			wchar_t* fullPath = NULL;
-			size_t wcStrsCharSize = 0;
-
-			for (size_t i = 0; i < n; i++)
-				wcStrsCharSize = std::wcslen(wStrs[i].c_str());
-
-			fullPath = (wchar_t*)malloc((wcStrsCharSize + 1) * sizeof(char));
-			memset(fullPath, 0, (wcStrsCharSize + 1) * sizeof(char));
-
-			for (unsigned int i = 0; i < n; i++)
-				wcscat(fullPath, wStrs[i].c_str());
-
-			return fullPath;
-		}
-		/*static std::string GetConcatStrFromResource(std::string* strs, unsigned int cStrLen)
-		{
-			char* fullPath = NULL;
-			size_t cStrsCharSize = 0;
-
-			cStrsCharSize = strlen(GetResourcePath());
-
-			for (size_t i = 0; i < cStrLen; i++)
-				cStrsCharSize += strlen(strs[i].c_str());
-
-			fullPath = (char*)malloc((cStrsCharSize + 1) * sizeof(char));
-			memset(fullPath, NULL, (cStrsCharSize + 1) * sizeof(char));
-
-			strcat(fullPath, GetResourcePath());
-
-			for (unsigned int i = 0; i < cStrLen; i++)
-				strcat(fullPath, strs[i].c_str());
-
-			return fullPath;
-		}*/
-		static const char* GetConcatStrFromResource(const char* cstr)
-		{
-			char* fullPath = NULL;
-			size_t cStrsCharSize = (strlen(GetResourcePath()) + strlen("\\") + strlen(cstr) + 1) * sizeof(char*);
-
-			fullPath = (char*)malloc(cStrsCharSize);
-			memset(fullPath, 0, cStrsCharSize);
-
-			strcat_s(fullPath, cStrsCharSize, GetResourcePath());
-			strcat_s(fullPath, cStrsCharSize, "\\");
-			strcat_s(fullPath, cStrsCharSize, cstr);
-
-			cstr = NULL;
-			delete cstr;
-
-			return fullPath;
 		}
 
 		template<typename T>
