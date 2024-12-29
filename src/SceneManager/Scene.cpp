@@ -143,7 +143,10 @@ namespace TS_ENGINE
 			if (mSceneCameras[mCurrentSceneCameraIndex])
 			{
 				UpdateCameraRT(mSceneCameras[mCurrentSceneCameraIndex], shader, deltaTime, false);
+
+#ifdef TS_ENGINE_EDITOR
 				mSceneCameras[mCurrentSceneCameraIndex]->GetFramebuffer()->Unbind();
+#endif
 			}
 		}
 	}
@@ -212,7 +215,9 @@ namespace TS_ENGINE
 		//	camera->GetFramebuffer()->Resize((uint32_t)mViewportPanelSize.x, (uint32_t)mViewportPanelSize.y);
 		//}
 
+#ifdef TS_ENGINE_EDITOR
 		camera->GetFramebuffer()->Bind();
+#endif
 
 		//if(!mGammaCorrection)
 		RenderCommand::SetClearColor(Vector4(0.2f, 0.3f, 0.3f, 1.0f));
@@ -222,14 +227,16 @@ namespace TS_ENGINE
 		RenderCommand::Clear();
 
 		// Clear our entity ID attachment to -1
+#ifdef TS_ENGINE_EDITOR
 		camera->GetFramebuffer()->ClearAttachment(1, -1);
+#endif
 
 		//mCurrentShader->SetBool("u_Gamma", mGammaCorrection);
 		//mCurrentShader->SetFloat("u_GammaValue", mGammaValue);
 		//mCurrentShader->SetBool("u_Hdr", mHdr);
 		//mCurrentShader->SetFloat("u_HdrExposure", mHdrExposure);
 		//mDirectionalLight->SetCommonParams(mCurrentShader, mDirectionalLight->GetNode()->GetTransform()->GetLocalPosition(),
-		//	mDirectionalLight->GetNode()->GetTransform()->GetForward(), Vector3(0.5f), Vector3(0.5f), Vector3(0.5f));
+		//mDirectionalLight->GetNode()->GetTransform()->GetForward(), Vector3(0.5f), Vector3(0.5f), Vector3(0.5f));
 
 		// Camera And Skybox Render (To render skybox without distance dependency)		
 		camera->SetIsDistanceIndependent(true);
