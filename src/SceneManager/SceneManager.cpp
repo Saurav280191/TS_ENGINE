@@ -1,6 +1,7 @@
 #include "tspch.h"
 #include "SceneManager.h"
 #include "Factory.h"
+#include "Utils/Utility.h"
 
 namespace TS_ENGINE
 {
@@ -76,7 +77,7 @@ namespace TS_ENGINE
 		editorCamera->SetPerspective(TS_ENGINE::Camera::Perspective(60.0f, 1.77f, 0.1f, 1000.0f));												
 		editorCamera->GetNode()->GetTransform()->SetLocalPosition(-0.738f, 5.788f, 14.731f);
 		editorCamera->GetNode()->GetTransform()->SetLocalEulerAngles(-18.102f, 0.066f, 0.0f);
-		editorCamera->CreateFramebuffer(1920, 1080);//Create framebuffer for editorCamera
+		editorCamera->CreateFramebuffer(1920, 1080);																							// Create Framebuffer For EditorCamera
 		editorCamera->Initialize();
 		editorCamera->GetNode()->InitializeTransformMatrices();
 
@@ -86,21 +87,38 @@ namespace TS_ENGINE
 		sceneCameraNode->GetTransform()->SetLocalEulerAngles(-13.235f, 38.064f, 0.0f);
 		
 		// Add editor camera to scene
-		scene->AddEditorCamera(editorCamera);																									// Add Editor Camera To Scene
+		scene->AddEditorCamera(editorCamera);
+		// Add scene camera to scene
+		scene->AddSceneCamera(sceneCameraNode->GetSceneCamera());																				// Add Editor Camera To Scene
 #else
-		// Initialize Scene camera for Sandbox
-		auto sceneCameraNode = Factory::GetInstance()->InstantitateSceneCamera("SceneCamera");													// Instantiate Scene Camera For Sandbox
+		// Initialize editor camera
+		Ref<Node> sceneCameraNode = Factory::GetInstance()->InstantitateSceneCamera("SceneCamera");												// Instantiate Scene Camera
+		
+		Ref<SceneCamera> sceneCamera = sceneCameraNode->GetSceneCamera();
+		sceneCamera->SetPerspective(TS_ENGINE::Camera::Perspective(60.0f, 1.77f, 0.1f, 1000.0f));
+		sceneCamera->CreateFramebuffer(1920, 1080);																								// Create Framebuffer For Sandbox
+		sceneCamera->Initialize();
 		sceneCameraNode->GetTransform()->SetLocalPosition(7.156f, 2.951f, 8.770f);
 		sceneCameraNode->GetTransform()->SetLocalEulerAngles(-13.235f, 38.064f, 0.0f);
+		sceneCameraNode->InitializeTransformMatrices();
 
+		// Add scene camera to scene
+		scene->AddSceneCamera(sceneCamera);																										// Add Scene Camera to Scene
+		
 		// Instantiate test model for Sandbox
-		auto modelNode = Factory::GetInstance()->InstantiateModel("..//..//..//Assets//Models//Ely By K.Atienza.fbx", scene->GetSceneNode());	// Instantiate Model
+		Ref<Node> modelNode = nullptr;
+
+		if (TS_ENGINE::Utility::FileExists("..//..//..//Assets//Models//Ely By K.Atienza.fbx"))
+			modelNode = Factory::GetInstance()->InstantiateModel("..//..//..//Assets//Models//Ely By K.Atienza.fbx", scene->GetSceneNode());	// Instantiate Model
+		else if (TS_ENGINE::Utility::FileExists("Assets//Models//Ely By K.Atienza.fbx"))
+			modelNode = Factory::GetInstance()->InstantiateModel("Assets//Models//Ely By K.Atienza.fbx", scene->GetSceneNode());	// Instantiate Model
+		else
+			TS_CORE_ERROR("Invalid model path!");
+
 		modelNode->GetTransform()->SetLocalScale(0.01f, 0.01f, 0.01f);
 		modelNode->InitializeTransformMatrices();
 #endif
-		// Add scene camera to scene
-		scene->AddSceneCamera(sceneCameraNode->GetSceneCamera());																				// Add Scene Camera to Scene
-		
+
 		// Default Ground
 		auto groundNode = Factory::GetInstance()->InstantiateQuad("Ground", scene->GetSceneNode());												// Instantiate Ground
 		groundNode->GetTransform()->SetLocalEulerAngles(-90.0f, 0.0f, 0.0f);
