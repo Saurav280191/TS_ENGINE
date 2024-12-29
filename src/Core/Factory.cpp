@@ -25,15 +25,15 @@ namespace TS_ENGINE
 		return emptyNode;
 	}
 
-	Ref<Node> Factory::InstantitateSceneCamera(const std::string& name, 
+	Ref<Node> Factory::InstantitateSceneCamera(const std::string& name
 #ifdef TS_ENGINE_EDITOR
-		Ref<EditorCamera> editorCamera
+		, Ref<EditorCamera> editorCamera
 #endif
 	)
 	{
-		Ref<SceneCamera> sceneCamera = CreateRef<SceneCamera>("SceneCamera",
+		Ref<SceneCamera> sceneCamera = CreateRef<SceneCamera>("SceneCamera"
 #ifdef TS_ENGINE_EDITOR
-			editorCamera
+			,editorCamera
 #endif
 		);
 

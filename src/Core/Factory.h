@@ -26,9 +26,9 @@ namespace TS_ENGINE
 
 		Ref<Node> InstantitateEmptyNode(const std::string& name, Ref<Node> parentNode);
 
-		Ref<Node> InstantitateSceneCamera(const std::string& name, 
+		Ref<Node> InstantitateSceneCamera(const std::string& name 
 #ifdef TS_ENGINE_EDITOR
-			Ref<EditorCamera> editorCamera
+			, Ref<EditorCamera> editorCamera
 #endif
 		);
 
