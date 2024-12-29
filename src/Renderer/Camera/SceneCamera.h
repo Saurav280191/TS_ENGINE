@@ -29,10 +29,11 @@ namespace TS_ENGINE {
 		bool IsSceneCameraGuiSelected(int entityID);
 		void RefreshFrustrumGUI();
 		Ref<Node> GetSceneCameraGui() { return mSceneCameraGuiNode; }
+#else
+		void Controls(float deltaTime);
 #endif
 		virtual Ref<Node> GetNode() override { return mCameraNode; }
 		
-		void Controls(float deltaTime);
 	private:
 #ifdef TS_ENGINE_EDITOR
 		Ref<Camera> mEditorCamera;

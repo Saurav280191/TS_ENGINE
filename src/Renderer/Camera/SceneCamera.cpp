@@ -203,8 +203,8 @@ namespace TS_ENGINE {
 		mSceneCameraFrustrumNode->GetMeshes()[0]->SetVertices(nonHomogeneousFrustrumVertices);
 		mSceneCameraFrustrumNode->GetMeshes()[0]->Create(DrawMode::LINE);
 	}
-#endif
-	
+
+#else
 	void SceneCamera::Controls(float deltaTime)
 	{
 		//Vertical
@@ -290,6 +290,7 @@ namespace TS_ENGINE {
 			}
 		}
 	}
+#endif
 
 	void SceneCamera::DeleteMeshes()
 	{
