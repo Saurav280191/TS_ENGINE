@@ -26,7 +26,11 @@ namespace TS_ENGINE
 
 		Ref<Node> InstantitateEmptyNode(const std::string& name, Ref<Node> parentNode);
 
+#ifdef TS_ENGINE_EDITOR
 		Ref<Node> InstantitateSceneCamera(const std::string& name, Ref<EditorCamera> editorCamera);
+#endif
+		Ref<Node> InstantitateSceneCamera(const std::string& name);
+
 		Ref<Node> InstantitateDuplicateSceneCamera(Ref<SceneCamera> sceneCamera);
 		
 		Ref<Node> InstantiateLine(const std::string& name, Ref<Node> parentNode, const std::vector<Vector3>& points);
