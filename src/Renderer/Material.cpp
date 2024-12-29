@@ -23,15 +23,14 @@ namespace TS_ENGINE {
 		mNormalMapOffset(0),
 		mNormalMapTiling(1),
 		mBumpValue(1.0f),
-		mDepthTestEnabled(true)
+		mDepthTestEnabled(true),
+		mAlphaBlendingEnabled(true)
 	{
 
 	}
 
 	Material::Material(const std::string& name, Ref<Shader> shader)
-		: mName(name),
-		mShader(shader),
-		mAmbientColor(1.0f),
+		: mAmbientColor(1.0f),
 		mDiffuseColor(1.0f),
 		mDiffuseMapOffset(0),
 		mDiffuseMapTiling(1),
@@ -42,9 +41,14 @@ namespace TS_ENGINE {
 		mNormalMapOffset(0),
 		mNormalMapTiling(1),
 		mBumpValue(1.0f),
-		mDepthTestEnabled(true)
+		mDepthTestEnabled(true),
+		mAlphaBlendingEnabled(true)
 	{
+		auto n = name;
+		auto s = shader;
 
+		this->mName = name;
+		this->mShader = shader;
 	}
 
 	Material::Material(const Ref<Material>& material)
@@ -99,6 +103,11 @@ namespace TS_ENGINE {
 
 		this->mAlphaBlendingEnabled = material->mAlphaBlendingEnabled;
 		this->mDepthTestEnabled = material->mDepthTestEnabled;
+	}
+
+	const Ref<Shader> Material::GetShader()
+	{
+		return mShader;
 	}
 
 #ifdef  TS_ENGINE_EDITOR

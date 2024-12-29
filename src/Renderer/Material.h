@@ -84,7 +84,7 @@ namespace TS_ENGINE {
 		float GetBumpValue() const { return mBumpValue; }
 
 		// Shader
-		const Ref<Shader>& GetShader() { return mShader; }
+		const Ref<Shader> GetShader();
 
 		// Other material properties
 		void EnableDepthTest() { mDepthTestEnabled = true; }

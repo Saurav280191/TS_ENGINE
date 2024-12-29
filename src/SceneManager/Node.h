@@ -43,8 +43,7 @@ namespace TS_ENGINE
 		void SetSiblingIndex(int index);
 
 		/// <summary>
-		/// Updates local and global model matrices for it's self and for children
-		/// </summary>
+		/// Updates local and global model matrices for itself and for children
 		void InitializeTransformMatrices();	
 		void UpdateTransformationMatrices(Matrix4 transformationMatrix);
 		

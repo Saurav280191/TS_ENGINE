@@ -21,18 +21,6 @@ namespace TS_ENGINE {
 	Ref<Model> ModelLoader::LoadModel(const std::string& modelPath)
 	{
 		std::string fullModelPath = modelPath;
-		//if (!IsModelLoaded(fullModelPath))
-		//{
-		//	mLastLoadedModel = CreateRef<Model>(fullModelPath);
-		//	mLoadedModelMap[fullModelPath] = mLastLoadedModel;
-		//	return mLastLoadedModel;
-		//}
-		//else
-		//{
-		//	mLastLoadedModel = CreateRef<Model>();//Create new instance and then copy data
-		//	mLastLoadedModel->CopyFrom(mLoadedModelMap[fullModelPath]);
-		//	return mLastLoadedModel;
-		//}
 		mLastLoadedModel = CreateRef<Model>(fullModelPath);
 		return mLastLoadedModel;
 	}

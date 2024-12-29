@@ -292,6 +292,11 @@ namespace TS_ENGINE
 		}
 	}
 
+	/// <summary>
+	/// Sets name and registers entityType
+	/// </summary>
+	/// <param name="name"></param>
+	/// <param name="entityType"></param>
 	void Node::Initialize(const std::string& name, const EntityType& entityType)
 	{
 		mNodeRef->mEntity = EntityManager::GetInstance()->Register(name, entityType);
