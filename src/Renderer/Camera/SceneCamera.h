@@ -31,7 +31,8 @@ namespace TS_ENGINE {
 		Ref<Node> GetSceneCameraGui() { return mSceneCameraGuiNode; }
 #endif
 		virtual Ref<Node> GetNode() override { return mCameraNode; }
-	private:
+		
+		void Controls(float deltaTime);
 	private:
 #ifdef TS_ENGINE_EDITOR
 		Ref<Camera> mEditorCamera;
