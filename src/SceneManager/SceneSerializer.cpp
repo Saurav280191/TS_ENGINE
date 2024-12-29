@@ -164,7 +164,14 @@ namespace TS_ENGINE
 		{
 			// Scene Camera Name
 			std::string name = jsonData["Scene"]["SceneCameras"][i]["Name"];
-			Ref<SceneCamera> sceneCamera = Factory::GetInstance()->InstantitateSceneCamera(name, editorCamera)->GetSceneCamera();
+
+			Ref<SceneCamera> sceneCamera = nullptr;
+			
+#ifdef TS_ENGINE_EDITOR
+			sceneCamera = Factory::GetInstance()->InstantitateSceneCamera(name, editorCamera)->GetSceneCamera();
+#else
+			sceneCamera = Factory::GetInstance()->InstantitateSceneCamera(name)->GetSceneCamera();
+#endif
 
 			Camera::ProjectionType projectionType = jsonData["Scene"]["SceneCameras"][i]["ProjectionType"];
 
@@ -406,7 +413,12 @@ namespace TS_ENGINE
 		}
 		else if (entityType == EntityType::CAMERA)
 		{
-			Ref<Node> sceneCameraNode = Factory::GetInstance()->InstantitateSceneCamera(name, editorCamera);// No need to set parent for camera. It gets set during scene creation process			
+			Ref<Node> sceneCameraNode = nullptr;
+#ifdef TS_ENGINE_EDITOR
+			sceneCameraNode = Factory::GetInstance()->InstantitateSceneCamera(name, editorCamera);// No need to set parent for camera. It gets set during scene creation process			
+#else
+			sceneCameraNode = Factory::GetInstance()->InstantitateSceneCamera(name);// No need to set parent for camera. It gets set during scene creation process			
+#endif
 			ApplyAndDeserializeChildrenNode(sceneCameraNode, jsonNode, editorCamera);
 			//mSceneCameraNodes.push_back(sceneCameraNode);
 		}
