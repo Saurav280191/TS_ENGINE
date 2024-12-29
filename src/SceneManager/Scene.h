@@ -73,8 +73,6 @@ namespace TS_ENGINE {
 	{
 	public:
 		Scene(std::string name);
-		//Scene(std::string name, Ref<EditorCamera> editorCamera, Ref<SceneCamera> sceneCamera);
-		//Scene(std::string name, Ref<EditorCamera> editorCamera, std::vector<Ref<SceneCamera>> sceneCameras);
 		~Scene();
 		
 		void AddEditorCamera(Ref<EditorCamera> editorCamera);
@@ -86,7 +84,6 @@ namespace TS_ENGINE {
 		//bool m_BatchingEnabled;
 		//void OnBatched();
 		//void OnUnBatched();
-
 
 		void UpdateCameraRT(Ref<Camera> camera, Ref<Shader> shader, float deltaTime, bool isEditorCamera);
 		void Render(Ref<Shader> shader, float deltaTime);
