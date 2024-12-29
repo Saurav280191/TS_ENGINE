@@ -6,7 +6,8 @@
 namespace TS_ENGINE {
 
 	Mesh::Mesh() :
-		mStatsRegistered(false)
+		mStatsRegistered(false),
+		mDrawMode(DrawMode::TRIANGLE)
 	{
 		mPrimitiveType = PrimitiveType::MODEL;
 		std::string shaderDir = Application::s_ResourcesDir.string() + "\\Shaders\\";

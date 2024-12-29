@@ -232,6 +232,11 @@ namespace TS_ENGINE
 			extension = fileName.substr(lastDot + 1);
 		}
 
+		static bool FileExists(const std::string& _filepath)
+		{
+			return std::filesystem::exists(_filepath);
+		}
+
 		static void GetDirectory(const std::string& fullFileName, std::string& directory)
 		{
 			// Find the last directory separator
