@@ -42,17 +42,18 @@ namespace TS_ENGINE
 		void UpdateSiblings();
 		void SetSiblingIndex(int index);
 
-		/// <summary>
-		/// Updates local and global model matrices for itself and for children
+		
+		// Updates local and global model matrices for itself and for children
 		void InitializeTransformMatrices();	
 		void UpdateTransformationMatrices(Matrix4 transformationMatrix);
 		
-		/// <summary>
-		/// Registers entity
-		/// </summary>
-		/// <param name="name"></param>
+		// Registers entity amd initializes transformation matrix
 		void Initialize(const std::string& name, const EntityType& entityType);
+		
+		// Initializes transformation matrices of node and it's children 
 		void ReInitializeTransforms();
+
+		// Sets model matrix in shader. Renders mesh. Then updates children.
 		void Update(Ref<Shader> shader, float deltaTime);
 
 		void LookAt(Ref<Node> targetNode);

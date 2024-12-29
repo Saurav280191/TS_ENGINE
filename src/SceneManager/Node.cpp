@@ -310,19 +310,19 @@ namespace TS_ENGINE
 		InitializeTransformMatrices();
 	}
 
-	//If there is no parent set parentTransformModelMatrix to identity
+	// If there is no parent set parentTransformModelMatrix to identity
 	void Node::Update(Ref<Shader> shader, float deltaTime)
 	{
 		TS_CORE_ASSERT(mIsInitialized, "Node is not initialized!");
 
-		//Send modelMatrix to shader
+		// Send ModelMatrix to vertex shader
 		shader->SetMat4("u_Model", mTransform->GetGlobalTransformationMatrix());
 
 #ifdef TS_ENGINE_EDITOR
 		if (m_Enabled)
 #endif
 		{
-			//Draw Meshes
+			// Draw Meshes
 			for (auto& mesh : mMeshes)
 			{
 #ifdef TS_ENGINE_EDITOR
@@ -332,7 +332,7 @@ namespace TS_ENGINE
 #endif
 			}
 
-			//Send children modelMatrix to shader and draw gameobject with attached to child
+			// Send children modelMatrix to shader and draw gameobject with attached to child
 			for (auto& child : mChildren)
 			{
 				child->Update(shader, deltaTime);

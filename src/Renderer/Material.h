@@ -92,12 +92,13 @@ namespace TS_ENGINE {
 		void EnableAlphaBlending() { mAlphaBlendingEnabled = true; }
 		void DisableAlphaBlending() { mAlphaBlendingEnabled = false; }
 
-		// Material Render
 #ifdef  TS_ENGINE_EDITOR
+		// Material Render (Sets Render Commands. Passes properties to fragement shader)
 		void Render(int entityID);
 #else
+		// Material Render (Sets Render Commands. Passes properties to fragement shader)
 		void Render();
-#endif //  TS_ENGINE_EDITOR
+#endif
 
 #ifdef TS_ENGINE_EDITOR
 		void SetMaterialGui(MaterialGui materialGui);		

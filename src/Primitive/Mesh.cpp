@@ -64,7 +64,7 @@ namespace TS_ENGINE {
 		mIndices.push_back(index);
 	}
 
-	void Mesh::Create(DrawMode drawMode)//Default is Triangle
+	void Mesh::Create(DrawMode drawMode)// Default is Triangle
 	{
 		mDrawMode = drawMode;
 
@@ -93,15 +93,14 @@ namespace TS_ENGINE {
 	void Mesh::Render(int entityID)
 #else
 	void Mesh::Render()
-#endif // TS_ENGINE_EDITOR
+#endif
 	{
-		//To Fragment Shader
+		// Render Material
 #ifdef TS_ENGINE_EDITOR
 		mMaterial->Render(entityID);
 #else
 		mMaterial->Render();
-#endif // TS_ENGINE_EDITOR
-
+#endif
 
 		if (mDrawMode == DrawMode::TRIANGLE)
 			RenderCommand::DrawIndexed(mVertexArray, (uint32_t)mIndices.size());

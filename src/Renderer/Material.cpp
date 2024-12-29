@@ -114,31 +114,33 @@ namespace TS_ENGINE {
 	void Material::Render(int entityID)
 #else
 	void Material::Render()
-#endif //  TS_ENGINE_EDITOR
-	{
-		RenderCommand::EnableDepthTest(mDepthTestEnabled);
-		RenderCommand::EnableAlphaBlending(mAlphaBlendingEnabled);
+#endif
+	{																// *** Set RenderCommands ***
 
-		if (mShader)
+		RenderCommand::EnableDepthTest(mDepthTestEnabled);					// Depth Test
+		RenderCommand::EnableAlphaBlending(mAlphaBlendingEnabled);			// Alpha Blending
+
+		if (mShader)												// *** Set Shader Properties ***
 		{
-#ifdef  TS_ENGINE_EDITOR
-			mShader->SetInt("u_EntityID", entityID);
-#endif //  TS_ENGINE_EDITOR
+#ifdef  TS_ENGINE_EDITOR											
+			mShader->SetInt("u_EntityID", entityID);						// Entity ID
+#endif
 
-			mShader->SetVec4("u_AmbientColor", mAmbientColor);
-			mShader->SetVec4("u_DiffuseColor", mDiffuseColor);
-			mShader->SetVec4("u_SpecularColor", mSpecularColor);
+			mShader->SetVec4("u_AmbientColor", mAmbientColor);				// Ambient Color
+			mShader->SetVec4("u_DiffuseColor", mDiffuseColor);				// Diffuse Color
+			mShader->SetVec4("u_SpecularColor", mSpecularColor);			// Specular Color
 
 			if (Ref<Texture2D> diffuseMap = mDiffuseMap)
 			{
-				diffuseMap->Bind();
-				mShader->SetBool("u_HasDiffuseTexture", true);
-				mShader->SetVec2("u_DiffuseMapOffset", mDiffuseMapOffset);
-				mShader->SetVec2("u_DiffuseMapTiling", mDiffuseMapTiling);
+				diffuseMap->Bind();											// Bind Diffuse Map
+
+				mShader->SetBool("u_HasDiffuseTexture", true);				// HasDiffuseTexture
+				mShader->SetVec2("u_DiffuseMapOffset", mDiffuseMapOffset);	// DiffuseMapOffset
+				mShader->SetVec2("u_DiffuseMapTiling", mDiffuseMapTiling);	// DiffuseMapTiling
 			}
 			else
 			{
-				mShader->SetBool("u_HasDiffuseTexture", false);
+				mShader->SetBool("u_HasDiffuseTexture", false);				// HasDiffuseTexture
 			}
 		}
 	}

@@ -109,7 +109,7 @@ namespace TS_ENGINE {
 		void Render(int entityID);
 #else
 		void Render();
-#endif // TS_ENGINE_EDITOR
+#endif
 
 		void Destroy();
 
