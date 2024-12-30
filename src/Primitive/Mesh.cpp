@@ -172,4 +172,14 @@ namespace TS_ENGINE {
 
 		return worldSpaceVertices;
 	}
+
+	Ref<VertexArray> Mesh::GetVertexArray()
+	{
+		return mVertexArray;
+	}
+
+	uint32_t Mesh::GetNumIndices()
+	{
+		return mIndices.size();
+	}
 }

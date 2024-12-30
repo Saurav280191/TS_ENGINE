@@ -119,6 +119,9 @@ namespace TS_ENGINE {
 		std::vector<uint32_t> GetIndices() { return mIndices; }
 		Ref<Material> GetMaterial() const { return mMaterial; }
 		PrimitiveType GetPrimitiveType() { return mPrimitiveType; }
+
+		Ref<VertexArray> GetVertexArray();
+		uint32_t GetNumIndices();
 	private:
 		std::string mName;
 		PrimitiveType mPrimitiveType;

@@ -124,6 +124,8 @@ src/Primitive/Mesh.h
 src/Primitive/Mesh.cpp
 src/Primitive/Model.h
 src/Primitive/Model.cpp
+src/Primitive/Skybox.h
+src/Primitive/Skybox.cpp
 )
 source_group("Primitive" FILES ${PrimitiveSrc})
 

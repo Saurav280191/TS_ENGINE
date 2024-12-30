@@ -111,7 +111,7 @@ namespace TS_ENGINE
 		if (TS_ENGINE::Utility::FileExists("..//..//..//Assets//Models//Ely By K.Atienza.fbx"))
 			modelNode = Factory::GetInstance()->InstantiateModel("..//..//..//Assets//Models//Ely By K.Atienza.fbx", scene->GetSceneNode());	// Instantiate Model
 		else if (TS_ENGINE::Utility::FileExists("Assets//Models//Ely By K.Atienza.fbx"))
-			modelNode = Factory::GetInstance()->InstantiateModel("Assets//Models//Ely By K.Atienza.fbx", scene->GetSceneNode());	// Instantiate Model
+			modelNode = Factory::GetInstance()->InstantiateModel("Assets//Models//Ely By K.Atienza.fbx", scene->GetSceneNode());				// Instantiate Model
 		else
 			TS_CORE_ERROR("Invalid model path!");
 

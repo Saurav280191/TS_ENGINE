@@ -9,6 +9,8 @@
 #include "imgui_internal.h"
 #endif
 
+#include "Application.h"
+
 namespace TS_ENGINE {
 
 	Material::Material()
@@ -115,7 +117,7 @@ namespace TS_ENGINE {
 #else
 	void Material::Render()
 #endif
-	{																// *** Set RenderCommands ***
+	{																// *** Set Render Commands ***
 
 		RenderCommand::EnableDepthTest(mDepthTestEnabled);					// Depth Test
 		RenderCommand::EnableAlphaBlending(mAlphaBlendingEnabled);			// Alpha Blending
@@ -134,7 +136,9 @@ namespace TS_ENGINE {
 			{
 				diffuseMap->Bind();											// Bind Diffuse Map
 
-				mShader->SetBool("u_HasDiffuseTexture", true);				// HasDiffuseTexture
+				mShader->SetBool("u_HasDiffuseTexture",						// HasDiffuseTexture
+					TS_ENGINE::Application::GetInstance().IsTextureModeEnabled());
+
 				mShader->SetVec2("u_DiffuseMapOffset", mDiffuseMapOffset);	// DiffuseMapOffset
 				mShader->SetVec2("u_DiffuseMapTiling", mDiffuseMapTiling);	// DiffuseMapTiling
 			}

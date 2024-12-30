@@ -23,76 +23,10 @@ namespace TS_ENGINE
 		mCurrentSceneCameraIndex = 0;
 		//m_BatchButton.RegisterClickHandler(std::bind(&ButtonHandler::OnButtonClicked, &mBatchButtonHandler, std::placeholders::_1, std::placeholders::_2));
 
-#pragma region DefaultNewScene
-		mSkyboxNode = Factory::GetInstance()->InstantiateSphere("SkyboxSphere", nullptr);
-		mSkyboxNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create(Application::s_AssetsDir.string() + "\\Textures\\Skybox\\industrial_sunset_puresky.jpg"));
-		mSkyboxNode->GetTransform()->SetLocalScale(1600.0f, 1600.0f, 1600.0f);
-		mSkyboxNode->GetTransform()->SetLocalEulerAngles(90.0f, 235.0f, 0.0f);
-		mSkyboxNode->InitializeTransformMatrices();
-
-		//sceneCamera->GetNode()->SetParent(mSceneNode);
-		//mSceneCameras.push_back(sceneCamera);
-#pragma endregion
+		mSkybox = CreateRef<Skybox>();	
 
 		mSceneNode->Initialize(name, EntityType::SCENE);//Needs to be done at the end to initialize the hierarchy once
 	}
-
-//	Scene::Scene(std::string name, Ref<EditorCamera> editorCamera)
-//		//: m_BatchingEnabled(false)
-//	{
-//		mSceneNode = CreateRef<Node>();
-//		mSceneNode->SetNodeRef(mSceneNode);
-//
-//#ifdef TS_ENGINE_EDITOR
-//		mEditorCamera = editorCamera;
-//#endif
-//
-//		mCurrentSceneCameraIndex = 0;
-//		//m_BatchButton.RegisterClickHandler(std::bind(&ButtonHandler::OnButtonClicked, &mBatchButtonHandler, std::placeholders::_1, std::placeholders::_2));
-//		
-//#pragma region DefaultNewScene
-//		mSkyboxNode = Factory::GetInstance()->InstantiateSphere("SkyboxSphere", nullptr);
-//		mSkyboxNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create(Application::s_AssetsDir.string() + "\\Textures\\Skybox\\industrial_sunset_puresky.jpg"));
-//		mSkyboxNode->GetTransform()->SetLocalScale(1600.0f, 1600.0f, 1600.0f);
-//		mSkyboxNode->GetTransform()->SetLocalEulerAngles(90.0f, 235.0f, 0.0f);
-//		mSkyboxNode->InitializeTransformMatrices();
-//
-//		//sceneCamera->GetNode()->SetParent(mSceneNode);
-//		//mSceneCameras.push_back(sceneCamera);
-//#pragma endregion
-//
-//		mSceneNode->Initialize(name, EntityType::SCENE);//Needs to be done at the end to initialize the hierarchy once
-//	}
-
-//	Scene::Scene(std::string name, Ref<EditorCamera> editorCamera, std::vector<Ref<SceneCamera>> sceneCameras)
-//		//: m_BatchingEnabled(false)
-//	{
-//		mSceneNode = CreateRef<Node>();
-//		mSceneNode->SetNodeRef(mSceneNode);
-//#ifdef TS_ENGINE_EDITOR
-//		mEditorCamera = editorCamera;
-//#endif
-//		mCurrentSceneCameraIndex = 0;
-//		//m_BatchButton.RegisterClickHandler(std::bind(&ButtonHandler::OnButtonClicked, &mBatchButtonHandler, std::placeholders::_1, std::placeholders::_2));
-//
-//#pragma region DefaultNewScene
-//		mSkyboxNode = Factory::GetInstance()->InstantiateSphere("SkyboxSphere", nullptr);
-//		mSkyboxNode->GetMeshes()[0]->GetMaterial()->SetDiffuseMap(TS_ENGINE::Texture2D::Create(Application::s_AssetsDir.string() + "\\Textures\\Skybox\\industrial_sunset_puresky.jpg"));
-//		mSkyboxNode->GetTransform()->SetLocalScale(1600.0f, 1600.0f, 1600.0f);
-//		mSkyboxNode->GetTransform()->SetLocalEulerAngles(90.0f, 235.0f, 0.0f);
-//		mSkyboxNode->InitializeTransformMatrices();
-//
-//		//Add multiple camera
-//		for (auto& sceneCamera : sceneCameras)
-//		{
-//			sceneCamera->GetNode()->SetParent(mSceneNode);
-//			mSceneCameras.push_back(sceneCamera);
-//		}
-//#pragma endregion
-//
-//		mSceneNode->Initialize(name, EntityType::SCENE);//Needs to be done at the end to initialize the hierarchy once
-//	}
-
 
 	Scene::~Scene()
 	{
@@ -240,8 +174,15 @@ namespace TS_ENGINE
 
 		// Camera And Skybox Render (To render skybox without distance dependency)		
 		camera->SetIsDistanceIndependent(true);
-		camera->Update(shader, deltaTime);				
-		mSkyboxNode->Update(shader, deltaTime);
+		camera->Update(shader, deltaTime);
+		
+		// Render skybox
+		mSkybox->Render();
+
+		//if (mSkyboxNode)
+		//{
+			//mSkyboxNode->Update(shader, deltaTime);
+		//}
 
 		// Camera And Scene Render		
 		camera->SetIsDistanceIndependent(false);
