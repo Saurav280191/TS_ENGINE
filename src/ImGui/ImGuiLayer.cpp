@@ -43,7 +43,7 @@ namespace TS_ENGINE
 
 		SetDarkThemeColors();
 
-		Application& app = Application::Get();
+		Application& app = Application::GetInstance();
 		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
 	
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -81,7 +81,7 @@ namespace TS_ENGINE
 	void ImGuiLayer::End()
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		Application& app = Application::Get();
+		Application& app = Application::GetInstance();
 		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
 
 		// Rendering

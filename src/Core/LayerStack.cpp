@@ -8,7 +8,10 @@ namespace TS_ENGINE {
 		for (Layer* layer : mLayers)
 		{
 			layer->OnDetach();
+			
+			std::string layerName = layer->GetName();
 			delete layer;
+			TS_CORE_INFO("Deleted layer named {0}", layerName);
 		}
 	}
 

@@ -6,7 +6,8 @@
 
 namespace TS_ENGINE {
 
-	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height):
+	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height) :
+		mChannels(3),
 		mWidth(width),
 		mHeight(height)
 	{
@@ -14,15 +15,24 @@ namespace TS_ENGINE {
 		mDataFormat = GL_RGBA;
 		
 		glCreateTextures(GL_TEXTURE_2D, 1, &mRendererID);
+		// Allocates texture's storage in GPU memory and specifies it's dimensions, format, and number of mipmap levels.
 		glTextureStorage2D(mRendererID, 1, mInternalFormat, mWidth, mHeight);
-
+		
+		// Texture filters
 		glTextureParameteri(mRendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(mRendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(mRendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		// Texture wrapping
 		glTextureParameteri(mRendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(mRendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	}
 
-	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
+	OpenGLTexture2D::OpenGLTexture2D(const std::string& path) :
+		mChannels(4),
+		mDataFormat(GL_RGB),
+		mWidth(0),
+		mHeight(0),
+		mInternalFormat(GL_RGBA8),
+		mRendererID(0)
 	{
 		mPath = path;
 		int width, height, channels;
@@ -48,15 +58,15 @@ namespace TS_ENGINE {
 			{
 				internalFormat = GL_RGBA32F;
 				dataFormat = GL_RGBA;				
-				//internalFormat = GL_RGBA32F;//For Gamma Correction
-				//dataFormat = GL_RGBA;//For Gamma Correction
+				//internalFormat = GL_RGBA32F;	// For Gamma Correction
+				//dataFormat = GL_RGBA;			// For Gamma Correction
 			}
 			else if (channels == 3)
 			{
 				internalFormat = GL_RGB8;
 				dataFormat = GL_RGB;
-				//internalFormat = GL_RGB32F;//For Gamma Correction;
-				//dataFormat = GL_RGB;//For Gamma Correction
+				//internalFormat = GL_RGB32F;	// For Gamma Correction
+				//dataFormat = GL_RGB;			// For Gamma Correction
 			}
 			else if (channels == 1)
 			{
@@ -64,9 +74,9 @@ namespace TS_ENGINE {
 				dataFormat = GL_RED;
 			}
 
-			//Copy pixels data to mPixels vector
-			mPixels.resize(width * height * channels);
-			std::memcpy(mPixels.data(), data, width * height * channels);
+			// Copy pixels data to mPixels vector
+			//mPixels.resize(width * height * channels);
+			//std::memcpy(mPixels.data(), data, width * height * channels);
 
 			mInternalFormat = internalFormat;
 			mDataFormat = dataFormat;
@@ -74,15 +84,22 @@ namespace TS_ENGINE {
 			TS_CORE_ASSERT(internalFormat & dataFormat, "Format not supported!");
 
 			glCreateTextures(GL_TEXTURE_2D, 1, &mRendererID);
+			
+			// Allocates texture's storage in GPU memory and specifies it's dimensions, format, and number of mipmap levels.
 			glTextureStorage2D(mRendererID, 1, internalFormat, mWidth, mHeight);
 
+			// glTextureSubImage2D is used to upload a portion of texture data to a texture that has already been allocated with storage
+			glTextureSubImage2D(mRendererID, 0, 0, 0, mWidth, mHeight, dataFormat, GL_UNSIGNED_BYTE, data);
+
+			// Allocates storage and uploads data in one call
+			//glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, mWidth, mHeight, 0, dataFormat, GL_UNSIGNED_BYTE, data);
+
+			// Texture filters
 			glTextureParameteri(mRendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTextureParameteri(mRendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTextureParameteri(mRendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			// Texture wrapping
 			glTextureParameteri(mRendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTextureParameteri(mRendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-			glTextureSubImage2D(mRendererID, 0, 0, 0, mWidth, mHeight, dataFormat, GL_UNSIGNED_BYTE, data);
-			//glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, mWidth, mHeight, 0, dataFormat, GL_UNSIGNED_BYTE, data);
 
 			TS_CORE_INFO("Width: {0}, height : {1}, channel : {2} TextureID: {3}", mWidth, mHeight, channels, mRendererID);			
 
@@ -90,7 +107,13 @@ namespace TS_ENGINE {
 		}
 	}
 
-	OpenGLTexture2D::OpenGLTexture2D(const char* name, const unsigned char* pixelData, uint32_t len)
+	OpenGLTexture2D::OpenGLTexture2D(const char* name, const unsigned char* pixelData, uint32_t len) :
+		mChannels(4),
+		mDataFormat(GL_RGB),
+		mWidth(0),
+		mHeight(0),
+		mInternalFormat(GL_RGBA8),
+		mRendererID(0)
 	{
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(0);

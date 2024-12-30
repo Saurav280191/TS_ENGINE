@@ -12,14 +12,24 @@ extern TS_ENGINE::Application* TS_ENGINE::CreateApplication(std::filesystem::pat
 
 int main(int argc, char** argv)
 {
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
+	// Initialize logger
 	TS_ENGINE::Log::Init();
-	auto app = TS_ENGINE::CreateApplication(std::filesystem::path(argv[0]).parent_path());
-	app->Run();
-	delete app;
 	
-	_CrtDumpMemoryLeaks();
+	// Create application
+	TS_ENGINE::Application* application = TS_ENGINE::CreateApplication(std::filesystem::path(argv[0]).parent_path());
+	
+	// Run application
+	application->Run();
+
+	// Delete application
+	delete application;
+	application = nullptr;
+	
+	TS_CORE_INFO("Deleted application!");
+
+	//_CrtDumpMemoryLeaks();
 }
 
 #endif

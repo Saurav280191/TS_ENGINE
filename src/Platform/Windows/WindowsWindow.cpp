@@ -21,6 +21,7 @@ namespace TS_ENGINE {
 	WindowsWindow::~WindowsWindow()
 	{
 		Shutdown();
+		TS_CORE_INFO("Deleted Windows Window!");
 	}
 
 	void WindowsWindow::Init(const WindowProperties& properties)

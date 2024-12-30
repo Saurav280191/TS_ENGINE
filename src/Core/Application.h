@@ -14,15 +14,8 @@ namespace TS_ENGINE
 		Application();
 		virtual ~Application();
 
-		static Application& Get()
-		{
-			return *sInstance;
-		}
-
-		Window& GetWindow()
-		{
-			return *mWindow;
-		}
+		static Application& GetInstance();
+		Window& GetWindow();
 
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
@@ -46,10 +39,11 @@ namespace TS_ENGINE
 
 		void ToggleWireframeMode();
 
-		void ResetDrawCall()
-		{
-			mDrawCalls = 0;
-		}
+		void ToggleTextures();
+
+		void ResetDrawCall();
+
+		bool IsTextureModeEnabled();
 
 		static void SetExecutableDirectory(std::filesystem::path exeDir);
 	public:
@@ -59,12 +53,13 @@ namespace TS_ENGINE
 		static std::filesystem::path s_SaveSceneDir;
 		static std::filesystem::path s_ThumbnailsDir;
 	private:
-		static Application* sInstance;		
+		static Application* mInstance;		
 
 		friend int ::main(int argc, char** argv);
 
-		Scope<Window> mWindow;
+		Scope<Window> mWindow;		
 		ImGuiLayer* mImGuiLayer;
+		LayerStack mLayerStack;
 
 		float mLastFrame;
 		float mDeltaTime;
@@ -75,8 +70,8 @@ namespace TS_ENGINE
 
 		bool mRunning = true;
 		bool mMinimized = false;
-		LayerStack mLayerStack;
 		bool mWireframeMode = false;
+		bool mTextureModeEnabled = true;		
 	};
 
 	//To be defined in client

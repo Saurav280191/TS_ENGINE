@@ -6,7 +6,8 @@
 
 namespace TS_ENGINE
 {
-	Application* Application::sInstance = NULL;
+	Application* Application::mInstance = NULL;
+
 	std::filesystem::path Application::s_ExecutableDir;
 	std::filesystem::path Application::s_AssetsDir;
 	std::filesystem::path Application::s_ResourcesDir;
@@ -17,15 +18,17 @@ namespace TS_ENGINE
 
 	Application::Application()
 	{
-		TS_CORE_ASSERT(!sInstance, "Application already exists!");
-		sInstance = this;
+		TS_CORE_ASSERT(!mInstance, "Application already exists!");
+		mInstance = this;
 
+		// Create window
 		mWindow = Window::Create();
 		mWindow->SetEventCallback(TS_BIND_EVENT_FN(Application::OnEvent));
-		mWindow->SetVSync(false);//V-Sync off
+		mWindow->SetVSync(false);// V-Sync off
 
 		//Renderer::Init();
 
+		// Create ImGui layer
 		mImGuiLayer = new ImGuiLayer();
 		PushOverlay(mImGuiLayer);
 	}
@@ -33,6 +36,17 @@ namespace TS_ENGINE
 	Application::~Application()
 	{
 		//Renderer::Shutdown();
+		TS_CORE_INFO("Deleting application");
+	}
+
+	Application& Application::GetInstance()
+	{
+		return *mInstance;
+	}
+
+	Window& Application::GetWindow()
+	{		
+		return *mWindow;		
 	}
 
 	void Application::PushLayer(Layer* layer)
@@ -83,12 +97,14 @@ namespace TS_ENGINE
 
 			if (!mMinimized)
 			{
+				// Render scene
 				for (Layer* layer : mLayerStack)
 				{
 					//glEnable(GL_POLYGON_SMOOTH);
 					layer->OnUpdate(mDeltaTime);
 				}
 
+				// Render GUI
 				mImGuiLayer->Begin();
 				{
 					//glDisable(GL_POLYGON_SMOOTH);
@@ -96,6 +112,7 @@ namespace TS_ENGINE
 					for (Layer* layer : mLayerStack)
 						layer->OnImGuiRender();
 				}
+
 				mImGuiLayer->End();
 
 				mWindow->OnUpdate();
@@ -105,6 +122,7 @@ namespace TS_ENGINE
 
 	void Application::Close()
 	{
+		TS_CORE_INFO("Closing application");
 		mRunning = false;
 	}
 
@@ -146,7 +164,7 @@ namespace TS_ENGINE
 
 	bool Application::OnWindowClose(WindowCloseEvent& e)
 	{
-		mRunning = false;
+		Close();
 		return true;
 	}
 
@@ -174,5 +192,20 @@ namespace TS_ENGINE
 	{
 		mWireframeMode = !mWireframeMode;
 		mWindow->SetWireframeMode(mWireframeMode);
+	}
+
+	void Application::ToggleTextures()
+	{
+		mTextureModeEnabled = !mTextureModeEnabled;
+	}
+
+	void Application::ResetDrawCall()
+	{		
+		mDrawCalls = 0;
+	}
+
+	bool Application::IsTextureModeEnabled()
+	{
+		return mTextureModeEnabled;
 	}
 }

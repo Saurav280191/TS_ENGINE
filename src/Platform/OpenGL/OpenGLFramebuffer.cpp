@@ -26,6 +26,7 @@ namespace TS_ENGINE {
 		static void AttachColorTexture(uint32_t id, int samples, GLenum internalFormat, GLenum format, uint32_t width, uint32_t height, int index)
 		{
 			bool multisampled = samples > 1;
+
 			if (multisampled)
 			{
 				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, internalFormat, width, height, GL_FALSE);
@@ -47,6 +48,7 @@ namespace TS_ENGINE {
 		static void AttachDepthTexture(uint32_t id, int samples, GLenum format, GLenum attachmentType, uint32_t width, uint32_t height)
 		{
 			bool multisampled = samples > 1;
+
 			if (multisampled)
 			{
 				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, format, width, height, GL_FALSE);
@@ -76,7 +78,7 @@ namespace TS_ENGINE {
 			return false;
 		}
 
-		static GLenum TSFramebufferTextureFormatToGL(FramebufferTextureFormat format)
+		static GLenum TsFramebufferTextureFormatToGL(FramebufferTextureFormat format)
 		{
 			switch (format)
 			{
@@ -231,7 +233,7 @@ namespace TS_ENGINE {
 		TS_CORE_ASSERT(attachmentIndex < mColorAttachments.size());
 
 		auto& spec = mColorAttachmentSpecifications[attachmentIndex];
-		glClearTexImage(mColorAttachments[attachmentIndex], 0, Utils::TSFramebufferTextureFormatToGL(spec.TextureFormat), GL_INT, &value);
+		glClearTexImage(mColorAttachments[attachmentIndex], 0, Utils::TsFramebufferTextureFormatToGL(spec.TextureFormat), GL_INT, &value);
 	}
 
 	uint32_t OpenGLFramebuffer::GetColorAttachmentRendererID(uint32_t index) const

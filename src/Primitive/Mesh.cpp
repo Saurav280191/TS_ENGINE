@@ -110,9 +110,9 @@ namespace TS_ENGINE {
 			RenderCommand::DrawLines(mVertexArray, (uint32_t)mVertices.size());
 
 		// Add DrawCalls, Vertices and Indices for Stats
-		TS_ENGINE::Application::Get().AddDrawCalls(1);
-		TS_ENGINE::Application::Get().AddVertices((uint32_t)mVertices.size());
-		TS_ENGINE::Application::Get().AddIndices((uint32_t)mIndices.size());
+		TS_ENGINE::Application::GetInstance().AddDrawCalls(1);
+		TS_ENGINE::Application::GetInstance().AddVertices((uint32_t)mVertices.size());
+		TS_ENGINE::Application::GetInstance().AddIndices((uint32_t)mIndices.size());
 	}
 
 	void Mesh::Destroy()
