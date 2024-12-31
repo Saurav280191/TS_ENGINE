@@ -86,8 +86,15 @@ namespace TS_ENGINE {
 		//void OnBatched();
 		//void OnUnBatched();
 
-		void UpdateCameraRT(Ref<Camera> camera, Ref<Shader> shader, float deltaTime, bool isEditorCamera);
+		// 1. Binds camera's framebuffer
+		// 2. Clears color
+		// 3. Clear entity ID attachment to -1
+		// 4. Renders skybox
+		// 5. Renders scene hierarchy
+		// 6. Unbinds camera's framebuffer
 		void Render(Ref<Shader> shader, float deltaTime);
+		
+		void UpdateCameraRT(Ref<Camera> camera, Ref<Shader> shader, float deltaTime, bool isEditorCamera);
 
 #ifdef TS_ENGINE_EDITOR
 		int GetSkyboxEntityID();

@@ -40,6 +40,25 @@ namespace TS_ENGINE
 #endif
 	}
 
+	void Scene::AddSceneCamera(Ref<SceneCamera> sceneCamera)
+	{
+		sceneCamera->GetNode()->SetParent(mSceneNode);
+		mSceneCameras.push_back(sceneCamera);
+	}
+
+	void Scene::RemoveSceneCamera(Ref<SceneCamera> sceneCamera)
+	{
+		for (int i = 0; i < mSceneCameras.size(); i++)
+		{
+			if (mSceneCameras[i] == sceneCamera)
+			{
+				mSceneCameras.erase(mSceneCameras.begin() + i);
+				return;
+			}
+		}
+	}
+
+
 	void Scene::Flush()
 	{
 #ifdef TS_ENGINE_EDITOR
@@ -85,6 +104,51 @@ namespace TS_ENGINE
 		}
 	}
 
+	void Scene::UpdateCameraRT(Ref<Camera> camera, Ref<Shader> shader, float deltaTime, bool isEditorCamera)
+	{
+		// Resize
+		//if (TS_ENGINE::FramebufferSpecification spec = camera->GetFramebuffer()->GetSpecification();
+		//	mViewportPanelSize.x > 0.0f && mViewportPanelSize.y > 0.0f && // zero sized framebuffer is invalid
+		//	(spec.Width != mViewportPanelSize.x || spec.Height != mViewportPanelSize.y))
+		//{
+		//	camera->GetFramebuffer()->Resize((uint32_t)mViewportPanelSize.x, (uint32_t)mViewportPanelSize.y);
+		//}
+
+#ifdef TS_ENGINE_EDITOR
+		camera->GetFramebuffer()->Bind();
+#endif
+
+		//if(!mGammaCorrection)
+		RenderCommand::SetClearColor(Vector4(0.2f, 0.3f, 0.3f, 1.0f));
+		//else
+			//TS_ENGINE::RenderCommand::SetClearColor(Vector4(pow(0.2f, mGammaValue), pow(0.3f, mGammaValue), pow(0.3f, mGammaValue), 1.0f));
+
+		RenderCommand::Clear();
+
+		// Clear entity ID attachment to -1
+#ifdef TS_ENGINE_EDITOR
+		camera->GetFramebuffer()->ClearAttachment(1, -1);
+#endif
+
+		//mCurrentShader->SetBool("u_Gamma", mGammaCorrection);
+		//mCurrentShader->SetFloat("u_GammaValue", mGammaValue);
+		//mCurrentShader->SetBool("u_Hdr", mHdr);
+		//mCurrentShader->SetFloat("u_HdrExposure", mHdrExposure);
+		//mDirectionalLight->SetCommonParams(mCurrentShader, mDirectionalLight->GetNode()->GetTransform()->GetLocalPosition(),
+		//mDirectionalLight->GetNode()->GetTransform()->GetForward(), Vector3(0.5f), Vector3(0.5f), Vector3(0.5f));
+
+		// Render Skybox
+		camera->SetIsDistanceIndependent(true);	// Make Camera Distance Independent For Rendering Skybox
+		camera->Update(shader, deltaTime);		// Camera's View And Projection Matrix Updates 
+		mSkybox->Render();						// Render Skybox
+		camera->SetIsDistanceIndependent(false);// Disable Camera Distance Independent For Rendering Other World Objects
+
+		TS_CORE_ASSERT(mSceneNode);				// Make Sure Scene Node Is Set
+
+		camera->Update(shader, deltaTime);		// Camera's View And Projection Matrix Updates 
+		mSceneNode->Update(shader, deltaTime);	// Updates Shader Parameters And Renders Scene Hierarchy
+	}
+
 #ifdef TS_ENGINE_EDITOR
 	int Scene::GetSkyboxEntityID()
 	{
@@ -117,24 +181,6 @@ namespace TS_ENGINE
 		}
 	}
 	
-	void Scene::AddSceneCamera(Ref<SceneCamera> sceneCamera)
-	{
-		sceneCamera->GetNode()->SetParent(mSceneNode);
-		mSceneCameras.push_back(sceneCamera);
-	}
-
-	void Scene::RemoveSceneCamera(Ref<SceneCamera> sceneCamera) 
-	{
-		for (int i = 0; i < mSceneCameras.size(); i++)
-		{
-			if (mSceneCameras[i] == sceneCamera)
-			{
-				mSceneCameras.erase(mSceneCameras.begin() + i);
-				return;
-			}
-		}
-	}
-
 #ifdef TS_ENGINE_EDITOR
 	void Scene::ShowSceneCameraGUI(Ref<Shader> shader, float deltaTime)
 	{
@@ -145,61 +191,4 @@ namespace TS_ENGINE
 			mSceneCameras[mCurrentSceneCameraIndex]->ShowFrustrumGUI(shader, deltaTime);
 	}
 #endif
-
-	void Scene::UpdateCameraRT(Ref<Camera> camera, Ref<Shader> shader, float deltaTime, bool isEditorCamera)
-	{
-		// Resize
-		//if (TS_ENGINE::FramebufferSpecification spec = camera->GetFramebuffer()->GetSpecification();
-		//	mViewportPanelSize.x > 0.0f && mViewportPanelSize.y > 0.0f && // zero sized framebuffer is invalid
-		//	(spec.Width != mViewportPanelSize.x || spec.Height != mViewportPanelSize.y))
-		//{
-		//	camera->GetFramebuffer()->Resize((uint32_t)mViewportPanelSize.x, (uint32_t)mViewportPanelSize.y);
-		//}
-
-#ifdef TS_ENGINE_EDITOR
-		camera->GetFramebuffer()->Bind();
-#endif
-
-		//if(!mGammaCorrection)
-		RenderCommand::SetClearColor(Vector4(0.2f, 0.3f, 0.3f, 1.0f));
-		//else
-			//TS_ENGINE::RenderCommand::SetClearColor(Vector4(pow(0.2f, mGammaValue), pow(0.3f, mGammaValue), pow(0.3f, mGammaValue), 1.0f));
-
-		RenderCommand::Clear();
-
-		// Clear our entity ID attachment to -1
-#ifdef TS_ENGINE_EDITOR
-		camera->GetFramebuffer()->ClearAttachment(1, -1);
-#endif
-
-		//mCurrentShader->SetBool("u_Gamma", mGammaCorrection);
-		//mCurrentShader->SetFloat("u_GammaValue", mGammaValue);
-		//mCurrentShader->SetBool("u_Hdr", mHdr);
-		//mCurrentShader->SetFloat("u_HdrExposure", mHdrExposure);
-		//mDirectionalLight->SetCommonParams(mCurrentShader, mDirectionalLight->GetNode()->GetTransform()->GetLocalPosition(),
-		//mDirectionalLight->GetNode()->GetTransform()->GetForward(), Vector3(0.5f), Vector3(0.5f), Vector3(0.5f));
-
-		// Camera And Skybox Render (To render skybox without distance dependency)		
-		camera->SetIsDistanceIndependent(true);
-		camera->Update(shader, deltaTime);
-		
-		// Render skybox
-		mSkybox->Render();
-
-		//if (mSkyboxNode)
-		//{
-			//mSkyboxNode->Update(shader, deltaTime);
-		//}
-
-		// Camera And Scene Render		
-		camera->SetIsDistanceIndependent(false);
-		camera->Update(shader, deltaTime);
-
-		// Scene-Tree Render
-		if (mSceneNode)
-			mSceneNode->Update(shader, deltaTime);
-		else
-			TS_CORE_ERROR("Scene node not set");
-
-	}
 }
