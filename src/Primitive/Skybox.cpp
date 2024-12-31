@@ -43,6 +43,11 @@ namespace TS_ENGINE {
 	{	
 		// Set shader properties for skybox
 		Ref<Shader> shader = mMesh->GetMaterial()->GetShader();
+
+#ifdef  TS_ENGINE_EDITOR
+		shader->SetInt("u_EntityID", mEntity->GetEntityID());					// Entity ID
+#endif
+
 		shader->SetMat4("u_Model", mTransform->GetGlobalTransformationMatrix());// Model Matrix
 		shader->SetVec4("u_DiffuseColor", Vector4(0.8f, 0.8f, 0.8f, 1));		// Diffuse Color
 		mSkyTexture->Bind();													// Bind Skybox Texture
