@@ -85,6 +85,11 @@ namespace TS_ENGINE
 		}
 	}
 
+	int Scene::GetSkyboxEntityID()
+	{
+		return mSkybox->GetEntity()->GetEntityID();
+	}
+
 	void Scene::SetCurrentSceneCamera(Ref<SceneCamera> sceneCamera)
 	{
 		for (int i = 0; i < mSceneCameras.size(); i++)

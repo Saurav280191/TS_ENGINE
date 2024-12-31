@@ -88,7 +88,7 @@ namespace TS_ENGINE {
 
 		void UpdateCameraRT(Ref<Camera> camera, Ref<Shader> shader, float deltaTime, bool isEditorCamera);
 		void Render(Ref<Shader> shader, float deltaTime);
-		//int GetSkyboxEntityID() { return mSkyboxNode->GetEntity()->GetEntityID(); }
+		int GetSkyboxEntityID();
 		void SetCurrentSceneCamera(Ref<SceneCamera> sceneCamera);
 		void SwitchToAnotherSceneCamera(Ref<SceneCamera> sceneCamera);
 		void RemoveSceneCamera(Ref<SceneCamera> sceneCamera);
@@ -114,9 +114,6 @@ namespace TS_ENGINE {
 
 		// Root node
 		Ref<Node> mSceneNode;
-
-		// Skybox node
-		//Ref<TS_ENGINE::Node> mSkyboxNode;
 		
 		// Skybox
 		Ref<TS_ENGINE::Skybox> mSkybox;
