@@ -85,10 +85,12 @@ namespace TS_ENGINE
 		}
 	}
 
+#ifdef TS_ENGINE_EDITOR
 	int Scene::GetSkyboxEntityID()
 	{
 		return mSkybox->GetEntity()->GetEntityID();
 	}
+#endif
 
 	void Scene::SetCurrentSceneCamera(Ref<SceneCamera> sceneCamera)
 	{

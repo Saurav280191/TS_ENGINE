@@ -88,7 +88,11 @@ namespace TS_ENGINE {
 
 		void UpdateCameraRT(Ref<Camera> camera, Ref<Shader> shader, float deltaTime, bool isEditorCamera);
 		void Render(Ref<Shader> shader, float deltaTime);
+
+#ifdef TS_ENGINE_EDITOR
 		int GetSkyboxEntityID();
+#endif
+
 		void SetCurrentSceneCamera(Ref<SceneCamera> sceneCamera);
 		void SwitchToAnotherSceneCamera(Ref<SceneCamera> sceneCamera);
 		void RemoveSceneCamera(Ref<SceneCamera> sceneCamera);

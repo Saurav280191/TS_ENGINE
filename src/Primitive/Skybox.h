@@ -12,7 +12,14 @@ namespace TS_ENGINE
 		~Skybox();
 
 		void Render();
+
+#ifdef TS_ENGINE_EDITOR
+		Ref<Entity> GetEntity();
+#endif
 	private:
+#ifdef TS_ENGINE_EDITOR
+		Ref<Entity> mEntity;
+#endif
 		Ref<Texture2D> mSkyTexture;
 		Ref<Mesh> mMesh;
 		Ref<Transform> mTransform;
