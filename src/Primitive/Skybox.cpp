@@ -27,6 +27,11 @@ namespace TS_ENGINE {
 		mTransform->SetLocalEulerAngles(90.0f, 235.0f, 0.0f);
 
 		mTransform->ComputeTransformationMatrix(nullptr);
+
+#ifdef TS_ENGINE_EDITOR
+		// Register entity
+		mEntity = EntityManager::GetInstance()->Register("Skybox", EntityType::SKYBOX);
+#endif
 	}
 
 	Skybox::~Skybox()
@@ -47,4 +52,11 @@ namespace TS_ENGINE {
 		RenderCommand::DrawIndexed(mMesh->GetVertexArray(), mMesh->GetNumIndices());
 
 	}
+
+#ifdef TS_ENGINE_EDITOR
+	Ref<Entity> Skybox::GetEntity()
+	{
+		return mEntity;
+	}
+#endif
 }
