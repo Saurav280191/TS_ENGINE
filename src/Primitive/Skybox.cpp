@@ -45,18 +45,19 @@ namespace TS_ENGINE {
 		// Set shader properties for skybox
 		Ref<Shader> shader = mMesh->GetMaterial()->GetShader();
 
+		// Send Skybox's entityId to vertex shader 
 #ifdef  TS_ENGINE_EDITOR
 		shader->SetInt("u_EntityID", mEntity->GetEntityID());					// Entity ID
 #endif
-
+		// Send Skybox's modelMatrix to vertex shader 
 		shader->SetMat4("u_Model", mTransform->GetGlobalTransformationMatrix());// Model Matrix
-		shader->SetVec4("u_DiffuseColor", Vector4(0.8f, 0.8f, 0.8f, 1));		// Diffuse Color
-		mSkyTexture->Bind();													// Bind Skybox Texture
-		shader->SetBool("u_HasDiffuseTexture", true);							// Set HadDiffuseColor to true
-		
-		// Render Command To Draw Geometry
-		RenderCommand::DrawIndexed(mMesh->GetVertexArray(), mMesh->GetNumIndices());
 
+		// Render Skybox's mesh 
+#ifdef  TS_ENGINE_EDITOR
+		mMesh->Render(mEntity->GetEntityID());
+#else
+		mMesh->Render();
+#endif
 	}
 
 #ifdef TS_ENGINE_EDITOR
