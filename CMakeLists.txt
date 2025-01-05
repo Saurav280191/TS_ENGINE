@@ -198,8 +198,8 @@ src/SceneManager/Scene.h
 src/SceneManager/Scene.cpp
 src/SceneManager/SceneManager.h
 src/SceneManager/SceneManager.cpp
-#src/SceneManager/SceneSerializer.h
-#src/SceneManager/SceneSerializer.cpp
+src/SceneManager/SceneSerializer.h
+src/SceneManager/SceneSerializer.cpp
 )
 source_group("SceneManager" FILES ${SceneManagerSrc})
 
