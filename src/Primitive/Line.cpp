@@ -5,26 +5,29 @@ namespace TS_ENGINE
 {
 	Line::Line()
 	{
-				
+
 	}
 
 	Line::~Line()
 	{
-
+		TS_CORE_INFO("Destroyed Line!");
 	}
 
-	Ref<Mesh> Line::GetMesh(const std::vector<Vector3>& points)
+	void Line::CreateMesh(const std::vector<Vector3>& points)
 	{
-		Ref<Mesh> mesh = CreateRef<Mesh>();
-		mesh->SetPrimitiveType(PrimitiveType::LINE);
-		
+		mMesh = CreateRef<Mesh>();
+		mMesh->SetPrimitiveType(PrimitiveType::LINE);
+
 		for (int i = 0; i < points.size(); i++)
 		{
-			mesh->AddVertex(Vertex(points[i]));
+			mMesh->AddVertex(Vertex(points[i]));
 		}
 
-		mesh->Create(DrawMode::LINE);
+		mMesh->Create(DrawMode::LINE);
+	}
 
-		return mesh;
+	Ref<Mesh> Line::GetMesh()
+	{
+		return mMesh;
 	}
 }

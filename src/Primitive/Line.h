@@ -6,13 +6,14 @@ namespace TS_ENGINE
 {
 	class Line
 	{
-	private:
-
 	public:
 		Line();
 		~Line();
 
-		Ref<Mesh> GetMesh(const std::vector<Vector3>& points);
+		void CreateMesh(const std::vector<Vector3>& points);
+		Ref<Mesh> GetMesh();
+	private:
+		Ref<Mesh> mMesh;
 	};
 }
 

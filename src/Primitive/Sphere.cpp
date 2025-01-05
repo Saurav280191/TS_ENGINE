@@ -5,7 +5,7 @@ namespace TS_ENGINE {
 
 	Sphere::Sphere()
 	{
-
+		CreateMesh();
 	}
 
 	Sphere::~Sphere()
@@ -101,15 +101,19 @@ namespace TS_ENGINE {
 		}
 	}
 
+	void Sphere::CreateMesh()
+	{
+		mMesh = CreateRef<Mesh>();
+		mMesh->SetPrimitiveType(PrimitiveType::SPHERE);
+
+		CreateVertices(mMesh);
+		CreateIndices(mMesh);
+
+		mMesh->Create();
+	}
+
 	Ref<Mesh> Sphere::GetMesh()
 	{
-		Ref<Mesh> mesh = CreateRef<Mesh>();
-		mesh->SetPrimitiveType(PrimitiveType::SPHERE);
-
-		CreateVertices(mesh);
-		CreateIndices(mesh);
-
-		mesh->Create();
-		return mesh;
+		return mMesh;
 	}
 }
