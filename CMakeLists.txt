@@ -122,6 +122,8 @@ src/Primitive/Cone.h
 src/Primitive/Cone.cpp
 src/Primitive/Mesh.h
 src/Primitive/Mesh.cpp
+src/Primitive/Bone.h
+src/Primitive/Bone.cpp
 src/Primitive/Model.h
 src/Primitive/Model.cpp
 src/Primitive/Skybox.h
@@ -196,8 +198,8 @@ src/SceneManager/Scene.h
 src/SceneManager/Scene.cpp
 src/SceneManager/SceneManager.h
 src/SceneManager/SceneManager.cpp
-src/SceneManager/SceneSerializer.h
-src/SceneManager/SceneSerializer.cpp
+#src/SceneManager/SceneSerializer.h
+#src/SceneManager/SceneSerializer.cpp
 )
 source_group("SceneManager" FILES ${SceneManagerSrc})
 
