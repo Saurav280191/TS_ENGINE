@@ -40,6 +40,8 @@ namespace TS_ENGINE {
 		Material(const Ref<Material>& material);
 		virtual ~Material() = default;
 
+
+
 		void CloneMaterialProperties(Ref<Material> material);
 
 		const std::string& GetName() const { return mName;  }

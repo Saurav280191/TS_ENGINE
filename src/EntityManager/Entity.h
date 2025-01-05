@@ -6,7 +6,9 @@ namespace TS_ENGINE
 	enum EntityType
 	{
 		PRIMITIVE,
-		MODEL,
+		MESH,
+		BONE,
+		BONEGUI,
 		CAMERA,
 		SKYBOX,
 		SCENE,

@@ -18,7 +18,6 @@ namespace TS_ENGINE {
 
 	void Bone::SetParams(std::string& _name, int _id, std::vector<VertexWeight>& _vertexWeights, const Matrix4& _offsetMatrix)
 	{
-		//mGuiJointMesh->SetName(_name);
 		mName = _name;
 
 		mId = _id;

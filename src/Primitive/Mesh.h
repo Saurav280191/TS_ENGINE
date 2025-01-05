@@ -31,6 +31,8 @@ namespace TS_ENGINE {
 		Vector4 position = Vector4(0, 0, 0, 0);
 		Vector2 texCoord = Vector2(0, 0);
 		Vector3 normal = Vector3(0, 0, -1);
+		glm::ivec4 BoneIDs = glm::ivec4(0);	 // Default to 0 (no influence)
+		glm::vec4 Weights = glm::vec4(0.0f); // Default to 0.0 (no weight)
 
 		Vertex()
 		{
@@ -56,19 +58,32 @@ namespace TS_ENGINE {
 			texCoord = _texCoord;
 			normal = _normal;
 		}
-	};
 
-	struct VertexWeight
-	{
-		unsigned int vertexID;
-		float weight;
-	};
+		void AddBoneData(aiVertexWeight _weight)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				if (Weights[i] == 0.0f) // Find an empty slot
+				{
+					BoneIDs[i] = _weight.mVertexId;
+					Weights[i] = _weight.mWeight;
+					return;
+				}
+			}
+		}
 
-	struct Bone
-	{
-		std::string name;
-		std::vector<VertexWeight> vertexWeights;
-		Matrix4 offsetMatrix;
+		void AddBoneData(int boneID, float weight)
+		{
+			for (int i = 0; i < 4; i++) 
+			{
+				if (Weights[i] == 0.0f) // Find an empty slot
+				{ 
+					BoneIDs[i] = boneID;
+					Weights[i] = weight;
+					return;
+				}
+			}
+		}
 	};
 
 	enum DrawMode
@@ -80,19 +95,19 @@ namespace TS_ENGINE {
 	class Mesh
 	{
 	public:
-		Mesh();
+		Mesh();		
 		~Mesh();
 
 		void SetName(const std::string& name);
 		void SetPrimitiveType(PrimitiveType primitiveType);
 		void SetMaterial(Ref<Material> material);
 		void SetVertices(std::vector<Vertex> vertices);
-		void SetIndices(std::vector<uint32_t> indices);
-		void SetBones(std::vector<Bone> bones);
+		void SetIndices(std::vector<uint32_t> indices);		
 
 		void AddVertex(Vertex vertex);
 		void AddIndex(uint32_t index);
 
+		void CloneMesh(Mesh* mesh);
 		void CloneMesh(Ref<Mesh> mesh);
 
 		/// <summary>
@@ -113,6 +128,7 @@ namespace TS_ENGINE {
 
 		void Destroy();
 
+
 		const std::string GetName() const { return mName; }
 		std::vector<Vertex> GetVertices() { return mVertices; }
 		std::vector<Vertex> GetWorldSpaceVertices(Vector3 position, Vector3 eulerAngles, Vector3 scale);
@@ -126,8 +142,7 @@ namespace TS_ENGINE {
 		std::string mName;
 		PrimitiveType mPrimitiveType;
 		std::vector<Vertex> mVertices;
-		std::vector<uint32_t> mIndices;
-		std::vector<Bone> mBones;
+		std::vector<uint32_t> mIndices;		
 		Ref<VertexArray> mVertexArray;
 		bool mStatsRegistered;
 		DrawMode mDrawMode;

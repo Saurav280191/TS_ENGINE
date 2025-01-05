@@ -95,7 +95,6 @@ namespace TS_ENGINE {
 		void Render(Ref<Shader> shader, float deltaTime);
 		
 		void UpdateCameraRT(Ref<Camera> camera, Ref<Shader> shader, float deltaTime, bool isEditorCamera);
-
 #ifdef TS_ENGINE_EDITOR
 		int GetSkyboxEntityID();
 #endif

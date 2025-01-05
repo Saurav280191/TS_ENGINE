@@ -1,10 +1,12 @@
 #pragma once
+#include <map>
 #include "Core/tspch.h"
 #include "Mesh.h"
-#include "SceneManager/Node.h"
+#include "Primitive/Bone.h"
 
 namespace TS_ENGINE {
 
+	class Bone;
 	class Model
 	{
 	public:
@@ -13,29 +15,42 @@ namespace TS_ENGINE {
 		~Model();		
 		
 		void LoadModel(const std::string& modelPath);
-		//void ProcessEmbeddedTextures();
 		void CopyFrom(Ref<Model> model);
+
+		void UpdateBoneTransforms();
 		
-		Ref<Node> GetRootNode() { return mRootNode; }
+		Ref<Node> GetRootNode() { return mRootNode; }		
+		
+		void RenderBones(Ref<Shader> _shader);
+
+		// Gets added while processing meshes
+		std::unordered_map<std::string, Ref<Bone>> mBones;						// Bones
+		Ref<Line> GetBoneLines() { return mBoneLines; }
 	private:
-		Ref<Node> ProcessNode(aiNode* aiNode, const aiScene* scene);
-		void AddMaterialToDictionary(Ref<Material> material);
+		Ref<Texture2D> ProcessTexture(aiMaterial* _assimpMaterial,
+			aiTextureType _textureType, uint32_t _numMaps);						// Process Texture
+		
+		Ref<Material> ProcessMaterial(aiMaterial* _assimpMaterial);				// Process Material
+		
 		Ref<Mesh> ProcessMesh(aiMesh* aiMesh, const aiScene* scene);
-		void ProcessTexture(aiMaterial* aiMat, Ref<TS_ENGINE::Material> tsMaterial, aiTextureType textureType, uint32_t numMaps);
-		void ProcessMaterial(aiMaterial* aiMat);
-	private:
+
+		// Process Mesh
+		Ref<Node> ProcessNode(aiNode* aiNode, 
+			Ref<Node> _parentNode, const aiScene* scene);						// Process Node
+	
 		const aiScene* mAssimpScene;
 		uint32_t mRendererID;
-		AssimpMaterial mAssimpMaterial;
-		Ref<Material> mMaterial;
+		AssimpMaterial mAssimpMaterial;		
 		std::string mModelDirectory;
-		Ref<Node> mRootNode;
 		
-		std::vector<Ref<Node>> mProcessedNodes = {};
-		//std::vector<Ref<Mesh>> mProcessedMeshes = {};
-		std::unordered_map<std::string, Ref<Material>> mProcessedMaterials = {};
-		//std::unordered_map<std::string, Ref<Texture2D>> mProcessedEmbeddedTextures = {};
-		Ref<Texture2D> mTexture;
+		// Contains the point to render bone GUI
+		Ref<Line> mBoneLines;
+
+		Ref<Node> mRootNode;													// Root Node
+		
+		std::unordered_map<std::string, Ref<Material>> mProcessedMaterials = {};// Processed Materials
+		std::unordered_map<std::string, Ref<Mesh>> mProcessedMeshes = {};		// Processed Meshes
+		std::vector<Ref<Node>> mProcessedNodes = {};							// Processed Nodes
 	};
 }
 

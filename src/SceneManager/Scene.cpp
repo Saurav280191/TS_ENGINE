@@ -58,7 +58,6 @@ namespace TS_ENGINE
 		}
 	}
 
-
 	void Scene::Flush()
 	{
 #ifdef TS_ENGINE_EDITOR
@@ -95,7 +94,9 @@ namespace TS_ENGINE
 		{
 			if (mSceneCameras[mCurrentSceneCameraIndex])
 			{
-				UpdateCameraRT(mSceneCameras[mCurrentSceneCameraIndex], shader, deltaTime, false);
+				Ref<Camera> sceneCamera = mSceneCameras[mCurrentSceneCameraIndex];
+
+				UpdateCameraRT(sceneCamera, shader, deltaTime, false);
 
 #ifdef TS_ENGINE_EDITOR
 				mSceneCameras[mCurrentSceneCameraIndex]->GetFramebuffer()->Unbind();
@@ -147,6 +148,14 @@ namespace TS_ENGINE
 
 		camera->Update(shader, deltaTime);		// Camera's View And Projection Matrix Updates 
 		mSceneNode->Update(shader, deltaTime);	// Updates Shader Parameters And Renders Scene Hierarchy
+		
+		// Update & Render bones
+		for (auto& [modelName, pair] : Factory::GetInstance()->mLoadedModelNodeMap)
+		{
+			Ref<Model> model = pair.second;
+			model->UpdateBoneTransforms();	// Bone Gui Update
+			model->RenderBones(shader);		// Bone Gui Render
+		}
 	}
 
 #ifdef TS_ENGINE_EDITOR

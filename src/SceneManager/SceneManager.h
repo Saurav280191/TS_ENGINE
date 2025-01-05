@@ -1,6 +1,9 @@
 #pragma once
 #include "Scene.h"
+
+#ifdef TS_ENGINE_EDITOR
 #include "SceneSerializer.h"
+#endif
 
 namespace TS_ENGINE
 {
@@ -25,7 +28,10 @@ namespace TS_ENGINE
 		SceneManager();
 		~SceneManager();
 
+#ifdef TS_ENGINE_EDITOR
 		Ref<SceneSerializer> mSceneSerializer;
+#endif
+
 		Ref<Node> GetCurrentSceneNode();
 	};
 }

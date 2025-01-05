@@ -50,10 +50,10 @@ namespace TS_ENGINE {
 		mIndices = indices;
 	}
 
-	void Mesh::SetBones(std::vector<Bone> bones)
+	/*void Mesh::SetBones(std::vector<Bone> bones)
 	{
 		mBones = bones;
-	}
+	}*/
 
 	void Mesh::AddVertex(Vertex vertex)
 	{
@@ -74,9 +74,11 @@ namespace TS_ENGINE {
 		Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(&mVertices[0], (uint32_t)mVertices.size() * sizeof(Vertex));
 
 		vertexBuffer->SetLayout({
-			{ShaderDataType::FLOAT4, "a_Position"},
-			{ShaderDataType::FLOAT2, "a_TexCoord"},
-			{ShaderDataType::FLOAT3, "a_Normal"}
+			{ ShaderDataType::FLOAT4, "a_Position"},	// Position
+			{ ShaderDataType::FLOAT2, "a_TexCoord"},	// UV
+			{ ShaderDataType::FLOAT3, "a_Normal"},		// Normal
+			{ ShaderDataType::INT4,   "a_BoneIDs" },	// Bone IDs
+			{ ShaderDataType::FLOAT4, "a_Weights" }		// Bone weights
 			});
 
 		mVertexArray->AddVertexBuffer(vertexBuffer);
@@ -136,6 +138,19 @@ namespace TS_ENGINE {
 		mStatsRegistered = false;
 	}
 
+	void Mesh::CloneMesh(Mesh* mesh)
+	{
+		this->mName = mesh->mName;
+		this->mVertices = mesh->GetVertices();
+		this->mIndices = mesh->GetIndices();
+		this->mPrimitiveType = mesh->mPrimitiveType;
+		this->mDrawMode = mesh->mDrawMode;
+
+		Create(this->mDrawMode);
+
+		this->mMaterial->CloneMaterialProperties(mesh->GetMaterial());
+	}
+
 	void Mesh::CloneMesh(Ref<Mesh> mesh)
 	{
 		this->mName = mesh->mName;
@@ -180,6 +195,6 @@ namespace TS_ENGINE {
 
 	uint32_t Mesh::GetNumIndices()
 	{
-		return mIndices.size();
+		return (uint32_t)mIndices.size();
 	}
 }

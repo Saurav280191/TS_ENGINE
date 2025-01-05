@@ -249,14 +249,14 @@ namespace TS_ENGINE
 		{
 			jsonNode["PrimitiveType"] = node->GetMeshes()[0]->GetPrimitiveType();
 		}
-		else if (node->GetEntity()->GetEntityType() == EntityType::MODEL)
+		else if (node->GetEntity()->GetEntityType() == EntityType::MESH)
 		{
 			if (node->GetModelPath() != "")
 				jsonNode["ModelPath"] = node->GetModelPath().c_str();
 		}
 
 		// Mesh And Material
-		if (node->GetEntity()->GetEntityType() == EntityType::PRIMITIVE || node->GetEntity()->GetEntityType() == EntityType::MODEL)
+		if (node->GetEntity()->GetEntityType() == EntityType::PRIMITIVE || node->GetEntity()->GetEntityType() == EntityType::MESH)
 		{
 			for (int i = 0; i < node->GetMeshes().size(); i++)
 			{

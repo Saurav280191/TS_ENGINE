@@ -3,6 +3,7 @@
 #include "Utils/Utility.h"
 #include "Core/Application.h"
 #include "Renderer/MaterialManager.h"
+#include "Core/Factory.h"
 
 //#define AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS
 
@@ -28,25 +29,38 @@ namespace TS_ENGINE {
 		mAssimpScene = model->mAssimpScene;
 		mRendererID = model->mRendererID;
 		mAssimpMaterial = model->mAssimpMaterial;
-		mMaterial = model->mMaterial;
 		mModelDirectory = model->mModelDirectory;
 		mRootNode = model->mRootNode;
-		mProcessedNodes = model->mProcessedNodes;
-		//mProcessedMeshes = model->mProcessedMeshes;
 		mProcessedMaterials = model->mProcessedMaterials;
-		//mProcessedEmbeddedTextures = model->mProcessedEmbeddedTextures;
-		mTexture = model->mTexture;
+		mProcessedMeshes = model->mProcessedMeshes;
+		mProcessedNodes = model->mProcessedNodes;
 	}
 
+	void Model::UpdateBoneTransforms()
+	{
+		for (auto& bone : mBones)
+		{
+			bone.second->UpdateBoneGuiTransforms();
+		}
+	}
+
+	void Model::RenderBones(Ref<Shader> _shader)
+	{
+		for (auto& bone : mBones)
+		{
+			bone.second->Render(_shader);
+		}
+	}
 
 	Model::~Model()
 	{
 		mRendererID = -1;
 		mModelDirectory = "";
 		mRootNode = nullptr;
+
+		mProcessedMaterials.clear();
+		mProcessedMeshes.clear();
 		mProcessedNodes.clear();
-		//mProcessedMeshes.clear();
-		mTexture = nullptr;
 	}
 
 	void Model::LoadModel(const std::string& modelPath)
@@ -61,9 +75,33 @@ namespace TS_ENGINE {
 			return;
 		}
 
-		//ProcessEmbeddedTextures();
-		mRootNode = this->ProcessNode(mAssimpScene->mRootNode, mAssimpScene);
+		// Process material
+		for (unsigned int i = 0; i < mAssimpScene->mNumMaterials; i++)
+		{
+			aiMaterial* assimpMaterial = mAssimpScene->mMaterials[i];
+			Ref<Material> material = ProcessMaterial(assimpMaterial);
+			mProcessedMaterials.insert({ material->GetName(), material });
+		}
+
+		// Process meshes
+		for (unsigned int i = 0; i < mAssimpScene->mNumMeshes; i++)
+		{
+			aiMesh* assimpMesh = mAssimpScene->mMeshes[i];
+			Ref<Mesh> mesh = ProcessMesh(assimpMesh, mAssimpScene);
+			mProcessedMeshes.insert({ mesh->GetName(), mesh });
+		}
+
+		// Process Nodes
+		mRootNode = ProcessNode(mAssimpScene->mRootNode, nullptr, mAssimpScene);		
 		
+		// Reinitialize transforms for node and it's children
+		mRootNode->ReInitializeTransforms();
+
+		for (auto& [boneName, bone] : mBones)
+		{
+			bone->InitializeBones();
+		}
+
 		// TODO: Process animations
 		if (mAssimpScene->HasAnimations())
 		{
@@ -93,45 +131,64 @@ namespace TS_ENGINE {
 		}
 	}*/
 
-	Ref<Node> Model::ProcessNode(aiNode* aiNode, const aiScene* scene)
+	Ref<Node> Model::ProcessNode(aiNode* aiNode, Ref<Node> _parentNode, const aiScene* scene)
 	{	
 		Ref<Node> node = CreateRef<Node>();
-		node->SetNodeRef(node);		
+		node->SetNodeRef(node);							// NodeRef		
+		std::string nodeName = aiNode->mName.C_Str();
+		node->mName = nodeName;							// Name
 		
-		aiVector3D pos;
-		aiVector3D rot;
+		aiVector3D position;		
+		aiQuaternion rotation;
 		aiVector3D scale;
-		aiNode->mTransformation.Decompose(scale, rot, pos);
+		aiNode->mTransformation.Decompose(scale, rotation, position);
 		
-		node->SetPosition(Vector3(pos.x, pos.y, pos.z));
-		node->SetEulerAngles(Vector3(rot.x, rot.y, rot.z));
-		node->SetScale(Vector3(scale.x, scale.y, scale.z));
-
-		// Process meshes
-		for (GLuint i = 0; i < aiNode->mNumMeshes; i++)
+		node->SetPosition(position);					// Position
+		node->SetRotation(rotation);					// Rotation
+		node->SetScale(scale);							// Scale
+				
+		if (_parentNode)
 		{
-			aiMesh* assimpMesh = scene->mMeshes[aiNode->mMeshes[i]];
-			Ref<Mesh> processedMesh = ProcessMesh(assimpMesh, scene);
-			//mProcessedMeshes.push_back(processedMesh);
-			node->AddMesh(processedMesh);
+			_parentNode->AddChild(node);				// ParentNode
+		}
+		
+		// Process Bones Or Meshes
+		if (aiNode->mNumMeshes == 0)// *** Process Bone ***
+		{
+			if (mBones.find(nodeName) == mBones.end())
+			{
+				TS_CORE_ERROR("Unable to find bone named: {0}", nodeName);
+			}
+			else
+			{	
+				mBones[nodeName]->SetNode(node);		// Bones
+			}
+
+			node->Initialize(aiNode->mName.C_Str(), EntityType::BONE);	// Register Entity As Bone
+		}
+		else						// *** Process Meshes ***
+		{
+			for (GLuint i = 0; i < aiNode->mNumMeshes; i++)
+			{
+				aiMesh* assimpMesh = scene->mMeshes[aiNode->mMeshes[i]];
+				// Fetch mesh from mProcessedMeshes map and add to node's meshes
+				Ref<Mesh> processedMesh = mProcessedMeshes[assimpMesh->mName.C_Str()];
+				TS_CORE_ASSERT(processedMesh);
+				node->AddMesh(processedMesh);
+			}
+
+			node->Initialize(aiNode->mName.C_Str(), EntityType::MESH);	// Register Entity As Mesh
 		}
 
-		// Process node
+		// Process nodes
 		for (GLuint i = 0; i < aiNode->mNumChildren; i++)
 		{
-			node->AddChild(ProcessNode(aiNode->mChildren[i], scene));
+			Ref<Node> childNode = ProcessNode(aiNode->mChildren[i], node, scene);
 		}
 
-		mProcessedNodes.push_back(node);
+		mProcessedNodes.push_back(node);								// Add Processed Node
 
-		node->Initialize(aiNode->mName.C_Str(), EntityType::MODEL);// Set name and register entity
 		return node;
-	}
-
-	void Model::AddMaterialToDictionary(Ref<Material> material)
-	{
-		TS_CORE_INFO("Added material named {0} to dictionary", material->GetName().c_str());
-		mProcessedMaterials.insert(std::pair<std::string, Ref<Material>>(material->GetName().c_str(), material));
 	}
 
 	Ref<Mesh> Model::ProcessMesh(aiMesh* aiMesh, const aiScene* scene)
@@ -142,7 +199,7 @@ namespace TS_ENGINE {
 		std::vector<GLuint> indices;
 		std::vector<Texture> textures;
 		
-		// Fetch Vertices from assimpMesh
+		// Fetch Vertices From AssimpMesh
 		for (GLuint i = 0; i < aiMesh->mNumVertices; i++)
 		{
 			Vertex vertex;
@@ -156,7 +213,6 @@ namespace TS_ENGINE {
 			vector.w = 1;
 			vertex.position = vector;
 			
-
 			// Normal
 			if (aiMesh->HasNormals())
 			{
@@ -181,75 +237,76 @@ namespace TS_ENGINE {
 			vertices.push_back(vertex);
 		}
 		
-		// Fetch Indices from assimpMesh
+		// Fetch Indices From AssimpMesh
 		for (GLuint i = 0; i < aiMesh->mNumFaces; i++)
 		{
 			aiFace face = aiMesh->mFaces[i];
-			
+
 			for (GLuint j = 0; j < face.mNumIndices; j++)
-				indices.push_back(face.mIndices[j]);
-		}
-
-		// Fetch Bone info from assimpMesh
-		std::vector<Bone> bones = {};
-		TS_CORE_INFO("Number of bones in " + std::string(aiMesh->mName.C_Str()) + ": " + std::to_string(aiMesh->mNumBones));
-		
-		if (aiMesh->HasBones())
-		{
-			unsigned int numBones = aiMesh->mNumBones;
-			Bone bone;
-
-			for (unsigned int boneIndex = 0; boneIndex < numBones; boneIndex++)
 			{
-				aiBone* assimpBone = aiMesh->mBones[boneIndex];
-				bone.name = assimpBone->mName.C_Str();								// Name
-				
-				unsigned int numWeights = assimpBone->mNumWeights;				
-				for (unsigned int weightIndex = 0; weightIndex < numWeights; weightIndex++)
-				{
-					aiVertexWeight assimpWeight = assimpBone->mWeights[weightIndex];
-					VertexWeight vertexWeight;										
-					vertexWeight.vertexID = assimpWeight.mVertexId;					
-					vertexWeight.weight = assimpWeight.mWeight;						
-					
-					bone.vertexWeights.push_back(vertexWeight);						// Vertex weights
-				}
-
-				Matrix4 offsetMatrix = Matrix4(
-					assimpBone->mOffsetMatrix.a1, assimpBone->mOffsetMatrix.a2, assimpBone->mOffsetMatrix.a2, assimpBone->mOffsetMatrix.a3,
-					assimpBone->mOffsetMatrix.b1, assimpBone->mOffsetMatrix.b2, assimpBone->mOffsetMatrix.b2, assimpBone->mOffsetMatrix.b3,
-					assimpBone->mOffsetMatrix.c1, assimpBone->mOffsetMatrix.c2, assimpBone->mOffsetMatrix.c2, assimpBone->mOffsetMatrix.c3,
-					assimpBone->mOffsetMatrix.d1, assimpBone->mOffsetMatrix.d2, assimpBone->mOffsetMatrix.d2, assimpBone->mOffsetMatrix.d3
-				);
-
-				bone.offsetMatrix = offsetMatrix;									// OffsetMatrix
-				
-				// Add bone to vector
-				bones.push_back(bone);
+				indices.push_back(face.mIndices[j]);
 			}
 		}
 
-		// Fetch material info from assimpMEsh
+		// Fetch Bone Info From AssimpMesh
+		TS_CORE_INFO("Number of bones in " + std::string(aiMesh->mName.C_Str()) + ": " + std::to_string(aiMesh->mNumBones));
+
+		if (aiMesh->HasBones())
+		{
+			for (unsigned int boneId = 0; boneId < aiMesh->mNumBones; boneId++)
+			{
+				aiBone* assimpBone = aiMesh->mBones[boneId];
+				std::string boneName = assimpBone->mName.C_Str();
+
+				// If bone is not already created and added to map
+				if (mBones.find(boneName) == mBones.end())
+				{
+					Ref<Bone> bone = CreateRef<Bone>();
+
+					// Store the offset matrix
+					Matrix4 offsetMatrix = Matrix4(
+						assimpBone->mOffsetMatrix.a1, assimpBone->mOffsetMatrix.a2, assimpBone->mOffsetMatrix.a2, assimpBone->mOffsetMatrix.a3,
+						assimpBone->mOffsetMatrix.b1, assimpBone->mOffsetMatrix.b2, assimpBone->mOffsetMatrix.b2, assimpBone->mOffsetMatrix.b3,
+						assimpBone->mOffsetMatrix.c1, assimpBone->mOffsetMatrix.c2, assimpBone->mOffsetMatrix.c2, assimpBone->mOffsetMatrix.c3,
+						assimpBone->mOffsetMatrix.d1, assimpBone->mOffsetMatrix.d2, assimpBone->mOffsetMatrix.d2, assimpBone->mOffsetMatrix.d3
+					);
+
+					// Assign weights to vertices				
+					std::vector<VertexWeight> vertexWeights = {};
+
+					for (unsigned int weightIndex = 0; weightIndex < assimpBone->mNumWeights; weightIndex++)
+					{
+						aiVertexWeight weight = assimpBone->mWeights[weightIndex];
+						vertices[weight.mVertexId].AddBoneData(weight);
+						
+						VertexWeight vertexWeight(weight);
+						vertexWeights.push_back(vertexWeight);
+					}
+
+					// Set bone params and store in mBones
+					bone->SetParams(boneName, boneId, vertexWeights, offsetMatrix);
+					mBones[boneName] = bone;
+				}
+			}
+		}
+
+		Ref<Material> material = nullptr;
+
+		// Fetch Material Info From AssimpMesh
 		if (aiMesh->mMaterialIndex >= 0)
 		{
 			aiMaterial* aiMat = scene->mMaterials[aiMesh->mMaterialIndex];
-			
-			if (mProcessedMaterials[aiMat->GetName().C_Str()] != nullptr)
-			{
-				TS_CORE_INFO("Material {0} already processed", aiMat->GetName().C_Str());
-			}
-			else
-			{
-				ProcessMaterial(aiMat);
-			}		
+
+			// Material name should not be null
+			TS_CORE_ASSERT(mProcessedMaterials[aiMat->GetName().C_Str()]);
+			material = mProcessedMaterials[aiMat->GetName().C_Str()];
 		}
 
 		Ref<Mesh> mesh = CreateRef<Mesh>();
 		mesh->SetName(aiMesh->mName.C_Str());	// Name
 		mesh->SetVertices(vertices);			// Vertices
-		mesh->SetIndices(indices);				// Indices
-		mesh->SetBones(bones);					// Bones
-		mesh->SetMaterial(mMaterial);			// Materials
+		mesh->SetIndices(indices);				// Indices		
+		mesh->SetMaterial(material);			// Materials
 
 		// Create mesh
 		mesh->Create();						
@@ -257,13 +314,13 @@ namespace TS_ENGINE {
 		return mesh;
 	}
 	
-	void Model::ProcessTexture(aiMaterial* aiMat, Ref<TS_ENGINE::Material> tsMaterial, aiTextureType textureType, uint32_t numMaps)
+	Ref<Texture2D> Model::ProcessTexture(aiMaterial* _assimpMaterial, aiTextureType _textureType, uint32_t _numMaps)
 	{
-		for (uint32_t i = 0; i < numMaps; i++)
+		for (uint32_t i = 0; i < _numMaps; i++)
 		{
 			aiString texturePath;
 			
-			if (aiMat->GetTexture(textureType, i, &texturePath) == aiReturn_SUCCESS)
+			if (_assimpMaterial->GetTexture(_textureType, i, &texturePath) == aiReturn_SUCCESS)
 			{
 				Ref<Texture2D> texture = nullptr;
 
@@ -290,31 +347,23 @@ namespace TS_ENGINE {
 					}
 				}
 
-				if(textureType == aiTextureType_DIFFUSE)
-					tsMaterial->SetDiffuseMap(texture);
-				else if(textureType == aiTextureType_SPECULAR)
-					tsMaterial->SetSpecularMap(texture);
-				else if(textureType == aiTextureType_NORMALS)
-					tsMaterial->SetNormalMap(texture);
-				//else if(textureType == aiTextureType_METALNESS)
-				//	tsMaterial->SetMetallicMap(texture);
-				//else if(textureType == aiTextureType_EMISSIVE)
-				//	tsMaterial->SetEmmisiveMap(texture);
+				return texture;
 			}
 		}
+
+		return nullptr;
 	}
 
-	void Model::ProcessMaterial(aiMaterial* aiMat)
+	Ref<Material> Model::ProcessMaterial(aiMaterial* _assimpMaterial)
 	{
-		mMaterial = CreateRef<Material>(MaterialManager::GetInstance()->GetUnlitMaterial());
-		mMaterial->SetName(aiMat->GetName().C_Str());
+		std::string materialName = _assimpMaterial->GetName().C_Str();
 
-		aiMat->Get(AI_MATKEY_NAME, this->mAssimpMaterial.name);
+		_assimpMaterial->Get(AI_MATKEY_NAME, this->mAssimpMaterial.name);
 		//aiMat->Get(AI_MATKEY_COLOR_AMBIENT, this->mMaterial.ambient);
-		aiMat->Get(AI_MATKEY_COLOR_DIFFUSE, this->mAssimpMaterial.diffuse);
-		aiMat->Get(AI_MATKEY_COLOR_SPECULAR, this->mAssimpMaterial.specular);
-		aiMat->Get(AI_MATKEY_OPACITY, this->mAssimpMaterial.opacity);
-		aiMat->Get(AI_MATKEY_SHININESS, this->mAssimpMaterial.shininess);
+		_assimpMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, this->mAssimpMaterial.diffuse);
+		_assimpMaterial->Get(AI_MATKEY_COLOR_SPECULAR, this->mAssimpMaterial.specular);
+		_assimpMaterial->Get(AI_MATKEY_OPACITY, this->mAssimpMaterial.opacity);
+		_assimpMaterial->Get(AI_MATKEY_SHININESS, this->mAssimpMaterial.shininess);
 
 		//TS_CORE_INFO("Material {0} has {1} diffuse textures", this->material.name.C_Str(), diffTexCount);
 
@@ -327,24 +376,44 @@ namespace TS_ENGINE {
 		uint32_t lightMapTexCount = material->GetTextureCount(aiTextureType_LIGHTMAP);
 		uint32_t reflectionTexCount = material->GetTextureCount(aiTextureType_REFLECTION);*/
 
-		mMaterial->SetAmbientColor(Vector4(this->mAssimpMaterial.ambient.r, this->mAssimpMaterial.ambient.g, this->mAssimpMaterial.ambient.b, 1));
-		mMaterial->SetDiffuseColor(Vector4(this->mAssimpMaterial.diffuse.r, this->mAssimpMaterial.diffuse.g, this->mAssimpMaterial.diffuse.b, 1));
-		mMaterial->SetSpecularColor(Vector4(this->mAssimpMaterial.specular.r, this->mAssimpMaterial.specular.g, this->mAssimpMaterial.specular.b, 1));
-		mMaterial->SetShininess(this->mAssimpMaterial.shininess);
+		Vector4 ambientColor(mAssimpMaterial.ambient.r, mAssimpMaterial.ambient.g, mAssimpMaterial.ambient.b, 1);
+		Vector4 diffuseColor(mAssimpMaterial.diffuse.r, mAssimpMaterial.diffuse.g, mAssimpMaterial.diffuse.b, 1);
+		Vector4 specularColor(mAssimpMaterial.specular.r, mAssimpMaterial.specular.g, mAssimpMaterial.specular.b, 1);
+		float shininess = mAssimpMaterial.shininess;
 
-		uint32_t numDiffuseMaps = aiMat->GetTextureCount(aiTextureType_DIFFUSE);
-		uint32_t numSpecularMaps = aiMat->GetTextureCount(aiTextureType_SPECULAR);
-		uint32_t numNormalMaps = aiMat->GetTextureCount(aiTextureType_NORMALS);
-		uint32_t numMetallicMaps = aiMat->GetTextureCount(aiTextureType_METALNESS);
-		uint32_t numEmissiveMaps = aiMat->GetTextureCount(aiTextureType_EMISSIVE);
+		uint32_t numDiffuseMaps = _assimpMaterial->GetTextureCount(aiTextureType_DIFFUSE);
+		uint32_t numSpecularMaps = _assimpMaterial->GetTextureCount(aiTextureType_SPECULAR);
+		uint32_t numNormalMaps = _assimpMaterial->GetTextureCount(aiTextureType_NORMALS);
+		uint32_t numMetallicMaps = _assimpMaterial->GetTextureCount(aiTextureType_METALNESS);
+		uint32_t numEmissiveMaps = _assimpMaterial->GetTextureCount(aiTextureType_EMISSIVE);
 
-		ProcessTexture(aiMat, mMaterial, aiTextureType_DIFFUSE, numDiffuseMaps);
-		ProcessTexture(aiMat, mMaterial, aiTextureType_SPECULAR, numSpecularMaps);
-		ProcessTexture(aiMat, mMaterial, aiTextureType_NORMALS, numNormalMaps);
-		ProcessTexture(aiMat, mMaterial, aiTextureType_METALNESS, numMetallicMaps);
-		ProcessTexture(aiMat, mMaterial, aiTextureType_EMISSIVE, numEmissiveMaps);
+		// Process textures
+		Ref<Texture2D> diffuseMap = ProcessTexture(_assimpMaterial, aiTextureType_DIFFUSE, numDiffuseMaps);
+		Ref<Texture2D> specularMap = ProcessTexture(_assimpMaterial, aiTextureType_SPECULAR, numSpecularMaps);
+		Ref<Texture2D> normalMap = ProcessTexture(_assimpMaterial, aiTextureType_NORMALS, numNormalMaps);
+		//Ref<Texture2D> metallicMap = ProcessTexture(_assimpMaterial, aiTextureType_METALNESS, numMetallicMaps);
+		//Ref<Texture2D> emmisiveMap = ProcessTexture(_assimpMaterial, aiTextureType_EMISSIVE, numEmissiveMaps);
 
-		// Add processed material
-		AddMaterialToDictionary(mMaterial);
+		// Get Unlit Material And Pass To Material
+		Ref<Material> unlitMaterial = MaterialManager::GetInstance()->GetUnlitMaterial();
+		Ref<Material> material = CreateRef<Material>(unlitMaterial);
+		
+		material->SetName(materialName);			// Name
+		material->SetAmbientColor(ambientColor);	// Ambient Color
+		material->SetDiffuseColor(diffuseColor);	// Diffuse Color
+		material->SetSpecularColor(specularColor);	// Specular Color
+		material->SetShininess(shininess);			// Shininess
+		if (diffuseMap)
+			material->SetDiffuseMap(diffuseMap);	// Diffuse Map
+		else if (specularMap)
+			material->SetSpecularMap(specularMap);	// Specualr Map
+		else if (normalMap)
+			material->SetNormalMap(normalMap);		// Normal Map
+		//else if(metallicMap)
+		//	material->SetMetallicMap(metallicMap);	// Metallic Map
+		//else if(emmisiveMap)
+		//	material->SetEmmisiveMap(emmisiveMap);	// Emmisive Map
+		
+		return material;
 	}
 }
