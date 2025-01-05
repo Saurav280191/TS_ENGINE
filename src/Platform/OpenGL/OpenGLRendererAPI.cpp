@@ -108,4 +108,8 @@ namespace TS_ENGINE
 			glDisable(GL_BLEND);
 		}
 	}
+	void OpenGLRendererAPI::EnableWireframe(bool _enable)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, _enable ? GL_LINE : GL_FILL);
+	}
 }

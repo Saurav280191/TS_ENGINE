@@ -181,12 +181,4 @@ namespace TS_ENGINE {
 	{
 		return m_Data.VSync;
 	}
-
-	void WindowsWindow::SetWireframeMode(bool enabled)
-	{
-		if (enabled)
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		else
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
 }

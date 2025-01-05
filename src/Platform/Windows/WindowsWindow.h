@@ -25,8 +25,6 @@ namespace TS_ENGINE {
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
 
-		void SetWireframeMode(bool enabled) override;
-
 		virtual void* GetNativeWindow() const 
 		{ 
 			return m_Window;

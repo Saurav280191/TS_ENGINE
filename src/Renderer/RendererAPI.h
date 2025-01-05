@@ -25,8 +25,9 @@ namespace TS_ENGINE {
 
 		virtual void SetLineWidth(float width) = 0;
 		
-		virtual void EnableDepthTest(bool enable) = 0;
-		virtual void EnableAlphaBlending(bool enable) = 0;
+		virtual void EnableDepthTest(bool enable) = 0;		// Depth Test
+		virtual void EnableAlphaBlending(bool enable) = 0;	// Alpha Test
+		virtual void EnableWireframe(bool _enabled) = 0;	// Wireframe
 
 		static API GetAPI() 
 		{

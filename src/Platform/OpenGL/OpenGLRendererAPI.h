@@ -14,5 +14,6 @@ namespace TS_ENGINE {
 		virtual void SetLineWidth(float width) override;
 		virtual void EnableDepthTest(bool enable) override;
 		virtual void EnableAlphaBlending(bool enable) override;
+		virtual void EnableWireframe(bool _enable) override;
 	};
 }
