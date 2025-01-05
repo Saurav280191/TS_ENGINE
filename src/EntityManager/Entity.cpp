@@ -46,8 +46,14 @@ namespace TS_ENGINE
 		case EntityType::PRIMITIVE:
 			typeStr = "PRIMITIVE";
 			break;
-		case EntityType::MODEL:
-			typeStr = "MODEL";
+		case EntityType::MESH:
+			typeStr = "MESH";
+			break;
+		case EntityType::BONE:
+			typeStr = "BONE";
+			break;
+		case EntityType::BONEGUI:
+			typeStr = "BONEGUI";
 			break;
 		case EntityType::CAMERA:
 			typeStr = "CAMERA";

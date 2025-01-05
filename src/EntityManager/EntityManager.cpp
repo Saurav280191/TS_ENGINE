@@ -19,7 +19,7 @@ namespace TS_ENGINE
 		mEntityLookUp.insert({ entity->GetEntityID(), mEntities.size() });
 		mEntities.push_back(entity);
 
-		TS_CORE_TRACE("New entity registered with Name: {0}, Type: {1}, EntityID: {2}", name.c_str(), Entity::GetEntityTypeStr(entityType), entity->GetEntityID());
+		TS_CORE_TRACE("New Node Entity Registered With Name: {0}, Type: {1}, EntityID: {2}", name.c_str(), Entity::GetEntityTypeStr(entityType), entity->GetEntityID());
 
 		return entity;
 	}
