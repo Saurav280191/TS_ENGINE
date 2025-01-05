@@ -28,6 +28,11 @@ namespace TS_ENGINE {
 			sRendererAPI->Clear();
 		}
 
+		static void EnableWireframe(bool _enabled)
+		{
+			sRendererAPI->EnableWireframe(_enabled);
+		}
+
 		static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0)
 		{
 			sRendererAPI->DrawIndexed(vertexArray, indexCount);

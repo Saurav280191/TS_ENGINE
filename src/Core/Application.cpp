@@ -3,6 +3,7 @@
 #include "Core/Log.h"
 #include "Core/Base.h"
 //#include "Renderer/Renderer.h"
+#include "Renderer/RenderCommand.h"
 
 namespace TS_ENGINE
 {
@@ -105,14 +106,12 @@ namespace TS_ENGINE
 				}
 
 				// Render GUI
-				mImGuiLayer->Begin();
+				mImGuiLayer->Begin();				
+				//glDisable(GL_POLYGON_SMOOTH);
+				for (Layer* layer : mLayerStack)
 				{
-					//glDisable(GL_POLYGON_SMOOTH);
-
-					for (Layer* layer : mLayerStack)
-						layer->OnImGuiRender();
+					layer->OnImGuiRender();
 				}
-
 				mImGuiLayer->End();
 
 				mWindow->OnUpdate();
@@ -191,7 +190,7 @@ namespace TS_ENGINE
 	void Application::ToggleWireframeMode()
 	{
 		mWireframeMode = !mWireframeMode;
-		mWindow->SetWireframeMode(mWireframeMode);
+		RenderCommand::EnableWireframe(mWireframeMode);
 	}
 
 	void Application::ToggleTextures()
@@ -202,6 +201,11 @@ namespace TS_ENGINE
 	void Application::ResetDrawCall()
 	{		
 		mDrawCalls = 0;
+	}
+
+	bool Application::IsWireframeModeEnabled()
+	{
+		return mWireframeMode;
 	}
 
 	bool Application::IsTextureModeEnabled()

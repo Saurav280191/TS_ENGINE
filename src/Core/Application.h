@@ -43,6 +43,7 @@ namespace TS_ENGINE
 
 		void ResetDrawCall();
 
+		bool IsWireframeModeEnabled();
 		bool IsTextureModeEnabled();
 
 		static void SetExecutableDirectory(std::filesystem::path exeDir);
