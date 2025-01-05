@@ -45,8 +45,10 @@ namespace TS_ENGINE
 		void ChangeMeshForNode(Ref<Node> node, PrimitiveType primitive);
 		//Ref<Light> CreateLight(Light::Type lightType);
 		void Flush();
+
+		//std::vector<Ref<Node>> mBoneSphereNodes = {};
+		std::unordered_map<std::string, std::pair<Ref<Node>, Ref<Model>>> mLoadedModelNodeMap;//Model path and Model Node map
 	private:
 		static Factory* mInstance;
-		std::unordered_map<std::string, Ref<Node>> mLoadedModelNodeMap;//Model path and Model Node map
 	};
 }

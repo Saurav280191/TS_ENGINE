@@ -79,13 +79,19 @@ namespace TS_ENGINE
 
 	Ref<Node> Factory::InstantiateLine(const std::string& name, Ref<Node> parentNode, const std::vector<Vector3>& points)
 	{
+		// Create line mesh
+		Ref<Line> line = CreateRef<Line>();
+		line->CreateMesh(points);
+		Ref<Mesh> mesh = line->GetMesh();
+		mesh->SetName(name);
+		
+		// Create Node for line mesh
 		Ref<Node> lineNode = CreateRef<Node>();
 		lineNode->SetNodeRef(lineNode);
-		Ref<Mesh> mesh = CreateRef<Line>()->GetMesh(points);
-		mesh->SetName(name);
 		lineNode->AddMesh(mesh);
 		lineNode->SetParent(parentNode);
 		lineNode->Initialize(name, EntityType::PRIMITIVE);
+	
 		return lineNode;
 	}
 
@@ -158,14 +164,15 @@ namespace TS_ENGINE
 
 		if (it != mLoadedModelNodeMap.end())
 		{
-			mModelNode = it->second->Duplicate();
+			mModelNode = it->second.first->Duplicate();
 			mModelNode->GetTransform()->Reset();
 		}
 		else
 		{
 			model = ModelLoader::GetInstance()->LoadModel(modelPath);
 			mModelNode = model->GetRootNode();
-			mLoadedModelNodeMap.insert(std::pair<std::string, Ref<Node>>(modelPath, mModelNode));
+			
+			mLoadedModelNodeMap.insert(std::pair<std::string, std::pair<Ref<Node>, Ref<Model>>>(modelPath, { mModelNode, model }));
 		}
 
 		mModelNode->SetModelPath(modelPath);
