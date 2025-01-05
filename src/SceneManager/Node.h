@@ -25,12 +25,18 @@ namespace TS_ENGINE
 		void SetParent(Ref<Node> parentNode);
 		void ChangeParent(Ref<Node> parentNode);
 
+		void SetPosition(aiVector3D _assimpPosition);
 		void SetPosition(float* pos);
 		void SetPosition(float x, float y, float z);
 		void SetPosition(const Vector3& pos);
+		void SetEulerAngles(aiVector3D _assimpEulerAngles);
 		void SetEulerAngles(float* eulerAngles);
 		void SetEulerAngles(float x, float y, float z);
 		void SetEulerAngles(const Vector3& eulerAngles);
+		
+		void SetRotation(aiQuaternion _rotation);
+
+		void SetScale(aiVector3D _assimpScale);
 		void SetScale(float* scale);
 		void SetScale(float x, float y, float z);
 		void SetScale(const Vector3& scale);
@@ -42,15 +48,13 @@ namespace TS_ENGINE
 		void UpdateSiblings();
 		void SetSiblingIndex(int index);
 
-		
 		// Updates local and global model matrices for itself and for children
-		void InitializeTransformMatrices();	
-		void UpdateTransformationMatrices(Matrix4 transformationMatrix);
+		void ComputeTransformMatrices();	
 		
 		// Registers entity amd initializes transformation matrix
 		void Initialize(const std::string& name, const EntityType& entityType);
 		
-		// Initializes transformation matrices of node and it's children 
+		// Initializes transformation matrices of node and it's children with registering entity again
 		void ReInitializeTransforms();
 
 		// Sets model matrix in shader. Renders mesh. Then updates children.
@@ -87,26 +91,30 @@ namespace TS_ENGINE
 		const Ref<Transform> GetTransform() const { return mTransform; }
 		const size_t GetChildCount() const { return mChildren.size(); }
 		std::vector<Ref<Mesh>> GetMeshes() const { return mMeshes; }
+		Ref<Mesh> GetMesh() const { return mMeshes[0]; }
 		Ref<SceneCamera> GetSceneCamera() { return mSceneCamera; }
 		std::string GetModelPath() { return mModelPath; }
 		const int GetSiblingIndex(Ref<Node> node);
 #pragma endregion
 
-	public:
+		std::string mName;
+		Ref<Transform> mTransform;
+
 #ifdef TS_ENGINE_EDITOR
 		bool m_Enabled = true;//For IMGUI
 #endif
+	
+	protected:
+		Ref<Entity> mEntity;// Entity		
+		Ref<Node> mNodeRef;// This will be used for referencing everywhere instead of Node*
 	private:
 		bool mIsInitialized;		
-		Ref<Node> mNodeRef;// This will be used for referencing everywhere instead of Node*
-		Ref<Entity> mEntity;// Entity		
 		Ref<Node> mParentNode;
 		std::vector<Ref<Node>> mChildren;
-		Ref<Transform> mTransform;
 
 		std::vector<Ref<Node>> mSiblings = {};
 		std::vector<Ref<Mesh>> mMeshes;
-		std::string mModelPath;
+		std::string mModelPath;		
 		Ref<SceneCamera> mSceneCamera;// Only used incase of scene camera node
 #ifdef TS_ENGINE_EDITOR
 		bool mIsVisibleInEditor = true;

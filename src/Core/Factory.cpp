@@ -69,9 +69,9 @@ namespace TS_ENGINE
 		duplicateSceneCamera->GetNode()->Initialize(sceneCamera->GetNode()->GetEntity()->GetName() + " - Copy", EntityType::CAMERA);
 
 		duplicateSceneCamera->GetNode()->GetTransform()->SetLocalPosition(sceneCamera->GetNode()->GetTransform()->GetLocalPosition());
-		duplicateSceneCamera->GetNode()->GetTransform()->SetLocalEulerAngles(sceneCamera->GetNode()->GetTransform()->GetLocalEulerAngles());
+		duplicateSceneCamera->GetNode()->GetTransform()->SetLocalRotation(sceneCamera->GetNode()->GetTransform()->GetLocalRotation());
 		duplicateSceneCamera->GetNode()->GetTransform()->SetLocalScale(sceneCamera->GetNode()->GetTransform()->GetLocalScale());
-		duplicateSceneCamera->GetNode()->InitializeTransformMatrices();
+		duplicateSceneCamera->GetNode()->ComputeTransformMatrices();
 
 		scene->AddSceneCamera(duplicateSceneCamera);
 		return duplicateSceneCamera->GetNode();

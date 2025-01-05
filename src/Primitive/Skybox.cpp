@@ -19,12 +19,13 @@ namespace TS_ENGINE {
 		mMesh->SetMaterial(unlitMaterial);
 
 		// Set material texture
+		mMesh->GetMaterial()->SetAmbientColor(Vector4(0.8f, 0.8f, 0.8f, 1));
 		mMesh->GetMaterial()->SetDiffuseMap(mSkyTexture);
 
 		// Set Transform
 		mTransform = CreateRef<Transform>();
 		mTransform->SetLocalScale(1600.0f, 1600.0f, 1600.0f);
-		mTransform->SetLocalEulerAngles(90.0f, 235.0f, 0.0f);
+		mTransform->SetLocalRotation(Vector3(90.0f, 235.0f, 0.0f));
 
 		mTransform->ComputeTransformationMatrix(nullptr);
 

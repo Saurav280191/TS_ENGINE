@@ -60,9 +60,9 @@ namespace TS_ENGINE
 		duplicateNode->mNodeRef->mModelPath = mNodeRef->mModelPath;
 
 		duplicateNode->mNodeRef->mTransform = CreateRef<Transform>();
-		duplicateNode->mNodeRef->mTransform->m_Pos = mNodeRef->mTransform->m_Pos;
-		duplicateNode->mNodeRef->mTransform->m_EulerAngles = mNodeRef->mTransform->m_EulerAngles;
-		duplicateNode->mNodeRef->mTransform->m_Scale = mNodeRef->mTransform->m_Scale;
+		duplicateNode->mNodeRef->mTransform->mLocalPosition = mNodeRef->mTransform->mLocalPosition;
+		duplicateNode->mNodeRef->mTransform->mLocalRotation = mNodeRef->mTransform->mLocalRotation;
+		duplicateNode->mNodeRef->mTransform->mLocalScale = mNodeRef->mTransform->mLocalScale;
 
 #ifdef TS_ENGINE_EDITOR
 		duplicateNode->mNodeRef->mIsVisibleInEditor = mNodeRef->mIsVisibleInEditor;
@@ -124,52 +124,72 @@ namespace TS_ENGINE
 		}
 	}
 
+	void Node::SetPosition(aiVector3D _assimpPosition)
+	{
+		mTransform->SetLocalPosition(_assimpPosition.x, _assimpPosition.y, _assimpPosition.z);
+		ComputeTransformMatrices();
+	}
 	void Node::SetPosition(float* pos)
 	{
 		mTransform->SetLocalPosition(pos);
-		InitializeTransformMatrices();
+		ComputeTransformMatrices();
 	}
 	void Node::SetPosition(float x, float y, float z)
 	{
 		mTransform->SetLocalPosition(x, y, z);
-		InitializeTransformMatrices();
+		ComputeTransformMatrices();
 	}
 	void Node::SetPosition(const Vector3& pos)
 	{
 		mTransform->SetLocalPosition(pos);
-		InitializeTransformMatrices();
+		ComputeTransformMatrices();
 	}
 
+	void Node::SetEulerAngles(aiVector3D _assimpEulerAngles)
+	{
+		mTransform->SetLocalRotation(Vector3(_assimpEulerAngles.x, _assimpEulerAngles.y, _assimpEulerAngles.z));
+		ComputeTransformMatrices();
+	}
 	void Node::SetEulerAngles(float* eulerAngles)
 	{
-		mTransform->SetLocalEulerAngles(eulerAngles);
-		InitializeTransformMatrices();
+		mTransform->SetLocalRotation(Vector3(eulerAngles[0], eulerAngles[1], eulerAngles[2]));
+		ComputeTransformMatrices();
 	}
 	void Node::SetEulerAngles(float x, float y, float z)
 	{
-		mTransform->SetLocalEulerAngles(x, y, z);
-		InitializeTransformMatrices();
+		mTransform->SetLocalRotation(Vector3(x, y, z));
+		ComputeTransformMatrices();
 	}
 	void Node::SetEulerAngles(const Vector3& eulerAngles)
 	{
-		mTransform->SetLocalEulerAngles(eulerAngles);
-		InitializeTransformMatrices();
+		mTransform->SetLocalRotation(eulerAngles);
+		ComputeTransformMatrices();
 	}
 
+	void Node::SetRotation(aiQuaternion _rotation)
+	{
+		mTransform->mLocalRotation = Quaternion(_rotation.w, _rotation.x, _rotation.y, _rotation.z);
+	}
+
+	void Node::SetScale(aiVector3D _assimpScale)
+	{
+		mTransform->SetLocalScale(_assimpScale.x, _assimpScale.y, _assimpScale.z);
+		ComputeTransformMatrices();
+	}
 	void Node::SetScale(float* scale)
 	{
 		mTransform->SetLocalScale(scale);
-		InitializeTransformMatrices();
+		ComputeTransformMatrices();
 	}
 	void Node::SetScale(float x, float y, float z)
 	{
 		mTransform->SetLocalScale(x, y, z);
-		InitializeTransformMatrices();
+		ComputeTransformMatrices();
 	}
 	void Node::SetScale(const Vector3& scale)
 	{
 		mTransform->SetLocalScale(scale);
-		InitializeTransformMatrices();
+		ComputeTransformMatrices();
 	}
 
 	void Node::SetSceneCamera(Ref<SceneCamera> sceneCamera)
@@ -272,23 +292,13 @@ namespace TS_ENGINE
 		}
 	}
 
-	void Node::InitializeTransformMatrices()
+	void Node::ComputeTransformMatrices()
 	{
 		mTransform->ComputeTransformationMatrix(mParentNode);
 
 		for (auto& child : mChildren)
 		{
-			child->InitializeTransformMatrices();
-		}
-	}
-
-	void Node::UpdateTransformationMatrices(Matrix4 transformationMatrix)
-	{
-		//mTransform->m_GlobalTransformationMatrix = transformationMatrix;
-
-		for (auto& child : mChildren)
-		{
-			child->InitializeTransformMatrices();
+			child->ComputeTransformMatrices();
 		}
 	}
 
@@ -300,14 +310,14 @@ namespace TS_ENGINE
 	void Node::Initialize(const std::string& name, const EntityType& entityType)
 	{
 		mNodeRef->mEntity = EntityManager::GetInstance()->Register(name, entityType);
-		InitializeTransformMatrices();
+		ComputeTransformMatrices();
 
 		mIsInitialized = true;
 	}
 
 	void Node::ReInitializeTransforms()
 	{
-		InitializeTransformMatrices();
+		ComputeTransformMatrices();
 	}
 
 	// If there is no parent set parentTransformModelMatrix to identity
