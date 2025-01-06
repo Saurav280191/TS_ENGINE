@@ -80,7 +80,7 @@ namespace TS_ENGINE
 		editorCamera->GetNode()->GetTransform()->SetLocalEulerAngles(-18.102f, 0.066f, 0.0f);
 		editorCamera->CreateFramebuffer(1920, 1080);																				// Create Framebuffer For EditorCamera
 		editorCamera->Initialize();
-		editorCamera->GetNode()->InitializeTransformMatrices();
+		editorCamera->GetNode()->ReInitializeTransforms();
 
 		// Initialize scene camera for editor
 		auto sceneCameraNode = Factory::GetInstance()->InstantitateSceneCamera("SceneCamera", editorCamera);						// Instantiate Scene Camera For Editor
@@ -122,7 +122,7 @@ namespace TS_ENGINE
 
 		// Default Ground
 		auto groundNode = Factory::GetInstance()->InstantiateQuad("Ground", scene->GetSceneNode());									// Instantiate Ground
-		groundNode->GetTransform()->SetLocalRotation(-90.0f, 0.0f, 0.0f);
+		groundNode->GetTransform()->SetLocalEulerAngles(-90.0f, 0.0f, 0.0f);
 		groundNode->GetTransform()->SetLocalScale(10.0f, 10.0f, 10.0f);
 		auto groundMesh = groundNode->GetMeshes()[0];
 		auto groundMaterial = groundMesh->GetMaterial();

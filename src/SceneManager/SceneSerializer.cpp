@@ -155,7 +155,7 @@ namespace TS_ENGINE
 		editorCamera->GetNode()->GetTransform()->SetLocalEulerAngles(localEulerAngles);
 		editorCamera->CreateFramebuffer(1920, 1080);//Create framebuffer for editorCamera
 		editorCamera->Initialize();
-		editorCamera->GetNode()->InitializeTransformMatrices();
+		editorCamera->GetNode()->ReInitializeTransforms();
 
 		// Scene Cameras
 		std::vector<Ref<SceneCamera>> sceneCameras = {};
@@ -395,7 +395,7 @@ namespace TS_ENGINE
 			break;
 			}
 		}
-		else if (entityType == EntityType::MODEL)
+		else if (entityType == EntityType::BONE)
 		{
 			auto it = jsonNode.find("ModelPath");
 

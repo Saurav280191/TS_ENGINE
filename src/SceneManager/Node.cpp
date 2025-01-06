@@ -147,22 +147,22 @@ namespace TS_ENGINE
 
 	void Node::SetEulerAngles(aiVector3D _assimpEulerAngles)
 	{
-		mTransform->SetLocalRotation(Vector3(_assimpEulerAngles.x, _assimpEulerAngles.y, _assimpEulerAngles.z));
+		mTransform->SetLocalEulerAngles(Vector3(_assimpEulerAngles.x, _assimpEulerAngles.y, _assimpEulerAngles.z));
 		ComputeTransformMatrices();
 	}
 	void Node::SetEulerAngles(float* eulerAngles)
 	{
-		mTransform->SetLocalRotation(Vector3(eulerAngles[0], eulerAngles[1], eulerAngles[2]));
+		mTransform->SetLocalEulerAngles(Vector3(eulerAngles[0], eulerAngles[1], eulerAngles[2]));
 		ComputeTransformMatrices();
 	}
 	void Node::SetEulerAngles(float x, float y, float z)
 	{
-		mTransform->SetLocalRotation(Vector3(x, y, z));
+		mTransform->SetLocalEulerAngles(Vector3(x, y, z));
 		ComputeTransformMatrices();
 	}
 	void Node::SetEulerAngles(const Vector3& eulerAngles)
 	{
-		mTransform->SetLocalRotation(eulerAngles);
+		mTransform->SetLocalEulerAngles(eulerAngles);
 		ComputeTransformMatrices();
 	}
 

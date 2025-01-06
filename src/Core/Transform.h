@@ -40,8 +40,8 @@ namespace TS_ENGINE
 		void SetLocalPosition(float x, float y, float z);
 		void SetLocalPosition(const float* newPosition);
 
-		void SetLocalRotation(float _x, float _y, float _z);
-		void SetLocalRotation(Vector3 _eulerAngles);
+		void SetLocalEulerAngles(float _x, float _y, float _z);
+		void SetLocalEulerAngles(Vector3 _eulerAngles);
 		void SetLocalRotation(Quaternion _rotation);
 
 		// Sets local scale
@@ -49,9 +49,9 @@ namespace TS_ENGINE
 		void SetLocalScale(float x, float y, float z);
 		void SetLocalScale(const float* newScale);
 
-		Quaternion FromEulerAngles(glm::vec3 eulerAngles);
+		const Quaternion FromEulerAngles(glm::vec3 eulerAngles) const;
 
-		Vector3 ToEulerAngles(glm::quat quaternion);
+		const Vector3 ToEulerAngles(glm::quat quaternion) const;
 
 		// Sets local transform
 		void SetLocalTransform(Vector3 pos, Vector3 eulerAngles, Vector3 scale);
@@ -59,7 +59,8 @@ namespace TS_ENGINE
 		void Reset();
 
 		const Vector3& GetLocalPosition() const;
-		const Quaternion& GetLocalRotation() const;
+		const Quaternion GetLocalRotation() const;
+		const Vector3 GetLocalEulerAngles() const;
 		const Vector3& GetLocalScale() const;
 
 		Matrix4 GetInverseParentMat(Matrix4 newTransformMatrix) const;

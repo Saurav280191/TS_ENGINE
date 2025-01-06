@@ -153,12 +153,12 @@ namespace TS_ENGINE
 		mLocalPosition = Vector3(newPosition[0], newPosition[1], newPosition[2]);		
 	}
 
-	void Transform::SetLocalRotation(float _x, float _y, float _z)
+	void Transform::SetLocalEulerAngles(float _x, float _y, float _z)
 	{
 		mLocalRotation = FromEulerAngles(Vector3(_x, _y, _z));
 	}
 
-	void Transform::SetLocalRotation(Vector3 _eulerAngles)
+	void Transform::SetLocalEulerAngles(Vector3 _eulerAngles)
 	{
 		mLocalRotation = FromEulerAngles(_eulerAngles);
 	}
@@ -184,12 +184,12 @@ namespace TS_ENGINE
 		
 	}
 
-	Quaternion Transform::FromEulerAngles(glm::vec3 eulerAngles) 
+	const Quaternion Transform::FromEulerAngles(glm::vec3 eulerAngles) const
 	{
 		return glm::quat(glm::radians(eulerAngles));
 	}
 
-	Vector3 Transform::ToEulerAngles(glm::quat quaternion) 
+	const Vector3 Transform::ToEulerAngles(glm::quat quaternion) const
 	{
 		return glm::degrees(glm::eulerAngles(quaternion));
 	}
@@ -212,9 +212,13 @@ namespace TS_ENGINE
 	{
 		return mLocalPosition;
 	}
-	const Quaternion& Transform::GetLocalRotation() const
+	const Quaternion Transform::GetLocalRotation() const
 	{
 		return mLocalRotation;
+	}
+	const Vector3 Transform::GetLocalEulerAngles() const
+	{
+		return ToEulerAngles(mLocalRotation);
 	}
 	const Vector3& Transform::GetLocalScale() const
 	{

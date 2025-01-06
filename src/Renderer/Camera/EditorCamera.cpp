@@ -18,7 +18,7 @@ namespace TS_ENGINE {
 		mDefaultEulerAngles = Vector3(0.493025780f, -0.706756115f, 0.0f);
 
 		mCameraNode->GetTransform()->SetLocalPosition(mDefaultPos);
-		mCameraNode->GetTransform()->SetLocalRotation(mDefaultEulerAngles);
+		mCameraNode->GetTransform()->SetLocalEulerAngles(mDefaultEulerAngles);
 		mCameraNode->Initialize(name, EntityType::CAMERA);
 	}
 

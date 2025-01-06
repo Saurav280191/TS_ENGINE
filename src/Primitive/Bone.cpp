@@ -81,7 +81,7 @@ namespace TS_ENGINE {
 		// Render mJointGuiNode 
 		_shader->SetMat4("u_Model", mJointGuiNode->mTransform->GetGlobalTransformationMatrix());
 #ifdef TS_ENGINE_EDITOR
-		mJointGuiNode->GetMesh()->Render(mEntity->GetEntityID());
+		mJointGuiNode->GetMesh()->Render(mJointGuiNode->GetEntity()->GetEntityID());
 #else
 		mJointGuiNode->GetMesh()->Render();
 #endif
@@ -91,7 +91,7 @@ namespace TS_ENGINE {
 		{
 			_shader->SetMat4("u_Model", boneGuiNode->mTransform->GetGlobalTransformationMatrix());
 #ifdef TS_ENGINE_EDITOR		
-			boneGuiNode->GetMesh()->Render(mEntity->GetEntityID());
+			boneGuiNode->GetMesh()->Render(boneGuiNode->GetEntity()->GetEntityID());
 #else		
 			boneGuiNode->GetMesh()->Render();
 #endif
