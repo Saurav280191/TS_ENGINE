@@ -40,6 +40,12 @@ namespace TS_ENGINE
 		void SetScale(float* scale);
 		void SetScale(float x, float y, float z);
 		void SetScale(const Vector3& scale);
+
+		// Sets local transform in Transform
+		void SetLocalTransform(Vector3 _localPosition, Vector3 _localEulerAngles, Vector3 _localScale);
+		// Sets local transform in Transform
+		void SetLocalTransform(Vector3 _localPosition, Quaternion _localQuaternion, Vector3 _localScale);
+
 		void SetSceneCamera(Ref<SceneCamera> sceneCamera);
 
 		void AddChild(Ref<Node> child);

@@ -192,6 +192,16 @@ namespace TS_ENGINE
 		ComputeTransformMatrices();
 	}
 
+	void Node::SetLocalTransform(Vector3 _localPosition, Vector3 _localEulerAngles, Vector3 _localScale)
+	{
+		mTransform->SetLocalTransform(_localPosition, _localEulerAngles, _localScale, mParentNode);
+	}
+
+	void Node::SetLocalTransform(Vector3 _localPosition, Quaternion _localQuaternion, Vector3 _localScale)
+	{
+		mTransform->SetLocalTransform(_localPosition, _localQuaternion, _localScale, mParentNode);
+	}
+
 	void Node::SetSceneCamera(Ref<SceneCamera> sceneCamera)
 	{
 		mSceneCamera = sceneCamera;

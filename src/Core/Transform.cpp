@@ -194,7 +194,7 @@ namespace TS_ENGINE
 		return glm::degrees(glm::eulerAngles(quaternion));
 	}
 
-	void Transform::SetTransform(Vector3 _localPosition, Quaternion _localRotation, Vector3 _localScale, Ref<Node> _parentNode = nullptr)
+	void Transform::SetLocalTransform(Vector3 _localPosition, Quaternion _localRotation, Vector3 _localScale, Ref<Node> _parentNode = nullptr)
 	{
 		mLocalPosition = _localPosition;
 		mLocalRotation = _localRotation;
@@ -203,7 +203,7 @@ namespace TS_ENGINE
 		ComputeTransformationMatrix(_parentNode);
 	}
 
-	void Transform::SetTransform(Vector3 _localPosition, Vector3 _localEulerAngles, Vector3 _localScale, Ref<Node> _parentNode = nullptr)
+	void Transform::SetLocalTransform(Vector3 _localPosition, Vector3 _localEulerAngles, Vector3 _localScale, Ref<Node> _parentNode = nullptr)
 	{
 		mLocalPosition = _localPosition;
 		mLocalRotation = FromEulerAngles(_localEulerAngles);

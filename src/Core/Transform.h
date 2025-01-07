@@ -53,9 +53,10 @@ namespace TS_ENGINE
 
 		const Vector3 ToEulerAngles(glm::quat quaternion) const;
 
-		// Sets transform
-		void SetTransform(Vector3 _localPosition, Quaternion _localRotation, Vector3 _localScale, Ref<Node> _parentNode);
-		void SetTransform(Vector3 _localPosition, Vector3 _localEulerAngles, Vector3 _localScale, Ref<Node> _parentNode);
+		// Sets local transform
+		void SetLocalTransform(Vector3 _localPosition, Quaternion _localRotation, Vector3 _localScale, Ref<Node> _parentNode);
+		// Sets local transform
+		void SetLocalTransform(Vector3 _localPosition, Vector3 _localEulerAngles, Vector3 _localScale, Ref<Node> _parentNode);
 
 		void Reset();
 
