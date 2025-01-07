@@ -33,7 +33,7 @@ namespace TS_ENGINE
 
 		void ComputeTransformationMatrix(Ref<Node> parentNode);
 		void SetLocalTransformationMatrix(const Matrix4& transformationMatrix);
-		void SetGlobalTransformationMatrix(const Matrix4& transformationMatrix);
+		void SetWorldTransformationMatrix(const Matrix4& transformationMatrix);
 
 		// Sets local position
 		void SetLocalPosition(const Vector3& newPosition);
@@ -53,8 +53,9 @@ namespace TS_ENGINE
 
 		const Vector3 ToEulerAngles(glm::quat quaternion) const;
 
-		// Sets local transform
-		void SetLocalTransform(Vector3 pos, Vector3 eulerAngles, Vector3 scale);
+		// Sets transform
+		void SetTransform(Vector3 _localPosition, Quaternion _localRotation, Vector3 _localScale, Ref<Node> _parentNode);
+		void SetTransform(Vector3 _localPosition, Vector3 _localEulerAngles, Vector3 _localScale, Ref<Node> _parentNode);
 
 		void Reset();
 
@@ -72,7 +73,7 @@ namespace TS_ENGINE
 		const Vector3& GetScale() const;
 
 		const Matrix4 GetLocalTransformationMatrix() const { return mLocalTransformationMatrix; }
-		const Matrix4 GetGlobalTransformationMatrix() const { return mWorldTransformationMatrix; }
+		const Matrix4 GetWorldTransformationMatrix() const { return mWorldTransformationMatrix; }
 
 		Vector3 GetRight() const;
 		Vector3 GetUp() const;

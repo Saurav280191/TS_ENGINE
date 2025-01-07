@@ -36,7 +36,7 @@ namespace TS_ENGINE
 
 	void Transform::Follow(Ref<Node> targetNode)
 	{
-		mWorldTransformationMatrix = targetNode->GetTransform()->GetGlobalTransformationMatrix();
+		mWorldTransformationMatrix = targetNode->GetTransform()->GetWorldTransformationMatrix();
 	}
 
 	void Transform::LookAt(Ref<Node> parentNode, const Ref<Transform> target)
@@ -48,7 +48,7 @@ namespace TS_ENGINE
 
 		if (parentNode)
 		{
-			mWorldTransformationMatrix = parentNode->GetTransform()->GetGlobalTransformationMatrix() * modelMatrix;
+			mWorldTransformationMatrix = parentNode->GetTransform()->GetWorldTransformationMatrix() * modelMatrix;
 			
 			Vector3 skew;
 			Vector4 perspective;
@@ -127,7 +127,7 @@ namespace TS_ENGINE
 		mForward = GetForward();
 	}
 
-	void Transform::SetGlobalTransformationMatrix(const Matrix4& transformationMatrix)
+	void Transform::SetWorldTransformationMatrix(const Matrix4& transformationMatrix)
 	{
 		mWorldTransformationMatrix = transformationMatrix;
 		
@@ -194,11 +194,22 @@ namespace TS_ENGINE
 		return glm::degrees(glm::eulerAngles(quaternion));
 	}
 
-	void Transform::SetLocalTransform(Vector3 pos, Vector3 eulerAngles, Vector3 scale)
+	void Transform::SetTransform(Vector3 _localPosition, Quaternion _localRotation, Vector3 _localScale, Ref<Node> _parentNode = nullptr)
 	{
-		mLocalPosition = pos;
-		mLocalRotation = FromEulerAngles(eulerAngles);
-		mLocalScale = scale;
+		mLocalPosition = _localPosition;
+		mLocalRotation = _localRotation;
+		mLocalScale = _localScale;
+
+		ComputeTransformationMatrix(_parentNode);
+	}
+
+	void Transform::SetTransform(Vector3 _localPosition, Vector3 _localEulerAngles, Vector3 _localScale, Ref<Node> _parentNode = nullptr)
+	{
+		mLocalPosition = _localPosition;
+		mLocalRotation = FromEulerAngles(_localEulerAngles);
+		mLocalScale = _localScale;
+
+		ComputeTransformationMatrix(_parentNode);
 	}
 
 	void Transform::Reset()
@@ -301,8 +312,8 @@ namespace TS_ENGINE
 		glm::quat yawRotation = glm::angleAxis(-angle, glm::vec3(0.0f, 1.0f, 0.0f)); // Yaw rotates around the Y-axis
 
 		// Update the rotation
-		mLocalRotation = yawRotation * mLocalRotation; // Apply yaw
-		mLocalRotation = glm::normalize(mLocalRotation); // Normalize to avoid floating-point drift
+		mLocalRotation = yawRotation * mLocalRotation;	// Apply yaw
+		mLocalRotation = glm::normalize(mLocalRotation);// Normalize to avoid floating-point drift
 	}
 	void Transform::Pitch(float pitchSpeed, float deltaTime)
 	{
