@@ -73,7 +73,7 @@ namespace TS_ENGINE {
 			//Multiplying the point with inverse of mCameraNode's transform is important because it will be following mCamerNode
 			for (auto& frustrumPoints : homogeneousFrustrumPoints)
 			{
-				frustrumPoints = glm::inverse(mCameraNode->GetTransform()->GetGlobalTransformationMatrix()) * frustrumPoints;
+				frustrumPoints = glm::inverse(mCameraNode->GetTransform()->GetWorldTransformationMatrix()) * frustrumPoints;
 			}
 
 			std::vector<Vector3> nonHomogeneousFrustrumPoints(homogeneousFrustrumPoints.size());
@@ -102,7 +102,7 @@ namespace TS_ENGINE {
 
 	void SceneCamera::Update(Ref<Shader> shader, float deltaTime)
 	{
-		mViewMatrix = mCameraNode->GetTransform()->GetGlobalTransformationMatrix();
+		mViewMatrix = mCameraNode->GetTransform()->GetWorldTransformationMatrix();
 		mViewMatrix = glm::inverse(mViewMatrix);
 
 		shader->SetVec3("u_ViewPos", mCameraNode->GetTransform()->GetLocalPosition());
@@ -189,7 +189,7 @@ namespace TS_ENGINE {
 		//Multiplying the point with inverse of mCameraNode's transform is important because it will be following mCamerNode
 		for (auto& frustrumPoints : homogeneousFrustrumPoints)
 		{
-			frustrumPoints = glm::inverse(mCameraNode->GetTransform()->GetGlobalTransformationMatrix()) * frustrumPoints;
+			frustrumPoints = glm::inverse(mCameraNode->GetTransform()->GetWorldTransformationMatrix()) * frustrumPoints;
 		}
 
 		std::vector<Vertex> nonHomogeneousFrustrumVertices(homogeneousFrustrumPoints.size());

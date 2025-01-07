@@ -45,7 +45,7 @@ namespace TS_ENGINE {
 			// Set mesh color to Orange
 			boneGuiNode->GetMesh()->GetMaterial()->SetAmbientColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 			
-			TS_CORE_INFO("Created bone between {0} and {1}", mNode->mName, child->mName);
+			//TS_CORE_INFO("Created bone between {0} and {1}", mNode->mName, child->mName);
 
 			mBoneGuiNodes.push_back(boneGuiNode);
 		}
@@ -53,7 +53,7 @@ namespace TS_ENGINE {
 
 	void Bone::UpdateBoneGuiTransforms()
 	{
-		mJointGuiNode->mTransform->SetGlobalTransformationMatrix(mNode->GetTransform()->GetGlobalTransformationMatrix());
+		mJointGuiNode->mTransform->SetWorldTransformationMatrix(mNode->GetTransform()->GetWorldTransformationMatrix());
 
 		for (int i = 0; i < mNode->GetChildCount(); i++)
 		{
@@ -79,7 +79,7 @@ namespace TS_ENGINE {
 		RenderCommand::EnableWireframe(false);
 
 		// Render mJointGuiNode 
-		_shader->SetMat4("u_Model", mJointGuiNode->mTransform->GetGlobalTransformationMatrix());
+		_shader->SetMat4("u_Model", mJointGuiNode->mTransform->GetWorldTransformationMatrix());
 #ifdef TS_ENGINE_EDITOR
 		mJointGuiNode->GetMesh()->Render(mJointGuiNode->GetEntity()->GetEntityID());
 #else
@@ -89,7 +89,7 @@ namespace TS_ENGINE {
 		// Render all boneGuiNodes 
 		for(auto& boneGuiNode : mBoneGuiNodes)
 		{
-			_shader->SetMat4("u_Model", boneGuiNode->mTransform->GetGlobalTransformationMatrix());
+			_shader->SetMat4("u_Model", boneGuiNode->mTransform->GetWorldTransformationMatrix());
 #ifdef TS_ENGINE_EDITOR		
 			boneGuiNode->GetMesh()->Render(boneGuiNode->GetEntity()->GetEntityID());
 #else		

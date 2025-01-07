@@ -326,7 +326,7 @@ namespace TS_ENGINE
 		TS_CORE_ASSERT(mIsInitialized, "Node is not initialized!");
 
 		// Send ModelMatrix to vertex shader
-		shader->SetMat4("u_Model", mTransform->GetGlobalTransformationMatrix());
+		shader->SetMat4("u_Model", mTransform->GetWorldTransformationMatrix());
 
 #ifdef TS_ENGINE_EDITOR
 		if (m_Enabled)

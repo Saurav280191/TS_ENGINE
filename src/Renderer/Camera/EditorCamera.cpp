@@ -34,7 +34,7 @@ namespace TS_ENGINE {
 
 	void EditorCamera::Update(Ref<TS_ENGINE::Shader> shader, float deltaTime)
 	{
-		mViewMatrix = mCameraNode->GetTransform()->GetGlobalTransformationMatrix();;
+		mViewMatrix = mCameraNode->GetTransform()->GetWorldTransformationMatrix();;
 		mViewMatrix = glm::inverse(mViewMatrix);
 
 		shader->SetVec3("u_ViewPos", mCameraNode->GetTransform()->GetLocalPosition());

@@ -50,7 +50,7 @@ namespace TS_ENGINE {
 		shader->SetInt("u_EntityID", mEntity->GetEntityID());					// Entity ID
 #endif
 		// Send Skybox's modelMatrix to vertex shader 
-		shader->SetMat4("u_Model", mTransform->GetGlobalTransformationMatrix());// Model Matrix
+		shader->SetMat4("u_Model", mTransform->GetWorldTransformationMatrix());// Model Matrix
 
 		// Render Skybox's mesh 
 #ifdef  TS_ENGINE_EDITOR
