@@ -7,6 +7,7 @@ namespace TS_ENGINE
 	{
 		PRIMITIVE,
 		MESH,
+		MODELROOTNODE,
 		BONE,
 		BONEGUI,
 		CAMERA,

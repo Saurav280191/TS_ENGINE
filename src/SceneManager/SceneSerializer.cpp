@@ -249,10 +249,12 @@ namespace TS_ENGINE
 		{
 			jsonNode["PrimitiveType"] = node->GetMeshes()[0]->GetPrimitiveType();
 		}
-		else if (node->GetEntity()->GetEntityType() == EntityType::MESH)
+		else if (node->GetEntity()->GetEntityType() == EntityType::MODELROOTNODE)
 		{
 			if (node->GetModelPath() != "")
+			{
 				jsonNode["ModelPath"] = node->GetModelPath().c_str();
+			}
 		}
 
 		// Mesh And Material
@@ -395,21 +397,37 @@ namespace TS_ENGINE
 			break;
 			}
 		}
-		else if (entityType == EntityType::BONE)
+		else if (entityType == EntityType::MODELROOTNODE)
 		{
 			auto it = jsonNode.find("ModelPath");
 
 			if (it != jsonNode.end())// For Model's RootNode
 			{
+				// Load model
 				Ref<Node> modelRootNode = Factory::GetInstance()->InstantiateModel(jsonNode["ModelPath"], parentNode);				
+				
+				// Apply saved transform to nodes
 				ApplyAndDeserializeChildrenNode(modelRootNode, jsonNode, editorCamera);
 				
-				for (int i = 0; i < modelRootNode->GetChildCount(); i++)
+				// Deserialization not needed for Model root childern children since it is taken care of while Instantiating Model
+				/*for (int i = 0; i < modelRootNode->GetChildCount(); i++)
 				{
-					//nlohmann::json childJsonNode = jsonNode["Children"][i];
-					//DeserializeModelNode(modelRootNode->GetChildAt(i), modelRootNode, childJsonNode, editorCamera);
-				}				
+					nlohmann::json childJsonNode = jsonNode["Children"][i];
+					DeserializeModelNode(modelRootNode->GetChildAt(i), modelRootNode, childJsonNode, editorCamera);
+				}*/				
 			}
+		}
+		else if (entityType == EntityType::BONE)
+		{
+
+		}
+		else if (entityType == EntityType::BONEGUI)
+		{
+
+		}
+		else if (entityType == EntityType::MESH)
+		{
+			// TODO: Can be extended later to save models in custom encrypted model format
 		}
 		else if (entityType == EntityType::CAMERA)
 		{

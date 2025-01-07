@@ -94,8 +94,8 @@ namespace TS_ENGINE {
 		// Process Nodes
 		mRootNode = ProcessNode(mAssimpScene->mRootNode, nullptr, mAssimpScene);		
 		
-		// Reinitialize transforms for node and it's children
-		mRootNode->ReInitializeTransforms();
+		// Initialize transform for root node and it's children
+		mRootNode->Initialize(mRootNode->mName, EntityType::MODELROOTNODE);
 
 		for (auto& [boneName, bone] : mBones)
 		{
