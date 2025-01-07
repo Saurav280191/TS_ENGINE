@@ -82,6 +82,8 @@ namespace TS_ENGINE
 
 		void CloneMeshes(std::vector<Ref<Mesh>> meshes);
 
+		void PrintTransform();
+
 #ifdef TS_ENGINE_EDITOR
 		const bool IsVisibleInEditor() const { return mIsVisibleInEditor; }
 		void HideInEditor();					

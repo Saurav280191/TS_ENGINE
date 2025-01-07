@@ -319,6 +319,7 @@ namespace TS_ENGINE
 	/// <param name="entityType"></param>
 	void Node::Initialize(const std::string& name, const EntityType& entityType)
 	{
+		mName = name;
 		mNodeRef->mEntity = EntityManager::GetInstance()->Register(name, entityType);
 		ComputeTransformMatrices();
 
@@ -421,6 +422,14 @@ namespace TS_ENGINE
 			mNodeRef->AddMesh(clonedMesh);
 		}
 
+	}
+
+	void Node::PrintTransform()
+	{
+		TS_CORE_INFO("{0}'s LocalPosition = {1}, {2}, {3}, LocalEulerAngles = {4}, {5}, {6}, LocalScale = {7}, {8}, {9}", mName.c_str(),
+			mTransform->mLocalPosition.x, mTransform->mLocalPosition.y, mTransform->mLocalPosition.z,
+			mTransform->GetLocalEulerAngles().x, mTransform->GetLocalEulerAngles().y, mTransform->GetLocalEulerAngles().z, 
+			mTransform->mLocalScale.x, mTransform->mLocalScale.y, mTransform->mLocalScale.z);
 	}
 
 #ifdef TS_ENGINE_EDITOR
