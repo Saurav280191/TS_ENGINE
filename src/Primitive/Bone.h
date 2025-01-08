@@ -30,12 +30,15 @@ namespace TS_ENGINE {
 
 		void SetParams(std::string& _name, int _id, std::vector<VertexWeight>& _vertexWeights, const Matrix4& _offsetMatrix);
 		void SetNode(Ref<Node> _node);
+		Ref<Node> GetNode() { return mNode;  }
 
 		void InitializeBones();
 
 		void UpdateBoneGuiTransforms();
 
 		void Render(Ref<Shader> _shader);
+
+		bool PickNode(int _entityId);
 	private:
 		std::string mName;							// Name
 		int mId;									// Id

@@ -37,7 +37,9 @@ namespace TS_ENGINE
 		Ref<Node> InstantiateLine(const std::string& name, Ref<Node> parentNode, const std::vector<Vector3>& points);
 		Ref<Node> InstantiateQuad(const std::string& name, Ref<Node> parentNode);
 		Ref<Node> InstantiateCube(const std::string& name, Ref<Node> parentNode);
+		Ref<Node> InstantiateBone(const std::string& name, Ref<Node> parentNode);
 		Ref<Node> InstantiateSphere(const std::string& name, Ref<Node> parentNode);
+		Ref<Node> InstantiateSphere(const std::string& _name, float _radius, Ref<Node> _parentNode);
 		Ref<Node> InstantiateCylinder(const std::string& name, Ref<Node> parentNode);
 		Ref<Node> InstantiateCone(const std::string& name, Ref<Node> parentNode);
 		Ref<Node> InstantiateModel(const std::string& modelPath, Ref<Node> parentNode);

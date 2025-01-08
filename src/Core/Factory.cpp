@@ -119,6 +119,64 @@ namespace TS_ENGINE
 		return cubeNode;
 	}
 
+	Ref<Node> Factory::InstantiateBone(const std::string& name, Ref<Node> parentNode)
+	{
+		Ref<Node> boneNode = CreateRef<Node>();
+		boneNode->SetNodeRef(boneNode);
+		Ref<Mesh> mesh = CreateRef<Mesh>();
+		
+		mesh->AddVertex(Vertex(Vector3(-0.5f, 0.0f, 0.0f)));// Left Tip
+
+		mesh->AddVertex(Vertex(Vector3(0.3f,-0.5f,-0.5f)));	// Bottom-left
+		mesh->AddVertex(Vertex(Vector3(0.3f,-0.5f, 0.5f)));	// Bottom-right
+		mesh->AddVertex(Vertex(Vector3(0.3f, 0.5f, 0.5f)));	// Top-right
+		mesh->AddVertex(Vertex(Vector3(0.3f, 0.5f,-0.5f)));	// Top-left
+
+		mesh->AddVertex(Vertex(Vector3(0.5f, 0.0f, 0.0f)));	// Right Tip
+		
+		// Left pyramid
+		mesh->AddIndex(0);
+		mesh->AddIndex(1);
+		mesh->AddIndex(2);
+
+		mesh->AddIndex(0);
+		mesh->AddIndex(2);
+		mesh->AddIndex(3);
+
+		mesh->AddIndex(0);
+		mesh->AddIndex(3);
+		mesh->AddIndex(4);
+
+		mesh->AddIndex(0);
+		mesh->AddIndex(4);
+		mesh->AddIndex(1);
+
+		// Right pyramid
+		mesh->AddIndex(5); 
+		mesh->AddIndex(1); 
+		mesh->AddIndex(2);
+
+		mesh->AddIndex(5); 
+		mesh->AddIndex(2); 
+		mesh->AddIndex(3);
+
+		mesh->AddIndex(5); 
+		mesh->AddIndex(3); 
+		mesh->AddIndex(4);
+
+		mesh->AddIndex(5); 
+		mesh->AddIndex(4); 
+		mesh->AddIndex(1);
+
+		mesh->Create(DrawMode::TRIANGLE);
+
+		mesh->SetName(name);
+		boneNode->AddMesh(mesh);
+		boneNode->SetParent(parentNode);
+		boneNode->Initialize(name, EntityType::PRIMITIVE);
+		return boneNode;
+	}
+
 	Ref<Node> Factory::InstantiateSphere(const std::string& name, Ref<Node> parentNode)
 	{
 		Ref<Node> sphereNode = CreateRef<Node>();
@@ -128,6 +186,18 @@ namespace TS_ENGINE
 		sphereNode->AddMesh(mesh);
 		sphereNode->SetParent(parentNode);
 		sphereNode->Initialize(name, EntityType::PRIMITIVE);
+		return sphereNode;
+	}
+
+	Ref<Node> Factory::InstantiateSphere(const std::string& _name, float _radius, Ref<Node> _parentNode)
+	{
+		Ref<Node> sphereNode = CreateRef<Node>();
+		sphereNode->SetNodeRef(sphereNode);
+		Ref<Mesh> mesh = CreateRef<Sphere>(_radius)->GetMesh();
+		mesh->SetName(_name);
+		sphereNode->AddMesh(mesh);
+		sphereNode->SetParent(_parentNode);
+		sphereNode->Initialize(_name, EntityType::PRIMITIVE);
 		return sphereNode;
 	}
 

@@ -26,6 +26,7 @@ namespace TS_ENGINE {
 
 		// Create sphere Gui to show joint
 		mJointGuiNode = Factory::GetInstance()->InstantiateSphere(mName + "-SphereGui", nullptr);
+
 		// Set mesh color to Orange
 		mJointGuiNode->GetMesh()->GetMaterial()->SetAmbientColor(Vector4(1.0f, 0.647f, 0.0f, 1.0f));
 	}
@@ -41,9 +42,9 @@ namespace TS_ENGINE {
 		for (auto& child : mNode->GetChildren())
 		{
 			// Create bone Gui
-			Ref<Node> boneGuiNode = Factory::GetInstance()->InstantiateCube(mName + "-BoneGui", nullptr);
+			Ref<Node> boneGuiNode = Factory::GetInstance()->InstantiateBone(mName + "-BoneGui", nullptr);
 			// Set mesh color to Orange
-			boneGuiNode->GetMesh()->GetMaterial()->SetAmbientColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+			boneGuiNode->GetMesh()->GetMaterial()->SetAmbientColor(Vector4(1.0f, 0.647f, 0.0f, 1.0f));
 			
 			//TS_CORE_INFO("Created bone between {0} and {1}", mNode->mName, child->mName);
 
@@ -101,5 +102,25 @@ namespace TS_ENGINE {
 		{
 			RenderCommand::EnableWireframe(true);
 		}
+	}
+
+	bool Bone::PickNode(int _entityId)
+	{
+		// If JointGuiNode's entity Id matches
+		if(mJointGuiNode->GetEntity()->GetEntityID() == _entityId)
+		{
+			return true;
+		}
+
+		// If boneGuiNode's entity Id matches
+		for (auto& boneGuiNode : mBoneGuiNodes)
+		{
+			if (boneGuiNode->GetEntity()->GetEntityID() == _entityId)
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
