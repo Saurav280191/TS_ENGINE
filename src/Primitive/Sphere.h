@@ -8,6 +8,7 @@ namespace TS_ENGINE {
 	{
 	public:
 		Sphere();
+		Sphere(float _radius);
 		~Sphere();
 
 		Ref<Mesh> GetMesh();

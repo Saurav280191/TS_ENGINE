@@ -8,6 +8,12 @@ namespace TS_ENGINE {
 		CreateMesh();
 	}
 
+	Sphere::Sphere(float _radius)
+	{
+		mRadius = _radius;
+		CreateMesh();
+	}
+
 	Sphere::~Sphere()
 	{
 
