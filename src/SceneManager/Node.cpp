@@ -424,6 +424,24 @@ namespace TS_ENGINE
 
 	}
 
+	void Node::PrintLocalPosition()
+	{
+		TS_CORE_INFO("{0}'s LocalPosition = {1}, {2}, {3}", mName.c_str(),
+			mTransform->mLocalPosition.x, mTransform->mLocalPosition.y, mTransform->mLocalPosition.z);
+	}
+
+	void Node::PrintLocalEulerAngles()
+	{
+		TS_CORE_INFO("{0}'s LocalEulerAngles = {1}, {2}, {3}", mName.c_str(),
+			mTransform->GetLocalEulerAngles().x, mTransform->GetLocalEulerAngles().y, mTransform->GetLocalEulerAngles().z);
+	}
+
+	void Node::PrintLocalScale()
+	{
+		TS_CORE_INFO("{0}'s LocalScale = {1}, {2}, {3}", mName.c_str(),
+			mTransform->mLocalScale.x, mTransform->mLocalScale.y, mTransform->mLocalScale.z);
+	}
+
 	void Node::PrintTransform()
 	{
 		TS_CORE_INFO("{0}'s LocalPosition = {1}, {2}, {3}, LocalEulerAngles = {4}, {5}, {6}, LocalScale = {7}, {8}, {9}", mName.c_str(),

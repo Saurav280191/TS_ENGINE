@@ -82,6 +82,10 @@ namespace TS_ENGINE
 
 		void CloneMeshes(std::vector<Ref<Mesh>> meshes);
 
+		void PrintLocalPosition();
+		void PrintLocalEulerAngles();
+		void PrintLocalScale();
+
 		void PrintTransform();
 
 #ifdef TS_ENGINE_EDITOR

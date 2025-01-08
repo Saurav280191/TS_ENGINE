@@ -47,6 +47,16 @@ namespace TS_ENGINE
 			return q;
 		}
 
+		const static Vector3 ToEulerAngles(glm::quat& _quaternion)
+		{
+			return glm::degrees(glm::eulerAngles(_quaternion));
+		}
+
+		const static Quaternion FromEulerAngles(Vector3& _eulerAngles)
+		{
+			return glm::quat(glm::radians(_eulerAngles));
+		}
+
 		static bool DecomposeTransform(const glm::mat4& transform, glm::vec3& translation, glm::vec3& rotation, glm::vec3& scale)
 		{
 			// From glm::decompose in matrix_decompose.inl
