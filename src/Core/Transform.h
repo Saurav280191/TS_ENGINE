@@ -49,8 +49,9 @@ namespace TS_ENGINE
 		void SetLocalScale(float x, float y, float z);
 		void SetLocalScale(const float* newScale);
 
+		// Returns Quaternion
 		const Quaternion FromEulerAngles(glm::vec3 eulerAngles) const;
-
+		// Returns EulerAngles in Degrees
 		const Vector3 ToEulerAngles(glm::quat quaternion) const;
 
 		// Sets local transform

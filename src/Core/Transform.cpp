@@ -82,7 +82,7 @@ namespace TS_ENGINE
 	{
 		// Update local transformation matrix
 		const Matrix4 translationMatrix = glm::translate(Matrix4(1.0f), mLocalPosition);
-		const Matrix4 rotationMatrix = glm::toMat4(mLocalRotation);
+		const Matrix4 rotationMatrix = glm::toMat4(mLocalRotation);// Quaternion to Matrix4x4						
 		const Matrix4 scaleMatrix = glm::scale(Matrix4(1.0f), mLocalScale);
 
 		mLocalTransformationMatrix = translationMatrix * rotationMatrix * scaleMatrix;
@@ -92,7 +92,8 @@ namespace TS_ENGINE
 		{
 			if (parentNode)
 			{
-				mWorldTransformationMatrix = parentNode->GetTransform()->mWorldTransformationMatrix * mLocalTransformationMatrix;
+				// WorldTransform          = parentNode's WorldTransform						* LocalTrasform
+				mWorldTransformationMatrix = parentNode->mTransform->mWorldTransformationMatrix * mLocalTransformationMatrix;
 
 				Vector3 skew;
 				Vector4 perspective;
