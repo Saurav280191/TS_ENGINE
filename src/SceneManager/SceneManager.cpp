@@ -100,7 +100,7 @@ namespace TS_ENGINE
 		sceneCamera->CreateFramebuffer(1920, 1080);																					// Create Framebuffer For Sandbox
 		sceneCamera->Initialize();
 		sceneCameraNode->GetTransform()->SetLocalPosition(7.156f, 2.951f, 8.770f);
-		sceneCameraNode->GetTransform()->SetLocalRotation(-13.235f, 38.064f, 0.0f);
+		sceneCameraNode->GetTransform()->SetLocalEulerAngles(-13.235f, 38.064f, 0.0f);
 		sceneCameraNode->ComputeTransformMatrices();
 
 		// Add scene camera to scene
