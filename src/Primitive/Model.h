@@ -23,9 +23,7 @@ namespace TS_ENGINE {
 		
 		void RenderBones(Ref<Shader> _shader);
 
-		// Gets added while processing meshes
-		std::unordered_map<std::string, Ref<Bone>> mBones;						// Bones
-		Ref<Line> GetBoneLines() { return mBoneLines; }
+		const std::unordered_map<std::string, Ref<Bone>>& GetBoneMap() { return mBones; };
 	private:
 		Ref<Texture2D> ProcessTexture(aiMaterial* _assimpMaterial,
 			aiTextureType _textureType, uint32_t _numMaps);						// Process Texture
@@ -42,15 +40,15 @@ namespace TS_ENGINE {
 		uint32_t mRendererID;
 		AssimpMaterial mAssimpMaterial;		
 		std::string mModelDirectory;
-		
-		// Contains the point to render bone GUI
-		Ref<Line> mBoneLines;
 
 		Ref<Node> mRootNode;													// Root Node
 		
 		std::unordered_map<std::string, Ref<Material>> mProcessedMaterials = {};// Processed Materials
 		std::unordered_map<std::string, Ref<Mesh>> mProcessedMeshes = {};		// Processed Meshes
 		std::vector<Ref<Node>> mProcessedNodes = {};							// Processed Nodes
+		
+		// Gets added while processing meshes
+		std::unordered_map<std::string, Ref<Bone>> mBones;						// Bones
 	};
 }
 

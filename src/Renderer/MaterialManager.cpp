@@ -22,23 +22,31 @@ namespace TS_ENGINE {
 		// Shaders
 		std::string shaderDir = Application::s_ResourcesDir.string() + "\\Shaders\\";
 		mUnlitShader = Shader::Create("UnlitShader", shaderDir + "Unlit.vert", shaderDir + "Unlit.frag");
+		mSkinnedMeshUnlitShader = Shader::Create("SkinnedMeshUnlitShader", shaderDir + "SkinnedMeshUnlit.vert", shaderDir + "Unlit.frag");
 		mLitShader = Shader::Create("LitShader", shaderDir + "Lit.vert", shaderDir + "Lit.frag");
 		//mHdrLitShader = Shader::Create("HDRLighting", shaderDir + "HDRLighting.vert", shaderDir + "HDRLighting.frag");
 		//mBatchLitShader = Shader::Create("BatchLit", shaderDir + "BatchLit.vert", shaderDir + "BatchLit.frag");
 
 		// Materials
 		mUnlitMat = CreateRef<Material>("UnlitMaterial", mUnlitShader);// Create default material
+		mSkinnedMeshUnlitMat = CreateRef<Material>("UnlitMaterial", mSkinnedMeshUnlitShader);// Create default material
 		mLitMat = CreateRef<Material>("LitMaterial", mLitShader); 
 		//mHdrLitMat = CreateRef<Material>("UnlitMaterial", mUnlitShader);
 		//mBatchLitMat = CreateRef<Material>("BatchMaterial", mBatchLitShader);
 
 		mAllMaterials.push_back(mUnlitMat);
+		mAllMaterials.push_back(mSkinnedMeshUnlitMat);
 		mAllMaterials.push_back(mLitMat);
 	}
 
 	Ref<Material> MaterialManager::GetUnlitMaterial()
 	{
 		return mUnlitMat;
+	}
+
+	Ref<Material> MaterialManager::GetSkinnedMeshUnlitMaterial()
+	{
+		return mSkinnedMeshUnlitMat;
 	}
 
 	Ref<Material> MaterialManager::GetLitMaterial()

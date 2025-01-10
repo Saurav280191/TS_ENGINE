@@ -396,8 +396,15 @@ namespace TS_ENGINE {
 
 		// Get Unlit Material And Pass To Material
 		Ref<Material> unlitMaterial = MaterialManager::GetInstance()->GetUnlitMaterial();
-		Ref<Material> material = CreateRef<Material>(unlitMaterial);
+		Ref<Material> skinnedMeshUnlitMaterial = MaterialManager::GetInstance()->GetSkinnedMeshUnlitMaterial();
 		
+		Ref<Material> material = nullptr;
+		
+		if(mBones.size() > 0)
+			material = CreateRef<Material>(skinnedMeshUnlitMaterial);
+		else
+			material = CreateRef<Material>(unlitMaterial);
+
 		material->SetName(materialName);			// Name
 		material->SetAmbientColor(ambientColor);	// Ambient Color
 		material->SetDiffuseColor(diffuseColor);	// Diffuse Color

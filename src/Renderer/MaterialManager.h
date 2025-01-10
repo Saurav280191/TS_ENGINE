@@ -14,6 +14,7 @@ namespace TS_ENGINE {
 		void LoadAllShadersAndCreateMaterials();
 
 		Ref<Material> GetUnlitMaterial();
+		Ref<Material> GetSkinnedMeshUnlitMaterial();
 		Ref<Material> GetLitMaterial();
 		
 		const char* mMaterialNameList[2] = {
@@ -27,11 +28,13 @@ namespace TS_ENGINE {
 		static Ref<MaterialManager> mInstance;		
 		
 		Ref<Shader> mUnlitShader;
+		Ref<Shader> mSkinnedMeshUnlitShader;
 		Ref<Shader> mLitShader;
 		Ref<Shader> mHdrLitShader;
 		Ref<Shader> mBatchLitShader;
 
 		Ref<Material> mUnlitMat;
+		Ref<Material> mSkinnedMeshUnlitMat;
 		Ref<Material> mLitMat;
 		Ref<Material> mHdrLitMat;
 		Ref<Material> mBatchLitMat;
