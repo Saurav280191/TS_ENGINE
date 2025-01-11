@@ -26,22 +26,48 @@ namespace TS_ENGINE {
 		float shininess = 0.0f;
 	};
 
+#define MAX_BONE_INFLUENCE 4
+
 	struct Vertex
 	{
-		Vector4 position = Vector4(0, 0, 0, 0);
-		Vector2 texCoord = Vector2(0, 0);
-		Vector3 normal = Vector3(0, 0, -1);
-		glm::ivec4 BoneIDs = glm::ivec4(0);	 // Default to 0 (no influence)
-		glm::vec4 Weights = glm::vec4(0.0f); // Default to 0.0 (no weight)
+		Vector4 position = Vector4(0, 0, 0, 0);		// Position
+		Vector2 texCoord = Vector2(0, 0);			// UV
+		Vector3 normal = Vector3(0, 0, -1);			// Normal
+
+		// Bone indices that will influence vertex
+		int mBoneIds[MAX_BONE_INFLUENCE];			// Bone Ids
+		// Weights from each bone
+		float mWeights[MAX_BONE_INFLUENCE];			// Bone Weights
+
+		//Vector3 tangent;							// Tangent
+		//Vector3 biTangent;						// Bi-Tangent
 
 		Vertex()
 		{
+			mBoneIds[0] = -1;
+			mBoneIds[1] = -1;
+			mBoneIds[2] = -1;
+			mBoneIds[3] = -1;
 
+			mWeights[0] = 0.0f;
+			mWeights[1] = 0.0f;
+			mWeights[2] = 0.0f;
+			mWeights[3] = 0.0f;
 		}
 
 		Vertex(Vector3 _position)
 		{
 			position = Vector4(_position, 1);
+
+			mBoneIds[0] = -1;
+			mBoneIds[1] = -1;
+			mBoneIds[2] = -1;
+			mBoneIds[3] = -1;
+
+			mWeights[0] = 0.0f;
+			mWeights[1] = 0.0f;
+			mWeights[2] = 0.0f;
+			mWeights[3] = 0.0f;
 		}
 
 		Vertex(Vector3 _position, Vector2 _texCoord, Vector3 _normal)
@@ -49,24 +75,44 @@ namespace TS_ENGINE {
 			position = Vector4(_position, 1);
 			texCoord = _texCoord;
 			normal = _normal;
+
+			mBoneIds[0] = -1;
+			mBoneIds[1] = -1;
+			mBoneIds[2] = -1;
+			mBoneIds[3] = -1;
+
+			mWeights[0] = 0.0f;
+			mWeights[1] = 0.0f;
+			mWeights[2] = 0.0f;
+			mWeights[3] = 0.0f;
 		}
 
 		Vertex(Vector3 _position, Vector2 _texCoord, Vector3 _normal, const Matrix4& transformationMatrix)
 		{
-			Vector4 tranformedVertexPos = transformationMatrix * Vector4(_position.x, _position.y, _position.z, 1);
-			position = Vector4(tranformedVertexPos.x, tranformedVertexPos.y, tranformedVertexPos.z, tranformedVertexPos.w);
+			Vector4 transformedVertexPos = transformationMatrix * Vector4(_position.x, _position.y, _position.z, 1);
+			position = Vector4(transformedVertexPos.x, transformedVertexPos.y, transformedVertexPos.z, transformedVertexPos.w);
 			texCoord = _texCoord;
 			normal = _normal;
+
+			mBoneIds[0] = -1;
+			mBoneIds[1] = -1;
+			mBoneIds[2] = -1;
+			mBoneIds[3] = -1;
+
+			mWeights[0] = 0.0f;
+			mWeights[1] = 0.0f;
+			mWeights[2] = 0.0f;
+			mWeights[3] = 0.0f;
 		}
 
 		void AddBoneData(aiVertexWeight _weight)
 		{
-			for (int i = 0; i < 4; i++)
+			for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
 			{
-				if (Weights[i] == 0.0f) // Find an empty slot
+				if (mWeights[i] == 0.0f) // Find an empty slot
 				{
-					BoneIDs[i] = _weight.mVertexId;
-					Weights[i] = _weight.mWeight;
+					mBoneIds[i] = _weight.mVertexId;
+					mWeights[i] = _weight.mWeight;
 					return;
 				}
 			}
@@ -74,12 +120,12 @@ namespace TS_ENGINE {
 
 		void AddBoneData(int boneID, float weight)
 		{
-			for (int i = 0; i < 4; i++) 
+			for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
 			{
-				if (Weights[i] == 0.0f) // Find an empty slot
+				if (mWeights[i] == 0.0f) // Find an empty slot
 				{ 
-					BoneIDs[i] = boneID;
-					Weights[i] = weight;
+					mBoneIds[i] = boneID;
+					mWeights[i] = weight;
 					return;
 				}
 			}
@@ -121,9 +167,9 @@ namespace TS_ENGINE {
 		void Create(DrawMode drawMode = DrawMode::TRIANGLE);
 
 #ifdef TS_ENGINE_EDITOR
-		void Render(int entityID);
+		void Render(int entityID, bool _enableTextures);
 #else
-		void Render();
+		void Render(bool _enableTextures);
 #endif
 
 		void Destroy();

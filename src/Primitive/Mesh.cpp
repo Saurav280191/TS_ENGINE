@@ -77,7 +77,7 @@ namespace TS_ENGINE {
 			{ ShaderDataType::FLOAT4, "a_Position"},	// Position
 			{ ShaderDataType::FLOAT2, "a_TexCoord"},	// UV
 			{ ShaderDataType::FLOAT3, "a_Normal"},		// Normal
-			{ ShaderDataType::INT4,   "a_BoneIDs" },	// Bone IDs
+			{ ShaderDataType::INT4,   "a_BoneIds" },	// Bone IDs
 			{ ShaderDataType::FLOAT4, "a_Weights" }		// Bone weights
 			});
 
