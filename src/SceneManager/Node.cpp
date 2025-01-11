@@ -347,9 +347,9 @@ namespace TS_ENGINE
 			for (auto& mesh : mMeshes)
 			{
 #ifdef TS_ENGINE_EDITOR
-				mesh->Render(mEntity->GetEntityID());
+				mesh->Render(mEntity->GetEntityID(), Application::GetInstance().IsTextureModeEnabled());
 #else
-				mesh->Render();
+				mesh->Render(Application::GetInstance().IsTextureModeEnabled());
 #endif
 			}
 
@@ -358,6 +358,36 @@ namespace TS_ENGINE
 			{
 				child->Update(shader, deltaTime);
 			}
+		}
+	}
+
+	Ref<Node> Node::FindNodeByName(std::string _name)
+	{
+		Ref<Node> foundNode = nullptr;
+
+		if (_name == mName)
+		{
+			foundNode = mNodeRef;
+		}
+		else
+		{
+			for (auto& childNode : mChildren)
+			{
+				foundNode = childNode->FindNodeByName(_name);
+
+				if (foundNode)
+					break;
+			}
+		}
+
+		if (!foundNode)
+		{
+			//TS_CORE_ERROR("Could not find node with name: {0}", _name);
+			return nullptr;
+		}
+		else
+		{
+			return foundNode;
 		}
 	}
 
