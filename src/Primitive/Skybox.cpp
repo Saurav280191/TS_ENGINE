@@ -42,6 +42,9 @@ namespace TS_ENGINE {
 
 	void Skybox::Render()
 	{	
+		// Make sure skybox is never rendered in wireframe
+		RenderCommand::EnableWireframe(false);
+
 		// Set shader properties for skybox
 		Ref<Shader> shader = mMesh->GetMaterial()->GetShader();
 
@@ -50,14 +53,20 @@ namespace TS_ENGINE {
 		shader->SetInt("u_EntityID", mEntity->GetEntityID());					// Entity ID
 #endif
 		// Send Skybox's modelMatrix to vertex shader 
-		shader->SetMat4("u_Model", mTransform->GetWorldTransformationMatrix());// Model Matrix
+		shader->SetMat4("u_Model", mTransform->GetWorldTransformationMatrix());	// Model Matrix
 
 		// Render Skybox's mesh 
 #ifdef  TS_ENGINE_EDITOR
-		mMesh->Render(mEntity->GetEntityID());
+		mMesh->Render(mEntity->GetEntityID(), true);
 #else
-		mMesh->Render();
+		mMesh->Render(true);
 #endif
+
+		// If wireframe mode is enabled, re-enable it for other meshes
+		if (Application::GetInstance().IsWireframeModeEnabled())
+		{
+			RenderCommand::EnableWireframe(true);
+		}
 	}
 
 #ifdef TS_ENGINE_EDITOR

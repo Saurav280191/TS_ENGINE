@@ -113,9 +113,9 @@ namespace TS_ENGINE {
 	}
 
 #ifdef  TS_ENGINE_EDITOR
-	void Material::Render(int entityID)
+	void Material::Render(int _entityID, bool _enableTextures)
 #else
-	void Material::Render()
+	void Material::Render(bool _enableTextures)
 #endif
 	{																// *** Set Render Commands ***
 
@@ -125,7 +125,7 @@ namespace TS_ENGINE {
 		if (mShader)												// *** Set Shader Properties ***
 		{
 #ifdef  TS_ENGINE_EDITOR											
-			mShader->SetInt("u_EntityID", entityID);						// Entity ID
+			mShader->SetInt("u_EntityID", _entityID);						// Entity ID
 #endif
 
 			mShader->SetVec4("u_AmbientColor", mAmbientColor);				// Ambient Color
@@ -136,8 +136,7 @@ namespace TS_ENGINE {
 			{
 				diffuseMap->Bind();											// Bind Diffuse Map
 
-				mShader->SetBool("u_HasDiffuseTexture",						// HasDiffuseTexture
-					TS_ENGINE::Application::GetInstance().IsTextureModeEnabled());
+				mShader->SetBool("u_HasDiffuseTexture", _enableTextures);	// HasDiffuseTexture
 
 				mShader->SetVec2("u_DiffuseMapOffset", mDiffuseMapOffset);	// DiffuseMapOffset
 				mShader->SetVec2("u_DiffuseMapTiling", mDiffuseMapTiling);	// DiffuseMapTiling

@@ -77,14 +77,15 @@ namespace TS_ENGINE {
 
 	void Bone::Render(Ref<Shader> _shader)
 	{
+		// Make sure bone is never rendered in wireframe
 		RenderCommand::EnableWireframe(false);
 
 		// Render mJointGuiNode 
 		_shader->SetMat4("u_Model", mJointGuiNode->mTransform->GetWorldTransformationMatrix());
 #ifdef TS_ENGINE_EDITOR
-		mJointGuiNode->GetMesh()->Render(mJointGuiNode->GetEntity()->GetEntityID());
+		mJointGuiNode->GetMesh()->Render(mJointGuiNode->GetEntity()->GetEntityID(), false);
 #else
-		mJointGuiNode->GetMesh()->Render();
+		mJointGuiNode->GetMesh()->Render(false);
 #endif
 
 		// Render all boneGuiNodes 
@@ -92,12 +93,13 @@ namespace TS_ENGINE {
 		{
 			_shader->SetMat4("u_Model", boneGuiNode->mTransform->GetWorldTransformationMatrix());
 #ifdef TS_ENGINE_EDITOR		
-			boneGuiNode->GetMesh()->Render(boneGuiNode->GetEntity()->GetEntityID());
+			boneGuiNode->GetMesh()->Render(boneGuiNode->GetEntity()->GetEntityID(), false);
 #else		
-			boneGuiNode->GetMesh()->Render();
+			boneGuiNode->GetMesh()->Render(false);
 #endif
 		}
 
+		// If wireframe mode is enabled, re-enable it for other meshes
 		if (Application::GetInstance().IsWireframeModeEnabled())
 		{
 			RenderCommand::EnableWireframe(true);

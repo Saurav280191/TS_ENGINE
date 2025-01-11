@@ -93,16 +93,16 @@ namespace TS_ENGINE {
 	}
 
 #ifdef TS_ENGINE_EDITOR
-	void Mesh::Render(int entityID)
+	void Mesh::Render(int entityID, bool _enableTextures)
 #else
-	void Mesh::Render()
+	void Mesh::Render(bool _enableTextures)
 #endif
 	{
 		// Render Material
 #ifdef TS_ENGINE_EDITOR
-		mMaterial->Render(entityID);
+		mMaterial->Render(entityID, _enableTextures);
 #else
-		mMaterial->Render();
+		mMaterial->Render(_enableTextures);
 #endif
 
 		// Render Command To Draw Geometry
