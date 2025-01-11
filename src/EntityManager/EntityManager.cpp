@@ -39,6 +39,20 @@ namespace TS_ENGINE
 		}
 	}
 
+	Ref<Entity> EntityManager::GetEntityByName(std::string _name)
+	{
+		for (auto& entity : mEntities)
+		{
+			if (entity->GetName() == _name)
+			{
+				return entity;
+			}
+		}
+
+		TS_CORE_ERROR("Could not find entity with name: {0}", _name);
+		return nullptr;
+	}
+
 	void EntityManager::Remove(EntityID id)
 	{
 		TS_CORE_INFO("Removed entity with name: {0}, id: {1} from registry", Get(id)->GetName().c_str(), id);
