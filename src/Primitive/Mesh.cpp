@@ -78,7 +78,7 @@ namespace TS_ENGINE {
 			{ ShaderDataType::FLOAT2, "a_TexCoord"},	// UV
 			{ ShaderDataType::FLOAT3, "a_Normal"},		// Normal
 			{ ShaderDataType::INT4,   "a_BoneIds" },	// Bone IDs
-			{ ShaderDataType::FLOAT4, "a_Weights" }		// Bone weights
+			{ ShaderDataType::FLOAT4, "a_Weights" }		// Bone Weights
 			});
 
 		mVertexArray->AddVertexBuffer(vertexBuffer);

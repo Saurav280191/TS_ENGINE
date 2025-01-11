@@ -89,7 +89,19 @@ namespace TS_ENGINE {
 			case ShaderDataType::INT3:
 
 			case ShaderDataType::INT4:
+			{
+				glEnableVertexAttribArray(mVertexBufferIndex);
 
+				glVertexAttribPointer(mVertexBufferIndex,
+					element.GetComponentCount(),
+					ShaderDataTypeToOpenGLBaseType(element.type),
+					element.normalized ? GL_TRUE : GL_FALSE,
+					layout.GetStride(),
+					(const void*)element.offset);
+
+				mVertexBufferIndex++;
+				break;
+			}
 			case ShaderDataType::FLOAT:
 
 			case ShaderDataType::FLOAT2:
