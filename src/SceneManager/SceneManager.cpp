@@ -116,6 +116,11 @@ namespace TS_ENGINE
 		else
 			TS_CORE_ERROR("Invalid model path!");
 
+		// Rotate leftArm for testing bone influence
+		Ref<Node> leftArmNode = scene->GetSceneNode()->FindNodeByName("mixamorig:LeftArm");
+		Vector3 leftArmLocalEulerAngles = leftArmNode->GetTransform()->GetLocalEulerAngles();
+		leftArmNode->GetTransform()->SetLocalEulerAngles(leftArmLocalEulerAngles.x, leftArmLocalEulerAngles.y , leftArmLocalEulerAngles.z + 45.0f);
+
 		modelNode->GetTransform()->SetLocalScale(0.01f, 0.01f, 0.01f);
 		modelNode->ComputeTransformMatrices();
 #endif
