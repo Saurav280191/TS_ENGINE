@@ -1,4 +1,5 @@
 #include "Bone.h"
+#include "Bone.h"
 #include "Renderer/MaterialManager.h"
 #include "Core/Factory.h"
 #include "Renderer/RenderCommand.h"
@@ -7,7 +8,6 @@ namespace TS_ENGINE {
 	
 	Bone::Bone() :
 		mId(0),
-		mVertexWeights({}),
 		mOffsetMatrix(Matrix4(1)),
 		mNode(nullptr),
 		mJointGuiNode(nullptr),
@@ -16,51 +16,60 @@ namespace TS_ENGINE {
 
 	}
 
-	void Bone::SetParams(std::string& _name, int _id, std::vector<VertexWeight>& _vertexWeights, const Matrix4& _offsetMatrix)
+	void Bone::SetParams(int _id, const Matrix4& _offsetMatrix)
 	{
-		mName = _name;
-
-		mId = _id;
-		mVertexWeights = _vertexWeights;
+		mId = _id;		
 		mOffsetMatrix = _offsetMatrix;
-
-		// Create sphere Gui to show joint
-		mJointGuiNode = Factory::GetInstance()->InstantiateSphere(mName + "-SphereGui", nullptr);
-
-		// Set mesh color to Orange
-		mJointGuiNode->GetMesh()->GetMaterial()->SetAmbientColor(Vector4(1.0f, 0.647f, 0.0f, 1.0f));
 	}
 
 	void Bone::SetNode(Ref<Node> _node)
 	{
 		mNode = _node;
 	}
-	
-	void Bone::InitializeBones()
+
+	Ref<Node> Bone::GetNode()
 	{
+		return mNode; 
+	}
+
+	int Bone::GetId()
+	{
+		return mId;
+	}
+	
+	void Bone::Initialize(const std::string& _name)
+	{
+		// Create sphere Gui to show joint
+		mJointGuiNode = Factory::GetInstance()->InstantiateSphere(_name + "-SphereGui", nullptr);
+
+		// Set mesh color to Orange
+		mJointGuiNode->GetMesh()->GetMaterial()->SetAmbientColor(Vector4(1.0f, 0.647f, 0.0f, 1.0f));
+
 		// Create bone between node and it's children
 		for (auto& child : mNode->GetChildren())
 		{
 			// Create bone Gui
-			Ref<Node> boneGuiNode = Factory::GetInstance()->InstantiateBone(mName + "-BoneGui", nullptr);
+			Ref<Node> boneGuiNode = Factory::GetInstance()->InstantiateBone(_name + "-BoneGui", nullptr);
 			// Set mesh color to Orange
 			boneGuiNode->GetMesh()->GetMaterial()->SetAmbientColor(Vector4(1.0f, 0.647f, 0.0f, 1.0f));
 			
-			//TS_CORE_INFO("Created bone between {0} and {1}", mNode->mName, child->mName);
-
 			mBoneGuiNodes.push_back(boneGuiNode);
 		}
 	}
 
-	void Bone::UpdateBoneGuiTransforms()
+	void Bone::Update(Ref<Shader> _shader)
 	{
-		mJointGuiNode->mTransform->SetWorldTransformationMatrix(mNode->GetTransform()->GetWorldTransformationMatrix());
+		mBoneTransformMatrix = mNode->GetTransform()->GetWorldTransformationMatrix() * mOffsetMatrix;
+		_shader->SetMat4(std::string("finalBonesMatrices[" + std::to_string(mId) + "]").c_str(), mBoneTransformMatrix);
+	}
 
+	void Bone::UpdateBoneGui(Ref<Node> _rootNode)
+	{
+		Matrix4 jointWorldTransform = _rootNode->GetTransform()->GetWorldTransformationMatrix() * mNode->GetTransform()->GetWorldTransformationMatrix();
+		mJointGuiNode->mTransform->SetWorldTransformationMatrix(jointWorldTransform);
+		
 		for (int i = 0; i < mNode->GetChildCount(); i++)
 		{
-			mNode->GetTransform()->DecomposeGlobalTransform();
-			mNode->GetChildAt(i)->GetTransform()->DecomposeGlobalTransform();
-
 			Vector3 point1 = mNode->GetTransform()->GetPosition();
 			Vector3 point2 = mNode->GetChildAt(i)->GetTransform()->GetPosition();
 			glm::vec3 direction = glm::normalize(point1 - point2);
@@ -69,9 +78,10 @@ namespace TS_ENGINE {
 
 			mBoneGuiNodes[i]->GetTransform()->SetLocalPosition((point1 + point2) * 0.5f);
 			mBoneGuiNodes[i]->GetTransform()->SetLocalRotation(rotation);
-			mBoneGuiNodes[i]->GetTransform()->SetLocalScale(glm::vec3(boneLength, 0.01f, 0.01f));
+			mBoneGuiNodes[i]->GetTransform()->SetLocalScale(glm::vec3(boneLength, 0.1f, 0.1f));
 
 			mBoneGuiNodes[i]->GetTransform()->ComputeTransformationMatrix(nullptr);
+			mBoneGuiNodes[i]->GetTransform()->SetWorldTransformationMatrix(_rootNode->GetTransform()->GetWorldTransformationMatrix() * mBoneGuiNodes[i]->GetTransform()->GetWorldTransformationMatrix());
 		}
 	}
 

@@ -4,7 +4,6 @@
 
 namespace TS_ENGINE {
 
-	class Bone;
 	class Model;
 
 	class ModelLoader

@@ -28,27 +28,27 @@ namespace TS_ENGINE {
 	public:		
 		Bone();
 
-		void SetParams(std::string& _name, int _id, std::vector<VertexWeight>& _vertexWeights, const Matrix4& _offsetMatrix);
+		void SetParams(int _id, const Matrix4& _offsetMatrix);
 		void SetNode(Ref<Node> _node);
-		Ref<Node> GetNode() { return mNode;  }
+		Ref<Node> GetNode();
+		int GetId();
 
-		void InitializeBones();
-
-		void UpdateBoneGuiTransforms();
-
+		void Initialize(const std::string& _name);
+		void Update(Ref<Shader> _shader);
 		void Render(Ref<Shader> _shader);
+
+		void UpdateBoneGui(Ref<Node> _rootNode);
 
 		bool PickNode(int _entityId);
 	private:
-		std::string mName;							// Name
-		int mId;									// Id
-		std::vector<VertexWeight> mVertexWeights;	// VertexWeights
-		Matrix4 mOffsetMatrix;						// OffsetMatrix
+		int mId;									// ID is index in finalBoneMatrices
+		Matrix4 mOffsetMatrix;						// OffsetMatrix transforms vertex from model space to bone space
+		Ref<Node> mNode;							// Node that will be effected by the bone			
 		
-		// This node will be affect by the bone
-		Ref<Node> mNode;							// Node					
-		
+		Matrix4 mBoneTransformMatrix;				// BoneTransformMatrix
+
 		Ref<Node> mJointGuiNode;					// Gui to show joint
 		std::vector<Ref<Node>> mBoneGuiNodes;		// Gui to show bone
+		
 	};
 }
