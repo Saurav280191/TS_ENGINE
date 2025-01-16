@@ -147,14 +147,18 @@ namespace TS_ENGINE
 		TS_CORE_ASSERT(mSceneNode);				// Make Sure Scene Node Is Set
 
 		camera->Update(shader, deltaTime);		// Camera's View And Projection Matrix Updates 
+		
 		mSceneNode->Update(shader, deltaTime);	// Updates Shader Parameters And Renders Scene Hierarchy
+		
+		shader->SetInt("selectedBoneId",		// Pass selected bone to shader
+			mSelectedBoneId);
 		
 		// Update & Render bones
 		for (auto& [modelName, pair] : Factory::GetInstance()->mLoadedModelNodeMap)
 		{
 			Ref<Model> model = pair.second;
-			model->UpdateBoneTransforms();	// Bone Gui Update
-			model->RenderBones(shader);		// Bone Gui Render
+			model->UpdateBone(shader);// Bone Gui Update
+			model->RenderBones(shader);			// Bone Gui Render
 		}
 	}
 

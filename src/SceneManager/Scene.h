@@ -113,6 +113,8 @@ namespace TS_ENGINE {
 		void ShowSceneCameraGUI(Ref<Shader> shader, float deltaTime);
 		Ref<EditorCamera> GetEditorCamera() { return mEditorCamera; }
 #endif
+		int mSelectedBoneId;
+
 	private:
 		// Editor camera
 #ifdef TS_ENGINE_EDITOR
@@ -125,6 +127,7 @@ namespace TS_ENGINE {
 		// Root node
 		Ref<Node> mSceneNode;
 		
+
 		// Skybox
 		Ref<TS_ENGINE::Skybox> mSkybox;
 		//ButtonHandler mBatchButtonHandler;
