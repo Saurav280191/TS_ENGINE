@@ -109,10 +109,13 @@ namespace TS_ENGINE
 		// Instantiate test model for Sandbox
 		Ref<Node> modelNode = nullptr;
 
-		if (TS_ENGINE::Utility::FileExists("..//..//..//Assets//Models//Y Bot.fbx"))
-			modelNode = Factory::GetInstance()->InstantiateModel("..//..//..//Assets//Models//Y Bot.fbx", scene->GetSceneNode());	// Instantiate Model
-		else if (TS_ENGINE::Utility::FileExists("Assets//Models//Y Bot.fbx"))
-			modelNode = Factory::GetInstance()->InstantiateModel("Assets//Models//Y Bot.fbx", scene->GetSceneNode());				// Instantiate Model
+		std::string modelName = "Ely By K.Atienza.fbx";
+		//std::string modelName = "Y Bot.fbx";
+
+		if (TS_ENGINE::Utility::FileExists("..//..//..//Assets//Models//" + modelName))
+			modelNode = Factory::GetInstance()->InstantiateModel("..//..//..//Assets//Models//" + modelName, scene->GetSceneNode());// Instantiate Model
+		else if (TS_ENGINE::Utility::FileExists("Assets//Models//" + modelName))
+			modelNode = Factory::GetInstance()->InstantiateModel("Assets//Models//" + modelName, scene->GetSceneNode());			// Instantiate Model
 		else
 			TS_CORE_ERROR("Invalid model path!");
 
@@ -121,8 +124,26 @@ namespace TS_ENGINE
 		Vector3 leftArmLocalEulerAngles = leftArmNode->GetTransform()->GetLocalEulerAngles();
 		leftArmNode->GetTransform()->SetLocalEulerAngles(leftArmLocalEulerAngles.x, leftArmLocalEulerAngles.y , leftArmLocalEulerAngles.z + 45.0f);
 
-		modelNode->GetTransform()->SetLocalScale(0.01f, 0.01f, 0.01f);
+		Ref<Node> rightArmNode = scene->GetSceneNode()->FindNodeByName("mixamorig:RightArm");
+		Vector3 rightArmLocalEulerAngles = rightArmNode->GetTransform()->GetLocalEulerAngles();
+		rightArmNode->GetTransform()->SetLocalEulerAngles(rightArmLocalEulerAngles.x, rightArmLocalEulerAngles.y, rightArmLocalEulerAngles.z - 45.0f);
+		
+		Ref<Node> spineNode = scene->GetSceneNode()->FindNodeByName("mixamorig:Spine");
+		Vector3 spineLocalEulerAngles = spineNode->GetTransform()->GetLocalEulerAngles();
+		spineNode->GetTransform()->SetLocalEulerAngles(spineLocalEulerAngles.x, spineLocalEulerAngles.y + 45.0f, spineLocalEulerAngles.z);
+
+		modelNode->GetTransform()->SetLocalScale(0.1f, 0.1f, 0.1f);
 		modelNode->ComputeTransformMatrices();
+		
+		Ref<Model> model = nullptr;
+
+		if (TS_ENGINE::Utility::FileExists("..//..//..//Assets//Models//" + modelName))
+			model = Factory::GetInstance()->mLoadedModelNodeMap["..//..//..//Assets//Models//" + modelName].second;
+		else if (TS_ENGINE::Utility::FileExists("Assets//Models//" + modelName))
+			model = Factory::GetInstance()->mLoadedModelNodeMap["Assets//Models//" + modelName].second;
+
+		Ref<Bone> bone = model->FindBoneByName("mixamorig:LeftArm");
+		scene->mSelectedBoneId = bone->GetId();
 #endif
 
 		// Default Ground
