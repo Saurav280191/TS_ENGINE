@@ -5,8 +5,6 @@
 #include "Renderer/MaterialManager.h"
 #include "Core/Factory.h"
 
-//#define AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS
-
 namespace TS_ENGINE {
 
 	Model::Model()
@@ -34,22 +32,6 @@ namespace TS_ENGINE {
 		mProcessedMaterials = model->mProcessedMaterials;
 		mProcessedMeshes = model->mProcessedMeshes;
 		mProcessedNodes = model->mProcessedNodes;
-	}
-
-	void Model::UpdateBoneTransforms()
-	{
-		for (auto& bone : mBones)
-		{
-			bone.second->UpdateBoneGuiTransforms();
-		}
-	}
-
-	void Model::RenderBones(Ref<Shader> _shader)
-	{
-		for (auto& bone : mBones)
-		{
-			bone.second->Render(_shader);
-		}
 	}
 
 	Model::~Model()
@@ -92,15 +74,14 @@ namespace TS_ENGINE {
 		}
 
 		// Process Nodes
-		mRootNode = ProcessNode(mAssimpScene->mRootNode, nullptr, mAssimpScene);		
-		
+		mRootNode = ProcessNode(mAssimpScene->mRootNode, nullptr, mAssimpScene);
+
+		SetNodesForBones();
+
 		// Initialize transform for root node and it's children
 		mRootNode->Initialize(mRootNode->mName, EntityType::MODELROOTNODE);
 
-		for (auto& [boneName, bone] : mBones)
-		{
-			bone->InitializeBones();
-		}
+		InitializeBones();
 
 		// TODO: Process animations
 		if (mAssimpScene->HasAnimations())
@@ -132,37 +113,37 @@ namespace TS_ENGINE {
 	}*/
 
 	Ref<Node> Model::ProcessNode(aiNode* aiNode, Ref<Node> _parentNode, const aiScene* scene)
-	{	
+	{
 		Ref<Node> node = CreateRef<Node>();
 		node->SetNodeRef(node);							// NodeRef		
 		std::string nodeName = aiNode->mName.C_Str();
 		node->mName = nodeName;							// Name
-		
-		aiVector3D position;		
+
+		aiVector3D position;
 		aiQuaternion rotation;
 		aiVector3D scale;
 		aiNode->mTransformation.Decompose(scale, rotation, position);
-		
+
 		node->SetPosition(position);					// Position
 		node->SetRotation(rotation);					// Rotation
 		node->SetScale(scale);							// Scale
-				
+
 		if (_parentNode)
 		{
 			_parentNode->AddChild(node);				// ParentNode
 		}
-		
+
 		// Process Bones Or Meshes
 		if (aiNode->mNumMeshes == 0)// *** Process Bone ***
 		{
-			if (mBones.find(nodeName) == mBones.end())
-			{
-				TS_CORE_ERROR("Unable to find bone named: {0}", nodeName);
-			}
-			else
-			{	
-				mBones[nodeName]->SetNode(node);		// Bones
-			}
+			//if (mBones.find(nodeName) == mBones.end())
+			//{
+			//	TS_CORE_ERROR("Unable to find bone named: {0}", nodeName);
+			//}
+			//else
+			//{	
+			//	mBones[nodeName]->SetNode(node);		// Bones
+			//}
 
 			node->Initialize(aiNode->mName.C_Str(), EntityType::BONE);	// Register Entity As Bone
 		}
@@ -186,57 +167,53 @@ namespace TS_ENGINE {
 			Ref<Node> childNode = ProcessNode(aiNode->mChildren[i], node, scene);
 		}
 
-		mProcessedNodes.push_back(node);								// Add Processed Node
+		mProcessedNodes.insert({ node->mName, node });					// Add Processed Node
 
 		return node;
 	}
 
 	Ref<Mesh> Model::ProcessMesh(aiMesh* aiMesh, const aiScene* scene)
-	{	
+	{
 		TS_CORE_TRACE("Processing mesh named: {0}", aiMesh->mName.C_Str());
 
 		std::vector<Vertex> vertices;
 		std::vector<GLuint> indices;
 		std::vector<Texture> textures;
-		
+		//std::vector<Ref<CBone>> bones;
+
+		std::string meshName = aiMesh->mName.C_Str();
+
 		// Fetch Vertices From AssimpMesh
 		for (GLuint i = 0; i < aiMesh->mNumVertices; i++)
 		{
 			Vertex vertex;
-			
-			Vector4 vector; 
+			SetVertexBoneDataToDefault(vertex);
 
 			// Position
-			vector.x = aiMesh->mVertices[i].x;
-			vector.y = aiMesh->mVertices[i].y;
-			vector.z = aiMesh->mVertices[i].z;
-			vector.w = 1;
-			vertex.position = vector;
-			
-			// Normal
-			if (aiMesh->HasNormals())
-			{
-				vector.x = aiMesh->mNormals[i].x;
-				vector.y = aiMesh->mNormals[i].y;
-				vector.z = aiMesh->mNormals[i].z;
-				//vertex.normal = vector;
-			}
+			Vector4 position = Vector4(Utility::AssimpVec3ToGlmVec3(aiMesh->mVertices[i]), 1.0f);
 
+			// UV
+			Vector2 uv(0.0f);
 			if (aiMesh->mTextureCoords[0])
 			{
-				glm::vec2 vec;				
-				vec.x = aiMesh->mTextureCoords[0][i].x;
-				vec.y = aiMesh->mTextureCoords[0][i].y;
-				vertex.texCoord = vec;
-			}
-			else
-			{
-				vertex.texCoord = glm::vec2(0.0f, 0.0f);
+				uv.x = aiMesh->mTextureCoords[0][i].x;
+				uv.y = aiMesh->mTextureCoords[0][i].y;
 			}
 
-			vertices.push_back(vertex);
+			// Normal
+			Vector3 normal(0.0f);
+			if (aiMesh->HasNormals())
+			{
+				normal = Utility::AssimpVec3ToGlmVec3(aiMesh->mNormals[i]);
+			}
+
+			vertex.position = position;
+			vertex.texCoord = uv;
+			vertex.normal = normal;
+
+			vertices.push_back(vertex);			// Add to mesh vertices
 		}
-		
+
 		// Fetch Indices From AssimpMesh
 		for (GLuint i = 0; i < aiMesh->mNumFaces; i++)
 		{
@@ -248,51 +225,11 @@ namespace TS_ENGINE {
 			}
 		}
 
-		// Fetch Bone Info From AssimpMesh
-		TS_CORE_INFO("Number of bones in " + std::string(aiMesh->mName.C_Str()) + ": " + std::to_string(aiMesh->mNumBones));
-
-		if (aiMesh->HasBones())
-		{
-			for (unsigned int boneId = 0; boneId < aiMesh->mNumBones; boneId++)
-			{
-				aiBone* assimpBone = aiMesh->mBones[boneId];
-				std::string boneName = assimpBone->mName.C_Str();
-
-				// If bone is not already created and added to map
-				if (mBones.find(boneName) == mBones.end())
-				{
-					Ref<Bone> bone = CreateRef<Bone>();
-
-					// Store the offset matrix
-					Matrix4 offsetMatrix = Matrix4(
-						assimpBone->mOffsetMatrix.a1, assimpBone->mOffsetMatrix.a2, assimpBone->mOffsetMatrix.a3, assimpBone->mOffsetMatrix.a4,
-						assimpBone->mOffsetMatrix.b1, assimpBone->mOffsetMatrix.b2, assimpBone->mOffsetMatrix.b3, assimpBone->mOffsetMatrix.b4,
-						assimpBone->mOffsetMatrix.c1, assimpBone->mOffsetMatrix.c2, assimpBone->mOffsetMatrix.c3, assimpBone->mOffsetMatrix.c4,
-						assimpBone->mOffsetMatrix.d1, assimpBone->mOffsetMatrix.d2, assimpBone->mOffsetMatrix.d3, assimpBone->mOffsetMatrix.d4
-					);
-
-					// Assign weights to vertices				
-					std::vector<VertexWeight> vertexWeights = {};
-
-					for (unsigned int weightIndex = 0; weightIndex < assimpBone->mNumWeights; weightIndex++)
-					{
-						aiVertexWeight weight = assimpBone->mWeights[weightIndex];
-						vertices[weight.mVertexId].AddBoneData(weight);
-						
-						VertexWeight vertexWeight(weight);
-						vertexWeights.push_back(vertexWeight);
-					}
-
-					// Set bone params and store in mBones
-					bone->SetParams(boneName, boneId, vertexWeights, offsetMatrix);
-					mBones[boneName] = bone;
-				}
-			}
-		}
-
+		ExtractBoneWeightForVertices(vertices, aiMesh, scene);
+		
+		// Fetch Material Info From mProcessedMaterials
 		Ref<Material> material = nullptr;
 
-		// Fetch Material Info From AssimpMesh
 		if (aiMesh->mMaterialIndex >= 0)
 		{
 			aiMaterial* aiMat = scene->mMaterials[aiMesh->mMaterialIndex];
@@ -303,23 +240,24 @@ namespace TS_ENGINE {
 		}
 
 		Ref<Mesh> mesh = CreateRef<Mesh>();
-		mesh->SetName(aiMesh->mName.C_Str());	// Name
-		mesh->SetVertices(vertices);			// Vertices
-		mesh->SetIndices(indices);				// Indices		
-		mesh->SetMaterial(material);			// Materials
+		mesh->SetName(meshName);		// Name
+		mesh->SetVertices(vertices);	// Vertices
+		mesh->SetIndices(indices);		// Indices		
+		//mesh->SetBones(bones);			// Bones
+		mesh->SetMaterial(material);	// Materials
 
 		// Create mesh
-		mesh->Create();						
+		mesh->Create();
 
 		return mesh;
 	}
-	
+
 	Ref<Texture2D> Model::ProcessTexture(aiMaterial* _assimpMaterial, aiTextureType _textureType, uint32_t _numMaps)
 	{
 		for (uint32_t i = 0; i < _numMaps; i++)
 		{
 			aiString texturePath;
-			
+
 			if (_assimpMaterial->GetTexture(_textureType, i, &texturePath) == aiReturn_SUCCESS)
 			{
 				Ref<Texture2D> texture = nullptr;
@@ -368,11 +306,11 @@ namespace TS_ENGINE {
 		//TS_CORE_INFO("Material {0} has {1} diffuse textures", this->material.name.C_Str(), diffTexCount);
 
 		//TODO: Add support for other type of textures;
-		/*uint32_t ambientTexCount = material->GetTextureCount(aiTextureType_AMBIENT);		
+		/*uint32_t ambientTexCount = material->GetTextureCount(aiTextureType_AMBIENT);
 		uint32_t heightMapTexCount = material->GetTextureCount(aiTextureType_HEIGHT);
 		uint32_t opacityTexCount = material->GetTextureCount(aiTextureType_OPACITY);
 		uint32_t displacementTexCount= material->GetTextureCount(aiTextureType_DISPLACEMENT);
-		uint32_t shininessTexCount = material->GetTextureCount(aiTextureType_SHININESS);		
+		uint32_t shininessTexCount = material->GetTextureCount(aiTextureType_SHININESS);
 		uint32_t lightMapTexCount = material->GetTextureCount(aiTextureType_LIGHTMAP);
 		uint32_t reflectionTexCount = material->GetTextureCount(aiTextureType_REFLECTION);*/
 
@@ -397,13 +335,13 @@ namespace TS_ENGINE {
 		// Get Unlit Material And Pass To Material
 		Ref<Material> unlitMaterial = MaterialManager::GetInstance()->GetUnlitMaterial();
 		Ref<Material> skinnedMeshUnlitMaterial = MaterialManager::GetInstance()->GetSkinnedMeshUnlitMaterial();
-		
+
 		Ref<Material> material = nullptr;
-		
-		if(mBones.size() > 0)
+
+		/*if(mBones.size() > 0)
 			material = CreateRef<Material>(skinnedMeshUnlitMaterial);
-		else
-			material = CreateRef<Material>(unlitMaterial);
+		else*/
+		material = CreateRef<Material>(unlitMaterial);
 
 		material->SetName(materialName);			// Name
 		material->SetAmbientColor(ambientColor);	// Ambient Color
@@ -420,7 +358,106 @@ namespace TS_ENGINE {
 		//	material->SetMetallicMap(metallicMap);	// Metallic Map
 		//else if(emmisiveMap)
 		//	material->SetEmmisiveMap(emmisiveMap);	// Emmisive Map
-		
+
 		return material;
+	}
+	
+	Ref<Bone> Model::FindBoneByName(std::string _name)
+	{
+		TS_CORE_ASSERT(mBoneInfoMap[_name]);
+		return mBoneInfoMap[_name];
+	}
+
+	void Model::ExtractBoneWeightForVertices(std::vector<Vertex>& _vertices, aiMesh* _aiMesh, const aiScene* _aiScene)
+	{
+		for (int boneIndex = 0; boneIndex < (int)_aiMesh->mNumBones; ++boneIndex)
+		{
+			int boneID = -1;
+
+			std::string boneName = _aiMesh->mBones[boneIndex]->mName.C_Str();
+
+			if (mBoneInfoMap.find(boneName) == mBoneInfoMap.end())
+			{
+				Ref<Bone> bone = CreateRef<Bone>();
+				bone->SetParams(mBoneCounter, Utility::AssimpMatToGlmMat4(_aiMesh->mBones[boneIndex]->mOffsetMatrix));
+				mBoneInfoMap[boneName] = bone;
+				boneID = mBoneCounter;
+				mBoneCounter++;
+			}
+			else
+			{
+				boneID = mBoneInfoMap[boneName]->GetId();
+			}
+
+			TS_CORE_ASSERT(boneID != -1);
+
+			auto weights = _aiMesh->mBones[boneIndex]->mWeights;
+			int numWeights = _aiMesh->mBones[boneIndex]->mNumWeights;
+
+			for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
+			{
+				int vertexId = weights[weightIndex].mVertexId;
+				float weight = weights[weightIndex].mWeight;
+
+				TS_CORE_ASSERT(vertexId <= _vertices.size());
+
+				SetVertexBoneData(_vertices[vertexId], boneID, weight);
+			}
+		}
+	}
+
+	void Model::SetVertexBoneDataToDefault(Vertex& _vertex)
+	{
+		for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
+		{
+			_vertex.mBoneIds[i] = -1;
+			_vertex.mWeights[i] = 0.0f;
+		}
+	}
+
+	void Model::SetVertexBoneData(Vertex& _vertex, int _boneID, float _weight)
+	{
+		for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
+		{
+			if (_vertex.mBoneIds[i] < 0)
+			{
+				_vertex.mWeights[i] = _weight;
+				_vertex.mBoneIds[i] = _boneID;
+				break;
+			}
+		}
+	}
+
+	void Model::SetNodesForBones()
+	{
+		for (auto& [name, bone] : mBoneInfoMap)
+		{
+			bone->SetNode(mProcessedNodes[name]);
+		}
+	}
+
+	void Model::InitializeBones()
+	{
+		for (auto& [name, bone] : mBoneInfoMap)
+		{
+			bone->Initialize(name);
+		}
+	}
+
+	void Model::UpdateBone(Ref<Shader> _shader)
+	{
+		for (auto& [name, bone] : mBoneInfoMap)
+		{
+			bone->Update(_shader);
+			bone->UpdateBoneGui(mRootNode);
+		}
+	}
+
+	void Model::RenderBones(Ref<Shader> _shader)
+	{
+		for (auto& [name, bone] : mBoneInfoMap)
+		{
+			bone->Render(_shader);
+		}
 	}
 }
