@@ -157,7 +157,7 @@ namespace TS_ENGINE
 		for (auto& [modelName, pair] : Factory::GetInstance()->mLoadedModelNodeMap)
 		{
 			Ref<Model> model = pair.second;
-			model->UpdateBone(shader);// Bone Gui Update
+			model->UpdateBone(shader);			// Bone Gui Update
 			model->RenderBones(shader);			// Bone Gui Render
 		}
 	}

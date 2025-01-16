@@ -127,7 +127,6 @@ namespace TS_ENGINE {
 		// Root node
 		Ref<Node> mSceneNode;
 		
-
 		// Skybox
 		Ref<TS_ENGINE::Skybox> mSkybox;
 		//ButtonHandler mBatchButtonHandler;
