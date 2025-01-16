@@ -65,6 +65,7 @@ namespace TS_ENGINE {
 		vertexBuffer->Bind();
 
 		const auto& layout = vertexBuffer->GetLayout();
+		
 		for (const auto& element : layout)
 		{
 			switch (element.type)
@@ -92,13 +93,16 @@ namespace TS_ENGINE {
 			{
 				glEnableVertexAttribArray(mVertexBufferIndex);
 
-				glVertexAttribPointer(mVertexBufferIndex,
-					element.GetComponentCount(),
-					ShaderDataTypeToOpenGLBaseType(element.type),
-					element.normalized ? GL_TRUE : GL_FALSE,
-					layout.GetStride(),
-					(const void*)element.offset);
+				//glVertexAttribIPointer(mVertexBufferIndex, 4, GL_INT, layout.GetStride(), (const void*)element.offset);
 
+				glVertexAttribIPointer(
+					mVertexBufferIndex,                             // Attribute index
+					element.GetComponentCount(),					// Number of components (1 to 4 for INT types)
+					ShaderDataTypeToOpenGLBaseType(element.type),	// Integer data type (GL_INT)
+					layout.GetStride(),								// Stride
+					(const void*)element.offset						// Offset in the buffer
+				);
+				
 				mVertexBufferIndex++;
 				break;
 			}
@@ -139,7 +143,7 @@ namespace TS_ENGINE {
 						layout.GetStride(),
 						(const void*)(element.offset + sizeof(float) * count * i));
 
-					glVertexAttribDivisor(mVertexBufferIndex, 1);
+					//glVertexAttribDivisor(mVertexBufferIndex, 1);
 					mVertexBufferIndex++;
 				}
 				break;
