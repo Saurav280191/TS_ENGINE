@@ -48,6 +48,8 @@ namespace TS_ENGINE
 		//Ref<Light> CreateLight(Light::Type lightType);
 		void Flush();
 
+		int GetBoneIdByName(std::string& _name);
+
 		//std::vector<Ref<Node>> mBoneSphereNodes = {};
 		std::unordered_map<std::string, std::pair<Ref<Node>, Ref<Model>>> mLoadedModelNodeMap;//Model path and Model Node map
 	private:

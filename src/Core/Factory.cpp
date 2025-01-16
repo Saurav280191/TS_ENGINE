@@ -290,6 +290,22 @@ namespace TS_ENGINE
 		mLoadedModelNodeMap.clear();
 	}
 
+	int Factory::GetBoneIdByName(std::string& _name)
+	{
+		for (auto& loadeModelNodePair : mLoadedModelNodeMap)
+		{
+			Ref<Model> model = loadeModelNodePair.second.second;
+			Ref<Bone> foundBone = model->FindBoneByName(_name);
+		
+			if (foundBone)
+				return foundBone->GetId();
+			else
+				return -1;
+		}
+
+		return -1;// -1 is the no bone selected default value
+	}
+
 	//Ref<Light> Factory::CreateLight(Light::Type type)
 	//{
 	//	switch (type)
