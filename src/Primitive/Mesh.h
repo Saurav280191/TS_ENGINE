@@ -1,7 +1,7 @@
 #pragma once
-#include <Renderer/VertexArray.h>
-#include <Renderer/Buffer.h>
-#include <Renderer/Material.h>
+#include "Renderer/VertexArray.h"
+#include "Renderer/Buffer.h"
+#include "Renderer/Material.h"
 
 namespace TS_ENGINE {
 
@@ -32,42 +32,24 @@ namespace TS_ENGINE {
 	{
 		Vector4 position = Vector4(0, 0, 0, 0);		// Position
 		Vector2 texCoord = Vector2(0, 0);			// UV
-		Vector3 normal = Vector3(0, 0, -1);			// Normal
+		Vector3 normal = Vector3(0, 0, 0);			// Normal
 
 		// Bone indices that will influence vertex
-		int mBoneIds[MAX_BONE_INFLUENCE];			// Bone Ids
+		int mBoneIds[MAX_BONE_INFLUENCE] = { -1, -1, -1, -1 };			// Bone Ids
 		// Weights from each bone
-		float mWeights[MAX_BONE_INFLUENCE];			// Bone Weights
+		float mWeights[MAX_BONE_INFLUENCE] = {0.0f, 0.0f, 0.0f, 0.0f };	// Bone Weights
 
 		//Vector3 tangent;							// Tangent
 		//Vector3 biTangent;						// Bi-Tangent
 
 		Vertex()
 		{
-			mBoneIds[0] = -1;
-			mBoneIds[1] = -1;
-			mBoneIds[2] = -1;
-			mBoneIds[3] = -1;
 
-			mWeights[0] = 0.0f;
-			mWeights[1] = 0.0f;
-			mWeights[2] = 0.0f;
-			mWeights[3] = 0.0f;
 		}
 
 		Vertex(Vector3 _position)
 		{
 			position = Vector4(_position, 1);
-
-			mBoneIds[0] = -1;
-			mBoneIds[1] = -1;
-			mBoneIds[2] = -1;
-			mBoneIds[3] = -1;
-
-			mWeights[0] = 0.0f;
-			mWeights[1] = 0.0f;
-			mWeights[2] = 0.0f;
-			mWeights[3] = 0.0f;
 		}
 
 		Vertex(Vector3 _position, Vector2 _texCoord, Vector3 _normal)
@@ -75,16 +57,6 @@ namespace TS_ENGINE {
 			position = Vector4(_position, 1);
 			texCoord = _texCoord;
 			normal = _normal;
-
-			mBoneIds[0] = -1;
-			mBoneIds[1] = -1;
-			mBoneIds[2] = -1;
-			mBoneIds[3] = -1;
-
-			mWeights[0] = 0.0f;
-			mWeights[1] = 0.0f;
-			mWeights[2] = 0.0f;
-			mWeights[3] = 0.0f;
 		}
 
 		Vertex(Vector3 _position, Vector2 _texCoord, Vector3 _normal, const Matrix4& transformationMatrix)
@@ -93,42 +65,6 @@ namespace TS_ENGINE {
 			position = Vector4(transformedVertexPos.x, transformedVertexPos.y, transformedVertexPos.z, transformedVertexPos.w);
 			texCoord = _texCoord;
 			normal = _normal;
-
-			mBoneIds[0] = -1;
-			mBoneIds[1] = -1;
-			mBoneIds[2] = -1;
-			mBoneIds[3] = -1;
-
-			mWeights[0] = 0.0f;
-			mWeights[1] = 0.0f;
-			mWeights[2] = 0.0f;
-			mWeights[3] = 0.0f;
-		}
-
-		void AddBoneData(aiVertexWeight _weight)
-		{
-			for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
-			{
-				if (mWeights[i] == 0.0f) // Find an empty slot
-				{
-					mBoneIds[i] = _weight.mVertexId;
-					mWeights[i] = _weight.mWeight;
-					return;
-				}
-			}
-		}
-
-		void AddBoneData(int boneID, float weight)
-		{
-			for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
-			{
-				if (mWeights[i] == 0.0f) // Find an empty slot
-				{ 
-					mBoneIds[i] = boneID;
-					mWeights[i] = weight;
-					return;
-				}
-			}
 		}
 	};
 
@@ -174,16 +110,15 @@ namespace TS_ENGINE {
 
 		void Destroy();
 
-
 		const std::string GetName() const { return mName; }
-		std::vector<Vertex> GetVertices() { return mVertices; }
+		std::vector<Vertex>& GetVertices() { return mVertices; }
 		std::vector<Vertex> GetWorldSpaceVertices(Vector3 position, Vector3 eulerAngles, Vector3 scale);
-		std::vector<uint32_t> GetIndices() { return mIndices; }
+		std::vector<uint32_t>& GetIndices() { return mIndices; }
 		Ref<Material> GetMaterial() const { return mMaterial; }
 		PrimitiveType GetPrimitiveType() { return mPrimitiveType; }
 
 		Ref<VertexArray> GetVertexArray();
-		uint32_t GetNumIndices();
+		uint32_t GetNumIndices();		
 	private:
 		std::string mName;
 		PrimitiveType mPrimitiveType;
@@ -192,7 +127,7 @@ namespace TS_ENGINE {
 		Ref<VertexArray> mVertexArray;
 		bool mStatsRegistered;
 		DrawMode mDrawMode;
-		Ref<Material> mMaterial;
+		Ref<Material> mMaterial;		
 	};
 }
 

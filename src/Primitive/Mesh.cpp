@@ -50,11 +50,6 @@ namespace TS_ENGINE {
 		mIndices = indices;
 	}
 
-	/*void Mesh::SetBones(std::vector<Bone> bones)
-	{
-		mBones = bones;
-	}*/
-
 	void Mesh::AddVertex(Vertex vertex)
 	{
 		mVertices.push_back(vertex);
@@ -131,7 +126,6 @@ namespace TS_ENGINE {
 		indexBuffer->~IndexBuffer();
 
 		mVertexArray->~VertexArray();
-
 
 		mVertices.clear();
 		mIndices.clear();
