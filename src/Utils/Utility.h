@@ -21,6 +21,28 @@ namespace TS_ENGINE
 {
 	namespace Utility
 	{
+		// Converts Assimp matrix to glm matrix
+		static const Matrix4 AssimpMatToGlmMat4(aiMatrix4x4& _aiMatrix)
+		{
+			glm::mat4 glmMatrix;
+			//the a,b,c,d in assimp is the row ; the 1,2,3,4 is the column
+			glmMatrix[0][0] = _aiMatrix.a1; glmMatrix[1][0] = _aiMatrix.a2; glmMatrix[2][0] = _aiMatrix.a3; glmMatrix[3][0] = _aiMatrix.a4;
+			glmMatrix[0][1] = _aiMatrix.b1; glmMatrix[1][1] = _aiMatrix.b2; glmMatrix[2][1] = _aiMatrix.b3; glmMatrix[3][1] = _aiMatrix.b4;
+			glmMatrix[0][2] = _aiMatrix.c1; glmMatrix[1][2] = _aiMatrix.c2; glmMatrix[2][2] = _aiMatrix.c3; glmMatrix[3][2] = _aiMatrix.c4;
+			glmMatrix[0][3] = _aiMatrix.d1; glmMatrix[1][3] = _aiMatrix.d2; glmMatrix[2][3] = _aiMatrix.d3; glmMatrix[3][3] = _aiMatrix.d4;
+			return glmMatrix;
+		}
+
+		static const Vector2 AssimpVec2ToGlmVec2(aiVector2D _aiVec2)
+		{
+			return Vector2(_aiVec2.x, _aiVec2.y);
+		}
+
+		static const Vector3 AssimpVec3ToGlmVec3(aiVector3D _aiVec3)
+		{
+			return Vector3(_aiVec3.x, _aiVec3.y, _aiVec3.z);
+		}
+
 		static Quaternion EulerToQuaternion(float pitchDegrees, float yawDegrees, float rollDegrees)
 		{
 			float pitchRadians = pitchDegrees * glm::pi<float>() / 180.0f;
