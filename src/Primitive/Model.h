@@ -17,7 +17,8 @@ namespace TS_ENGINE {
 		void LoadModel(const std::string& modelPath);
 		void CopyFrom(Ref<Model> model);
 
-		Ref<Node> GetRootNode() { return mRootNode; }		
+		Ref<Node> GetRootNode() { return mRootNode; }	
+		std::unordered_map<std::string, Ref<Bone>>& GetBoneInfoMap() { return mBoneInfoMap;  };
 	private:
 		Ref<Texture2D> ProcessTexture(aiMaterial* _assimpMaterial, aiTextureType _textureType, uint32_t _numMaps);	// Process Texture		
 		Ref<Material> ProcessMaterial(aiMaterial* _assimpMaterial);													// Process Material		

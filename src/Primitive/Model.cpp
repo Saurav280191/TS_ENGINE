@@ -364,8 +364,15 @@ namespace TS_ENGINE {
 	
 	Ref<Bone> Model::FindBoneByName(std::string _name)
 	{
-		TS_CORE_ASSERT(mBoneInfoMap[_name]);
-		return mBoneInfoMap[_name];
+		if (mBoneInfoMap[_name])
+		{
+			return mBoneInfoMap[_name];
+		}
+		else
+		{
+			TS_CORE_ERROR("Could not find bone named: " + _name);
+			return nullptr;
+		}
 	}
 
 	void Model::ExtractBoneWeightForVertices(std::vector<Vertex>& _vertices, aiMesh* _aiMesh, const aiScene* _aiScene)
@@ -432,7 +439,8 @@ namespace TS_ENGINE {
 	{
 		for (auto& [name, bone] : mBoneInfoMap)
 		{
-			bone->SetNode(mProcessedNodes[name]);
+			if(bone)
+				bone->SetNode(mProcessedNodes[name]);
 		}
 	}
 
@@ -440,7 +448,8 @@ namespace TS_ENGINE {
 	{
 		for (auto& [name, bone] : mBoneInfoMap)
 		{
-			bone->Initialize(name);
+			if(bone)
+				bone->Initialize(name);
 		}
 	}
 
@@ -448,8 +457,11 @@ namespace TS_ENGINE {
 	{
 		for (auto& [name, bone] : mBoneInfoMap)
 		{
-			bone->Update(_shader);
-			bone->UpdateBoneGui(mRootNode);
+			if (bone)
+			{
+				bone->Update(_shader);
+				bone->UpdateBoneGui(mRootNode);
+			}
 		}
 	}
 
@@ -457,7 +469,8 @@ namespace TS_ENGINE {
 	{
 		for (auto& [name, bone] : mBoneInfoMap)
 		{
-			bone->Render(_shader);
+			if (bone)			
+				bone->Render(_shader);			
 		}
 	}
 }
