@@ -76,6 +76,8 @@ namespace TS_ENGINE {
 		// Process Nodes
 		mRootNode = ProcessNode(mAssimpScene->mRootNode, nullptr, mAssimpScene);
 
+		// The bone data has been created in ProcessMesh function.
+		// The node need to be set for each bone.
 		SetNodesForBones();
 
 		// Initialize transform for root node and it's children
@@ -136,15 +138,6 @@ namespace TS_ENGINE {
 		// Process Bones Or Meshes
 		if (aiNode->mNumMeshes == 0)// *** Process Bone ***
 		{
-			//if (mBones.find(nodeName) == mBones.end())
-			//{
-			//	TS_CORE_ERROR("Unable to find bone named: {0}", nodeName);
-			//}
-			//else
-			//{	
-			//	mBones[nodeName]->SetNode(node);		// Bones
-			//}
-
 			node->Initialize(aiNode->mName.C_Str(), EntityType::BONE);	// Register Entity As Bone
 		}
 		else						// *** Process Meshes ***
@@ -415,7 +408,7 @@ namespace TS_ENGINE {
 
 	void Model::SetVertexBoneDataToDefault(Vertex& _vertex)
 	{
-		for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
+		for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
 		{
 			_vertex.mBoneIds[i] = -1;
 			_vertex.mWeights[i] = 0.0f;

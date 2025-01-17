@@ -33,8 +33,9 @@ namespace TS_ENGINE {
 		void SetVertexBoneDataToDefault(Vertex& _vertex);
 		void SetVertexBoneData(Vertex& _vertex, int _boneID, float _weight);
 		
-		void SetNodesForBones();	
-		
+		// Sets nodes for bones
+		void SetNodesForBones();		
+		// Created GUI nodes for bones
 		void InitializeBones();
 	public:
 		void UpdateBone(Ref<Shader> _shader);
@@ -47,13 +48,13 @@ namespace TS_ENGINE {
 		AssimpMaterial mAssimpMaterial;		
 		std::string mModelDirectory;
 
-		Ref<Node> mRootNode;																						// Root Node
+		Ref<Node> mRootNode;														// Root Node
 		
-		std::unordered_map<std::string, Ref<Material>> mProcessedMaterials = {};									// Processed Materials
-		std::unordered_map<std::string, Ref<Mesh>> mProcessedMeshes = {};											// Processed Meshes
-		std::unordered_map<std::string, Ref<Node>> mProcessedNodes = {};											// Processed Nodes
+		std::unordered_map<std::string, Ref<Material>> mProcessedMaterials = {};	// Processed Materials
+		std::unordered_map<std::string, Ref<Mesh>> mProcessedMeshes = {};			// Processed Meshes
+		std::unordered_map<std::string, Ref<Node>> mProcessedNodes = {};			// Processed Nodes
+		std::unordered_map<std::string, Ref<Bone>> mBoneInfoMap;					// Name & Bone Map
 
-		std::unordered_map<std::string, Ref<Bone>> mBoneInfoMap;													// Name & Bone Map
 		int mBoneCounter = 0;
 	};
 }
