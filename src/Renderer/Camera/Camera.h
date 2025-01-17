@@ -97,7 +97,7 @@ namespace TS_ENGINE
 		const Matrix4 GetViewMatrix() const { return mViewMatrix; }
 		const Matrix4 GetProjectionViewMatrix() const;		
 
-		const Ref<Framebuffer> GetFramebuffer() const { return mFramebuffer; }
+		const Ref<Framebuffer>& GetFramebuffer() const { return mFramebuffer; }
 		virtual Ref<Node> GetNode() = 0;
 	protected:
 		bool mIsDistanceIndependent = false;

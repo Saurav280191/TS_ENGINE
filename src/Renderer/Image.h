@@ -9,6 +9,7 @@ namespace TS_ENGINE {
 		int width = 0;
 		int height = 0;
 		
+		// Writes pixels to file path
 		void WritePixelsToFile(const std::string& filePath);
 	};
 }

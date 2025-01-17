@@ -1,6 +1,7 @@
 #include "tspch.h"
 #include "Platform/OpenGL/OpenGLFramebuffer.h"
 #include <glad/glad.h>
+#include <stb_image_write.h>
 
 namespace TS_ENGINE {
 	
@@ -226,6 +227,42 @@ namespace TS_ENGINE {
 
 		Vector4 pixelData = Vector4(pixelColor[0], pixelColor[1], pixelColor[2], pixelColor[3]);
 		return pixelData;
+	}
+
+	std::vector<GLubyte> OpenGLFramebuffer::SaveFramebufferToFile(const std::string& _filepath)
+	{
+		// Ensure the framebuffer is bound
+		glBindFramebuffer(GL_FRAMEBUFFER, mRendererID);
+
+		// Create a buffer to store the pixel data
+		std::vector<GLubyte> pixels(4 * mSpecification.Width * mSpecification.Height); // RGBA format
+
+		// Read pixels from the framebuffer
+		glReadPixels(0, 0, mSpecification.Width, mSpecification.Height, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+
+		// Flip the image vertically since OpenGL's origin is bottom-left and most image formats expect top-left
+		std::vector<GLubyte> flippedPixels(4 * mSpecification.Width * mSpecification.Height);
+		
+		for (uint32_t y = 0; y < mSpecification.Height; y++)
+		{
+			memcpy(&flippedPixels[4 * mSpecification.Width * y],
+				&pixels[4 * mSpecification.Width * (mSpecification.Height - 1 - y)],
+				4 * mSpecification.Width);
+		}
+
+		// Write the image using stb_image_write (saving as PNG)
+		if (!stbi_write_png(_filepath.c_str(), mSpecification.Width, mSpecification.Height, 4, flippedPixels.data(), mSpecification.Width * 4))
+		{
+			TS_CORE_ERROR("Failed to save framebuffer to file: {0}", _filepath);
+		}
+		else
+		{
+			TS_CORE_INFO("Framebuffer saved to: {0}", _filepath);
+		}
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		return pixels;
 	}
 
 	void OpenGLFramebuffer::ClearAttachment(uint32_t attachmentIndex, int value)

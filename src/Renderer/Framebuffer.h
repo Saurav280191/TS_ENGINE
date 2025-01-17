@@ -60,6 +60,8 @@ namespace TS_ENGINE {
 		virtual void Resize(uint32_t width, uint32_t height) = 0;
 		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
 		virtual Vector4 ReadPixelColor(uint32_t attachmentIndex, int x, int y) = 0;
+		
+		virtual std::vector<GLubyte> SaveFramebufferToFile(const std::string& _filepath) = 0;
 
 		virtual void ClearAttachment(uint32_t attachmentIndex, int value) = 0;
 
