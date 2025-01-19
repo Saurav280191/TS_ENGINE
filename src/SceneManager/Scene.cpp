@@ -150,15 +150,22 @@ namespace TS_ENGINE
 		
 		mSceneNode->Update(shader, deltaTime);	// Updates Shader Parameters And Renders Scene Hierarchy
 		
+		// Set selected bone Id
 		shader->SetInt("selectedBoneId",		// Pass selected bone to shader
 			mSelectedBoneId);
 		
+		// Set bone influence view
+		shader->SetInt("boneInfluence",			// Pass bone influence to shader
+			(int)Application::GetInstance().mBoneInfluence);
+
 		// Update & Render bones
 		for (auto& [modelName, pair] : Factory::GetInstance()->mLoadedModelNodeMap)
 		{
 			Ref<Model> model = pair.second;
 			model->UpdateBone(shader);			// Bone Gui Update
-			model->RenderBones(shader);			// Bone Gui Render
+
+			if (Application::GetInstance().mBoneView)
+				model->RenderBones(shader);			// Bone Gui Render
 		}
 	}
 

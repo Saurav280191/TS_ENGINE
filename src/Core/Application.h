@@ -53,6 +53,11 @@ namespace TS_ENGINE
 		static std::filesystem::path s_ResourcesDir;
 		static std::filesystem::path s_SaveSceneDir;
 		static std::filesystem::path s_ThumbnailsDir;
+		
+		bool mWireframeMode = false;
+		bool mTextureModeEnabled = true;
+		bool mBoneView = false;
+		bool mBoneInfluence = false;
 	private:
 		static Application* mInstance;		
 
@@ -70,9 +75,7 @@ namespace TS_ENGINE
 		uint32_t mTotalIndices;
 
 		bool mRunning = true;
-		bool mMinimized = false;
-		bool mWireframeMode = false;
-		bool mTextureModeEnabled = true;		
+		bool mMinimized = false;			
 	};
 
 	//To be defined in client
