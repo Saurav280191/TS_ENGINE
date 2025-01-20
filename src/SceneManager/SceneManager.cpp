@@ -37,12 +37,12 @@ namespace TS_ENGINE
 		delete mInstance;
 	}
 
-	void SceneManager::SetCurrentScene(Ref<Scene> scene)
+	void SceneManager::SetCurrentScene(const Ref<Scene>& scene)
 	{
 		mCurrentScene = scene;
 	}
 
-	Ref<Scene> SceneManager::GetCurrentScene()
+	Ref<Scene>& SceneManager::GetCurrentScene()
 	{
 		return mCurrentScene;
 	}

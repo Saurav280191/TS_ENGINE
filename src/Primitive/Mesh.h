@@ -39,9 +39,6 @@ namespace TS_ENGINE {
 		// Weights from each bone
 		float mWeights[MAX_BONE_INFLUENCE] = {0.0f, 0.0f, 0.0f, 0.0f };	// Bone Weights
 
-		//Vector3 tangent;							// Tangent
-		//Vector3 biTangent;						// Bi-Tangent
-
 		Vertex()
 		{
 
