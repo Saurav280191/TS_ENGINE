@@ -7,7 +7,8 @@ namespace TS_ENGINE {
 
 	Mesh::Mesh() :
 		mStatsRegistered(false),
-		mDrawMode(DrawMode::TRIANGLE)
+		mDrawMode(DrawMode::TRIANGLE),
+		mHasBoneInfluence(false)
 	{
 		mPrimitiveType = PrimitiveType::MODEL;
 		std::string shaderDir = Application::s_ResourcesDir.string() + "\\Shaders\\";
@@ -23,6 +24,7 @@ namespace TS_ENGINE {
 		mStatsRegistered = false;
 		mDrawMode = DrawMode::TRIANGLE;
 		mPrimitiveType = PrimitiveType::MODEL;
+		mHasBoneInfluence = false;
 	}
 
 	void Mesh::SetName(const std::string& name)
@@ -190,5 +192,10 @@ namespace TS_ENGINE {
 	uint32_t Mesh::GetNumIndices()
 	{
 		return (uint32_t)mIndices.size();
+	}
+
+	void Mesh::SetHasBoneInfluence(bool _hasBoneInfluence)
+	{
+		mHasBoneInfluence = _hasBoneInfluence;
 	}
 }

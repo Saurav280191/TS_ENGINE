@@ -59,13 +59,14 @@ namespace TS_ENGINE {
 
 	void Bone::Update(Ref<Shader> _shader)
 	{
+		// Set boneTransform matrix in bone space
 		mBoneTransformMatrix = mNode->GetTransform()->GetWorldTransformationMatrix() * mOffsetMatrix;
 		_shader->SetMat4(std::string("finalBonesMatrices[" + std::to_string(mId) + "]").c_str(), mBoneTransformMatrix);
 	}
 
 	void Bone::UpdateBoneGui(Ref<Node> _rootNode)
 	{
-		Matrix4 jointWorldTransform = _rootNode->GetTransform()->GetWorldTransformationMatrix() * mNode->GetTransform()->GetWorldTransformationMatrix();
+		Matrix4 jointWorldTransform = mNode->GetTransform()->GetWorldTransformationMatrix();
 		mJointGuiNode->mTransform->SetWorldTransformationMatrix(jointWorldTransform);
 		
 		for (int i = 0; i < mNode->GetChildCount(); i++)
@@ -78,10 +79,13 @@ namespace TS_ENGINE {
 
 			mBoneGuiNodes[i]->GetTransform()->SetLocalPosition((point1 + point2) * 0.5f);
 			mBoneGuiNodes[i]->GetTransform()->SetLocalRotation(rotation);
-			mBoneGuiNodes[i]->GetTransform()->SetLocalScale(glm::vec3(boneLength, 0.1f, 0.1f));
+
+			mBoneGuiNodes[i]->GetTransform()->SetLocalScale(glm::vec3(boneLength, 
+				1.5f * glm::length(mNode->GetTransform()->GetScale()), 
+				1.5f * glm::length(mNode->GetTransform()->GetScale())));
 
 			mBoneGuiNodes[i]->GetTransform()->ComputeTransformationMatrix(nullptr);
-			mBoneGuiNodes[i]->GetTransform()->SetWorldTransformationMatrix(_rootNode->GetTransform()->GetWorldTransformationMatrix() * mBoneGuiNodes[i]->GetTransform()->GetWorldTransformationMatrix());
+			mBoneGuiNodes[i]->GetTransform()->SetWorldTransformationMatrix(mBoneGuiNodes[i]->GetTransform()->GetWorldTransformationMatrix());
 		}
 	}
 

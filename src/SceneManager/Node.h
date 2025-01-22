@@ -118,6 +118,8 @@ namespace TS_ENGINE
 		bool m_Enabled = true;//For IMGUI
 #endif
 	
+		void SetHasBoneInfluence(bool _hasBoneInfluence);
+		bool GetBoneInfluence() { return mHasBoneInfluence; }
 	protected:
 		Ref<Entity> mEntity;// Entity		
 		Ref<Node> mNodeRef;// This will be used for referencing everywhere instead of Node*
@@ -133,6 +135,7 @@ namespace TS_ENGINE
 #ifdef TS_ENGINE_EDITOR
 		bool mIsVisibleInEditor = true;
 #endif
+		bool mHasBoneInfluence;
 	};
 }
 

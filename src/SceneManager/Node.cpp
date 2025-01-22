@@ -10,15 +10,16 @@ namespace TS_ENGINE
 {
 	Node::Node()
 	{
-		this->mIsInitialized = false;
-		this->mTransform = CreateRef<Transform>();
-		this->mParentNode = nullptr;
-		this->mMeshes = {};
-		this->mModelPath = "";
+		mIsInitialized = false;
+		mTransform = CreateRef<Transform>();
+		mParentNode = nullptr;
+		mMeshes = {};
+		mModelPath = "";
 #ifdef TS_ENGINE_EDITOR
-		this->mIsVisibleInEditor = true;
+		mIsVisibleInEditor = true;
 #endif
-		this->mSceneCamera = nullptr;
+		mSceneCamera = nullptr;
+		mHasBoneInfluence = false;
 	}
 
 	Node::~Node()
@@ -261,6 +262,11 @@ namespace TS_ENGINE
 		return 0;
 	}
 
+	void Node::SetHasBoneInfluence(bool _hasBoneInfluence)
+	{
+		mHasBoneInfluence = _hasBoneInfluence;
+	}
+
 	void Node::UpdateSiblings()
 	{
 		if (mParentNode)
@@ -304,7 +310,13 @@ namespace TS_ENGINE
 
 	void Node::ComputeTransformMatrices()
 	{
-		mTransform->ComputeTransformationMatrix(mParentNode);
+		if (mEntity)
+		{
+			if(!mHasBoneInfluence)//mEntity->GetEntityType() != EntityType::MESH)
+			{
+				mTransform->ComputeTransformationMatrix(mParentNode);
+			}
+		}
 
 		for (auto& child : mChildren)
 		{

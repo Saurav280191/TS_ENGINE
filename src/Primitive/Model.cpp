@@ -76,6 +76,19 @@ namespace TS_ENGINE {
 		// Process Nodes
 		mRootNode = ProcessNode(mAssimpScene->mRootNode, nullptr, mAssimpScene);
 
+		// Set root node for all the nodes
+		for (auto& nodePair : mProcessedNodes)
+		{
+			for (auto& mesh : nodePair.second->GetMeshes())
+			{
+				if (mesh->HasBoneInfluence())
+				{
+					Ref<Node>& node = nodePair.second;
+					node->SetHasBoneInfluence(true);
+				}
+			}
+		}
+
 		// The bone data has been created in ProcessMesh function.
 		// The node need to be set for each bone.
 		SetNodesForBones();
@@ -236,8 +249,24 @@ namespace TS_ENGINE {
 		mesh->SetName(meshName);		// Name
 		mesh->SetVertices(vertices);	// Vertices
 		mesh->SetIndices(indices);		// Indices		
-		//mesh->SetBones(bones);			// Bones
 		mesh->SetMaterial(material);	// Materials
+
+		for(auto& vertex : mesh->GetVertices())
+		{
+			for(auto& weight : vertex.mWeights)
+			{
+				if (weight != 0.0f)
+				{
+					mesh->SetHasBoneInfluence(true);
+					break;
+				}
+			}
+
+			if (mesh->HasBoneInfluence())
+			{
+				break;
+			}
+		}
 
 		// Create mesh
 		mesh->Create();

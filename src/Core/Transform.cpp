@@ -90,7 +90,7 @@ namespace TS_ENGINE
 		// Update world transformation matrix
 		if (!mLookAtTarget)
 		{
-			if (parentNode)
+			if (parentNode && parentNode->mTransform)
 			{
 				// WorldTransform          = parentNode's WorldTransform						* LocalTrasform
 				mWorldTransformationMatrix = parentNode->mTransform->mWorldTransformationMatrix * mLocalTransformationMatrix;
@@ -110,9 +110,9 @@ namespace TS_ENGINE
 		}
 
 		// Update directions
-		mRight = GetRight();
-		mUp = GetUp();
-		mForward = GetForward();
+		mRight = glm::normalize(GetRight());
+		mUp = glm::normalize(GetUp());
+		mForward = glm::normalize(GetForward());
 	}
 
 	void Transform::SetLocalTransformationMatrix(const Matrix4& transformationMatrix)
@@ -123,9 +123,9 @@ namespace TS_ENGINE
 		Vector4 perspective;
 		glm::decompose(transformationMatrix, mLocalScale, mLocalRotation, mLocalPosition, skew, perspective);
 
-		mRight = GetRight();
-		mUp = GetUp();
-		mForward = GetForward();
+		mRight = glm::normalize(GetRight());
+		mUp = glm::normalize(GetUp());
+		mForward = glm::normalize(GetForward());
 	}
 
 	void Transform::SetWorldTransformationMatrix(const Matrix4& transformationMatrix)

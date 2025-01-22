@@ -116,6 +116,9 @@ namespace TS_ENGINE {
 
 		Ref<VertexArray> GetVertexArray();
 		uint32_t GetNumIndices();		
+		
+		void SetHasBoneInfluence(bool _hasBoneInfluence);
+		bool HasBoneInfluence() { return mHasBoneInfluence; }
 	private:
 		std::string mName;
 		PrimitiveType mPrimitiveType;
@@ -124,7 +127,9 @@ namespace TS_ENGINE {
 		Ref<VertexArray> mVertexArray;
 		bool mStatsRegistered;
 		DrawMode mDrawMode;
-		Ref<Material> mMaterial;		
+		Ref<Material> mMaterial;
+
+		bool mHasBoneInfluence;
 	};
 }
 
