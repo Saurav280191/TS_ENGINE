@@ -219,6 +219,12 @@ src/Utils/Utility.h
 )
 source_group("Utils" FILES ${UtilsSrc})
 
+file (GLOB ComponentsSrc
+src/Components/Animation.h
+src/Components/Animation.cpp
+) 
+source_group("Components" FILES ${ComponentsSrc})
+
 # Setting type of TS_Engine project ie. .lib in this case
 add_library (TS_ENGINE
 ${SOURCE_FILES} 		# Source Files Default Filter
@@ -234,6 +240,7 @@ ${CameraSrc} 			# Renderer/Camera Filter
 ${SceneManagerSrc} 		# SceneManager Filter
 ${EntityManagerSrc} 	# EntityManager Filter
 ${UtilsSrc} 			# Utils Filter
+${ComponentsSrc}		# Components Filter
 )
 
 # Add definations
