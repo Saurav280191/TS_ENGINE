@@ -36,6 +36,7 @@ namespace TS_ENGINE {
 		Animation(aiAnimation* _aiAnimation);
 		~Animation();
 
+		// Fetches node of loaded Model from Factory class by name
 		void InitializeNodesForAnimation();
 		void Update(double _deltaTime);
 		void UpdateBoneTransforms();

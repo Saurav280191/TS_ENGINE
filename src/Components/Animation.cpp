@@ -80,7 +80,7 @@ namespace TS_ENGINE {
 		for (auto& [nodeName, keyTransform] : mNodeNameAndKeyTransformsMap)
 		{
 			// Search Nodes in Factory to fetch respective node with same nodeName 
-			if (const auto& node = Factory::GetInstance()->GetNodeByName(nodeName))
+			if (const auto& node = Factory::GetInstance()->FindNodeByName(nodeName))
 			{
 				mNodeAndKeyTransformsMap.insert({ node, keyTransform });
 			}
@@ -106,9 +106,13 @@ namespace TS_ENGINE {
     {
         for (auto& [node, keyTransforms] : mNodeAndKeyTransformsMap)
         {
+            // Set node's LocalPosition
             keyTransforms.mKeyPositions.size() > mCurrentTime ? node->GetTransform()->SetLocalPosition(keyTransforms.mKeyPositions[mCurrentTime].position) : (void)0;
+            // Set node's LocalRotation
             keyTransforms.mKeyRotations.size() > mCurrentTime ? node->GetTransform()->SetLocalRotation(keyTransforms.mKeyRotations[mCurrentTime].rotation) : (void)0;
+            // Set node's LocalScale
             keyTransforms.mKeyScales.size() > mCurrentTime ? node->GetTransform()->SetLocalScale(keyTransforms.mKeyScales[mCurrentTime].scale) : (void)0;            
+            // Computer node's transform
             node->ComputeTransformMatrices();
         }
     }

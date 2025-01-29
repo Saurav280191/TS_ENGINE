@@ -4,6 +4,7 @@
 #include "Mesh.h"
 #include "SceneManager/Node.h"
 #include "Bone.h"
+#include "Components/Animation.h"
 
 namespace TS_ENGINE {
 
@@ -27,7 +28,10 @@ namespace TS_ENGINE {
 		
 #pragma region Bone related functions
 	public:
-		Ref<Bone> FindBoneByName(std::string _name);
+		// Used to find node by name in Factory's FindNodeByName function  
+		const Ref<Node>& FindNodeByName(const std::string& _name);
+		// Used to find bone id in Factory's GetBoneIdByName function  
+		const Ref<Bone>& FindBoneByName(const std::string& _name);
 	private:
 		void ExtractBoneWeightForVertices(std::vector<Vertex>& _vertices, aiMesh* _aiMesh, const aiScene* _aiScene);
 		void SetVertexBoneDataToDefault(Vertex& _vertex);

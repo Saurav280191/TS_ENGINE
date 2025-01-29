@@ -384,17 +384,23 @@ namespace TS_ENGINE {
 		return material;
 	}
 	
-	Ref<Bone> Model::FindBoneByName(std::string _name)
+	const Ref<Node>& Model::FindNodeByName(const std::string& _name)
 	{
-		if (mBoneInfoMap[_name])
+		if (mProcessedNodes[_name])
 		{
-			return mBoneInfoMap[_name];
+			return mProcessedNodes[_name];
 		}
 		else
 		{
-			TS_CORE_ERROR("Could not find bone named: " + _name);
+			TS_CORE_ERROR("Could not find node named: " + _name);
 			return nullptr;
 		}
+	}
+
+	const Ref<Bone>& Model::FindBoneByName(const std::string& _name)
+	{
+		TS_CORE_ASSERT(mBoneInfoMap[_name]);
+		return mBoneInfoMap[_name];
 	}
 
 	void Model::ExtractBoneWeightForVertices(std::vector<Vertex>& _vertices, aiMesh* _aiMesh, const aiScene* _aiScene)
