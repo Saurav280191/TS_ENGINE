@@ -73,6 +73,15 @@ namespace TS_ENGINE
 		//ModelLoader::GetInstance()->Flush();
 	}
 
+	void Scene::Update(double _deltaTime)
+	{
+		for (auto& [name, rootNodeAndModelPair] : Factory::GetInstance()->mLoadedModelNodeMap)
+		{
+			auto& [rootNode, model] = rootNodeAndModelPair;
+			rootNode->GetCurrentAnimation()->Update(_deltaTime);
+		}
+	}
+
 	/*void Scene::OnBatched()
 	{
 		mSceneNode->RemoveAllChildren();
@@ -209,6 +218,10 @@ namespace TS_ENGINE
 
 		if(mSceneCameras.size() > 0)
 			mSceneCameras[mCurrentSceneCameraIndex]->ShowFrustrumGUI(shader, deltaTime);
+	}
+	void Scene::AddAnimation(Ref<Animation> _animation)
+	{
+		mAnimations.insert({ _animation->GetName(), _animation });
 	}
 #endif
 }

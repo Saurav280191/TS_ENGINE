@@ -6,6 +6,7 @@
 #include <Renderer/Camera/EditorCamera.h>
 #include <Renderer/Camera/SceneCamera.h>
 #include "Primitive/Skybox.h"
+#include "Components/Animation.h"
 
 #include <imgui.h>
 //#define IMGUI_DEFINE_MATH_OPERATORS // Already set in preprocessors
@@ -86,6 +87,8 @@ namespace TS_ENGINE {
 		//void OnBatched();
 		//void OnUnBatched();
 
+		void Update(double _deltaTime);
+
 		// 1. Binds camera's framebuffer
 		// 2. Clears color
 		// 3. Clear entity ID attachment to -1
@@ -115,6 +118,8 @@ namespace TS_ENGINE {
 #endif
 		int mSelectedBoneId;
 
+		void AddAnimation(Ref<Animation> _animation);
+
 	private:
 		// Editor camera
 #ifdef TS_ENGINE_EDITOR
@@ -126,7 +131,9 @@ namespace TS_ENGINE {
 
 		// Root node
 		Ref<Node> mSceneNode;
-		
+
+		std::unordered_map<std::string, Ref<Animation>> mAnimations = {};
+
 		// Skybox
 		Ref<TS_ENGINE::Skybox> mSkybox;
 		//ButtonHandler mBatchButtonHandler;

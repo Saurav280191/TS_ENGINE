@@ -267,6 +267,21 @@ namespace TS_ENGINE
 		mHasBoneInfluence = _hasBoneInfluence;
 	}
 
+	void Node::AddAnimation(Ref<Animation>& _animation)
+	{
+		mAnimations.insert({ _animation->GetName(), _animation });
+	}
+
+	void Node::SetAnimations(std::unordered_map<std::string, Ref<Animation>>& _animations)
+	{
+		mAnimations = _animations;
+	}
+
+	void Node::SetCurrentAnimation(std::string _name)
+	{
+		mCurrentAnimation = mAnimations[_name];
+	}
+
 	void Node::UpdateSiblings()
 	{
 		if (mParentNode)
@@ -312,7 +327,7 @@ namespace TS_ENGINE
 	{
 		if (mEntity)
 		{
-			if(!mHasBoneInfluence)//mEntity->GetEntityType() != EntityType::MESH)
+			if(!mHasBoneInfluence)
 			{
 				mTransform->ComputeTransformationMatrix(mParentNode);
 			}

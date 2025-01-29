@@ -19,7 +19,7 @@ namespace TS_ENGINE {
 		mRendererID = 0;
 
 		Utility::GetDirectory(modelPath, mModelDirectory);
-		this->LoadModel(modelPath);
+		LoadModel(modelPath);
 	}
 
 	void Model::CopyFrom(Ref<Model> model)// TODO:: Check why this does not work
@@ -76,7 +76,7 @@ namespace TS_ENGINE {
 		// Process Nodes
 		mRootNode = ProcessNode(mAssimpScene->mRootNode, nullptr, mAssimpScene);
 
-		// Set root node for all the nodes
+		// SetHasBoneInfluence for nodes
 		for (auto& nodePair : mProcessedNodes)
 		{
 			for (auto& mesh : nodePair.second->GetMeshes())
@@ -98,16 +98,19 @@ namespace TS_ENGINE {
 
 		InitializeBones();
 
-		// TODO: Process animations
+		// Process animations
 		if (mAssimpScene->HasAnimations())
 		{
 			for (unsigned int i = 0; i < mAssimpScene->mNumAnimations; ++i)
 			{
-				aiAnimation* animation = mAssimpScene->mAnimations[i];
-				TS_CORE_TRACE("Animation " + std::to_string(i) + ": " + animation->mName.C_Str());
-				TS_CORE_TRACE("Duration: " + std::to_string(animation->mDuration));
-				TS_CORE_TRACE("Ticks per second: " + std::to_string(animation->mTicksPerSecond));
+				Ref<Animation> animation = CreateRef<Animation>(mAssimpScene->mAnimations[i]);
+
+				// Add processed animation to root node to show in Inspector panel
+				mRootNode->AddAnimation(animation);
 			}
+
+			// Set default current animation to first animation
+			mRootNode->SetCurrentAnimation(mAssimpScene->mAnimations[0]->mName.C_Str());
 		}
 		else
 		{

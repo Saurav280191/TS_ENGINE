@@ -6,11 +6,13 @@
 #include "Primitive/Mesh.h"
 #include "EntityManager/Entity.h"
 #include "EntityManager/EntityManager.h"
+#include "Components/Animation.h"
 
 namespace TS_ENGINE
 {
 	class Transform;
 	class SceneCamera;
+	class Animation;
 	class Node
 	{		
 	public:
@@ -117,12 +119,18 @@ namespace TS_ENGINE
 #ifdef TS_ENGINE_EDITOR
 		bool m_Enabled = true;//For IMGUI
 #endif
-	
 		void SetHasBoneInfluence(bool _hasBoneInfluence);
-		bool GetBoneInfluence() { return mHasBoneInfluence; }
+		bool HasBoneInfluence() { return mHasBoneInfluence; }
+		void AddAnimation(Ref<Animation>& _animation);
+		void SetAnimations(std::unordered_map<std::string, Ref<Animation>>& _animations);
+		void SetCurrentAnimation(std::string _name);
+
+		const Ref<Animation>& GetCurrentAnimation() { return mCurrentAnimation; }
+		const std::unordered_map<std::string, Ref<Animation>>& GetAnimations() { return mAnimations; }
+	
 	protected:
-		Ref<Entity> mEntity;// Entity		
-		Ref<Node> mNodeRef;// This will be used for referencing everywhere instead of Node*
+		Ref<Entity> mEntity;				// Entity		
+		Ref<Node> mNodeRef;					// This will be used for referencing everywhere instead of Node*
 	private:
 		bool mIsInitialized;		
 		Ref<Node> mParentNode;
@@ -131,11 +139,16 @@ namespace TS_ENGINE
 		std::vector<Ref<Node>> mSiblings = {};
 		std::vector<Ref<Mesh>> mMeshes;
 		std::string mModelPath;		
-		Ref<SceneCamera> mSceneCamera;// Only used incase of scene camera node
+		Ref<SceneCamera> mSceneCamera;		// Only used incase of scene camera node
 #ifdef TS_ENGINE_EDITOR
 		bool mIsVisibleInEditor = true;
 #endif
-		bool mHasBoneInfluence;
+		bool mHasBoneInfluence;				// This helps in identifying mesh nodes have bone influence and need to be ignored while computing transforms in ComputeTransformMatrices function
+		
+		std::unordered_map<std::string, 
+			Ref<Animation>> mAnimations;	// Name & Animation Map
+		
+		Ref<Animation> mCurrentAnimation;
 	};
 }
 
