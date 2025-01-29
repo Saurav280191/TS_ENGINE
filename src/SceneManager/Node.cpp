@@ -373,7 +373,7 @@ namespace TS_ENGINE
 		}
 	}
 
-	Ref<Node> Node::FindNodeByName(std::string _name)
+	const Ref<Node>& Node::FindNodeByName(std::string _name)
 	{
 		Ref<Node> foundNode = nullptr;
 
