@@ -387,7 +387,7 @@ namespace TS_ENGINE {
 		return material;
 	}
 	
-	const Ref<Node>& Model::FindNodeByName(const std::string& _name)
+	const Ref<Node> Model::FindNodeByName(const std::string& _name)
 	{
 		if (mProcessedNodes[_name])
 		{

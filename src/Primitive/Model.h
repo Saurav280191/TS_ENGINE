@@ -29,7 +29,7 @@ namespace TS_ENGINE {
 #pragma region Bone related functions
 	public:
 		// Used to find node by name in Factory's FindNodeByName function  
-		const Ref<Node>& FindNodeByName(const std::string& _name);
+		const Ref<Node> FindNodeByName(const std::string& _name);
 		// Used to find bone id in Factory's GetBoneIdByName function  
 		const Ref<Bone>& FindBoneByName(const std::string& _name);
 	private:

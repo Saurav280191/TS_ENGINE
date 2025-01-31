@@ -68,7 +68,7 @@ namespace TS_ENGINE
 		// Sets model matrix in shader. Renders mesh. Then updates children.
 		void Update(Ref<Shader> shader, float deltaTime);
 
-		const Ref<Node>& FindNodeByName(std::string _name);
+		const Ref<Node> FindNodeByName(std::string _name);
 
 		void LookAt(Ref<Node> targetNode);
 
