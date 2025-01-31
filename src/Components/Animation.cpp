@@ -6,9 +6,13 @@ namespace TS_ENGINE {
 
     Animation::Animation(aiAnimation* _aiAnimation) :
         mName("AnimationNameNotSet"),
-        mCurrentTime(0.0f),
+        mCurrentFrame(0),
+        mTotalFrames(),
         mDuration(0.0f),
+        mTicksPerSecond(0.0f),
+        mCurrentTime(0.0f),
         mIsPlaying(false),
+        mTotalTimeInSeconds(0.0f),
         mNodeNameAndKeyTransformsMap({}),
         mNodeAndKeyTransformsMap({})
 	{
@@ -18,7 +22,11 @@ namespace TS_ENGINE {
 
         mName = _aiAnimation->mName.C_Str();
         mDuration = (float)_aiAnimation->mDuration;
- 
+        mTicksPerSecond = (float)_aiAnimation->mTicksPerSecond;
+        float ticksPerSecond = (mTicksPerSecond != 0.0f) ? mTicksPerSecond : 24.0f;
+        mTotalTimeInSeconds = mDuration / ticksPerSecond;
+        mTotalFrames = (int)(mDuration * ticksPerSecond);
+
         aiNodeAnim** assimpAnimations = _aiAnimation->mChannels;
 
         for (unsigned int i = 0; i < _aiAnimation->mNumChannels; i++)
@@ -31,7 +39,7 @@ namespace TS_ENGINE {
             for (unsigned int positionIndex = 0; positionIndex < assimpAnimation->mNumPositionKeys; ++positionIndex)
             {
                 aiVector3D aiPosition = assimpAnimation->mPositionKeys[positionIndex].mValue;
-                double timeStamp = (float)assimpAnimation->mPositionKeys[positionIndex].mTime;
+                float timeStamp = (float)assimpAnimation->mPositionKeys[positionIndex].mTime;
                 
                 KeyPosition keyPosition;
                 keyPosition.position = Vector3(aiPosition.x, aiPosition.y, aiPosition.z);
@@ -43,7 +51,7 @@ namespace TS_ENGINE {
             for (unsigned int rotationIndex = 0; rotationIndex < assimpAnimation->mNumRotationKeys; ++rotationIndex)
             {
                 aiQuaternion aiOrientation = assimpAnimation->mRotationKeys[rotationIndex].mValue;
-                double timeStamp = (float)assimpAnimation->mRotationKeys[rotationIndex].mTime;
+                float timeStamp = (float)assimpAnimation->mRotationKeys[rotationIndex].mTime;
                 
                 KeyRotation keyRotation;
                 keyRotation.rotation = Quaternion(aiOrientation.w, aiOrientation.x, aiOrientation.y, aiOrientation.z);
@@ -55,7 +63,7 @@ namespace TS_ENGINE {
             for (unsigned int scaleIndex = 0; scaleIndex < assimpAnimation->mNumScalingKeys; ++scaleIndex)
             {
                 aiVector3D scale = assimpAnimation->mScalingKeys[scaleIndex].mValue;
-                double timeStamp = (float)assimpAnimation->mScalingKeys[scaleIndex].mTime;
+                float timeStamp = (float)assimpAnimation->mScalingKeys[scaleIndex].mTime;
                 
                 KeyScale keyScale;
                 keyScale.scale = Vector3(scale.x, scale.y, scale.z);
@@ -87,34 +95,111 @@ namespace TS_ENGINE {
 		}
     }
 
-    void Animation::Update(double _deltaTime)
+    void Animation::Update(float _deltaTime)
     {
         if (mIsPlaying)
         {
-            UpdateBoneTransforms();
-
-            mCurrentTime += 0.1f * _deltaTime;
-
-            if (mCurrentTime > mDuration)
-            {
-                mCurrentTime = 0.0;
-            }
+            mCurrentTime += _deltaTime;
         }
+
+        // Calculate current time        
+        (mCurrentTime > mTotalTimeInSeconds) ? mCurrentTime = 0.0f : void();
+
+		// Convert to animation time (in ticks)
+		float animationTime = mCurrentTime * mTicksPerSecond;
+        animationTime = fmod(animationTime, mDuration);
+
+		// Calculate the current frame index            
+		mCurrentFrame = (mCurrentTime == mTotalTimeInSeconds) ? mCurrentFrame = static_cast<int>(mDuration) : static_cast<int>(animationTime); // Current frame index
+
+        // Update Skeleton Hierarchy
+		UpdateBoneTransforms(animationTime);
+        
     }
 
-    void Animation::UpdateBoneTransforms()
+    void Animation::UpdateBoneTransforms(float _animationTime)
     {
         for (auto& [node, keyTransforms] : mNodeAndKeyTransformsMap)
         {
-            // Set node's LocalPosition
-            keyTransforms.mKeyPositions.size() > mCurrentTime ? node->GetTransform()->SetLocalPosition(keyTransforms.mKeyPositions[mCurrentTime].position) : (void)0;
-            // Set node's LocalRotation
-            keyTransforms.mKeyRotations.size() > mCurrentTime ? node->GetTransform()->SetLocalRotation(keyTransforms.mKeyRotations[mCurrentTime].rotation) : (void)0;
-            // Set node's LocalScale
-            keyTransforms.mKeyScales.size() > mCurrentTime ? node->GetTransform()->SetLocalScale(keyTransforms.mKeyScales[mCurrentTime].scale) : (void)0;            
+            int positionKeyFrameIndex = FindPositionKeyFrameIndex(keyTransforms.mKeyPositions, _animationTime);
+            int rotationKeyFrameIndex = FindRotationKeyFrameIndex(keyTransforms.mKeyRotations, _animationTime);
+            int scaleKeyFrameIndex = FindScaleKeyFrameIndex(keyTransforms.mKeyScales, _animationTime);
+
+            if (positionKeyFrameIndex >= 0 && positionKeyFrameIndex + 1 < keyTransforms.mKeyPositions.size())
+            {
+                auto& keyA = keyTransforms.mKeyPositions[positionKeyFrameIndex];
+                auto& keyB = keyTransforms.mKeyPositions[positionKeyFrameIndex + 1];
+
+                float factor = (_animationTime - keyA.timestamp) / (keyB.timestamp - keyA.timestamp);
+                node->GetTransform()->SetLocalPosition(glm::mix(keyA.position, keyB.position, factor));
+            }
+
+            if (rotationKeyFrameIndex >= 0 && rotationKeyFrameIndex + 1 < keyTransforms.mKeyRotations.size())
+            {
+                auto& keyA = keyTransforms.mKeyRotations[rotationKeyFrameIndex];
+                auto& keyB = keyTransforms.mKeyRotations[rotationKeyFrameIndex + 1];
+
+                float factor = (_animationTime - keyA.timestamp) / (keyB.timestamp - keyA.timestamp);
+                node->GetTransform()->SetLocalRotation(glm::slerp(keyA.rotation, keyB.rotation, factor));
+            }
+
+            if (scaleKeyFrameIndex >= 0 && scaleKeyFrameIndex + 1 < keyTransforms.mKeyScales.size())
+            {
+                auto& keyA = keyTransforms.mKeyScales[scaleKeyFrameIndex];
+                auto& keyB = keyTransforms.mKeyScales[scaleKeyFrameIndex + 1];
+
+                float factor = (_animationTime - keyA.timestamp) / (keyB.timestamp - keyA.timestamp);
+                node->GetTransform()->SetLocalScale(glm::mix(keyA.scale, keyB.scale, factor));
+            }
+            
             // Computer node's transform
             node->ComputeTransformMatrices();
         }
+    }
+
+    int Animation::FindPositionKeyFrameIndex(const std::vector<TS_ENGINE::KeyPosition>& _keyPositions, double animationTime)
+    {
+        int keyCount = (int)_keyPositions.size(); // Assume using position keys
+
+        if (keyCount == 0) return -1; // No keyframes
+
+        for (int i = 0; i < keyCount - 1; i++)
+        {
+            if (animationTime < _keyPositions[i + 1].timestamp)
+                return i; // Found the closest lower-bound keyframe
+        }
+
+        return keyCount - 1; // Return last frame if time exceeds
+    }
+
+    int Animation::FindRotationKeyFrameIndex(const std::vector<TS_ENGINE::KeyRotation>& _keyRotations, double animationTime)
+    {
+        int keyCount = (int)_keyRotations.size(); // Assume using position keys
+
+        if (keyCount == 0) return -1; // No keyframes
+
+        for (int i = 0; i < keyCount - 1; i++)
+        {
+            if (animationTime < _keyRotations[i + 1].timestamp)
+                return i; // Found the closest lower-bound keyframe
+        }
+
+        return keyCount - 1; // Return last frame if time exceeds
+    }
+
+    int Animation::FindScaleKeyFrameIndex(const std::vector<TS_ENGINE::KeyScale>& _keyScales, double animationTime)
+    {
+        int keyCount = (int)_keyScales.size(); // Assume using position keys
+
+        if (keyCount == 0) return -1; // No keyframes
+
+        for (int i = 0; i < keyCount - 1; i++)
+        {
+            if (animationTime < _keyScales[i + 1].timestamp)
+                return i; // Found the closest lower-bound keyframe
+        }
+
+        return keyCount - 1; // Return last frame if time exceeds
     }
 
     void Animation::Play()
@@ -130,6 +215,7 @@ namespace TS_ENGINE {
     void Animation::Stop()
     {
         mIsPlaying = false;
+        mCurrentFrame = 0;
         mCurrentTime = 0.0f;
     }
 

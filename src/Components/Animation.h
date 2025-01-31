@@ -6,19 +6,19 @@ namespace TS_ENGINE {
 
 	struct KeyPosition
 	{
-		double timestamp;
+		float timestamp;
 		Vector3 position;
 	};
 	
 	struct KeyRotation
 	{
-		double timestamp;
+		float timestamp;
 		Quaternion rotation;
 	};
 
 	struct KeyScale
 	{
-		double timestamp;
+		float timestamp;
 		Vector3 scale;
 	};
 
@@ -38,8 +38,12 @@ namespace TS_ENGINE {
 
 		// Fetches node of loaded Model from Factory class by name
 		void InitializeNodesForAnimation();
-		void Update(double _deltaTime);
-		void UpdateBoneTransforms();
+		void Update(float _deltaTime);
+		void UpdateBoneTransforms(float _animationTime);
+
+		int FindPositionKeyFrameIndex(const std::vector<TS_ENGINE::KeyPosition>& _keyPositions, double animationTime);
+		int FindRotationKeyFrameIndex(const std::vector<TS_ENGINE::KeyRotation>& _keyRotations, double animationTime);
+		int FindScaleKeyFrameIndex(const std::vector<TS_ENGINE::KeyScale>& _keyScales, double animationTime);
 
 		void Play();
 		void Pause();
@@ -48,15 +52,21 @@ namespace TS_ENGINE {
 		void ToggleIsPlaying();
 		
 		const std::string& GetName() { return mName; }
-		double GetDuration() { return mDuration; }
-		double GetCurrentTime() { return mCurrentTime; }
+		float GetDuration() { return mDuration; }
 		bool IsPlaying() { return mIsPlaying; }
+
 		const std::unordered_map<Ref<Node>, KeyTransforms>& GetNodeKeyTransformMap() { return mNodeAndKeyTransformsMap; }
+		
+		int mCurrentFrame;		// CurrentFrame
+		int mTotalFrames;		// TotalFrames
+		float mTicksPerSecond;	// TicksPerSecond
+		float mCurrentTime;		// CurrentTime
+		float mTotalTimeInSeconds;
 	private:
 		std::string mName;		// Name
-		double mDuration;		// Duration
-		double mCurrentTime;	// CurrentTime
+		float mDuration;		// Duration
 		bool mIsPlaying;		// IsPlaying
+
 
 		// Stores Bone Name and KeyTransforms
 		std::unordered_map<std::string, KeyTransforms> mNodeNameAndKeyTransformsMap;
