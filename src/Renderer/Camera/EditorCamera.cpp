@@ -121,7 +121,7 @@ namespace TS_ENGINE {
 		//Mouse Move
 		{
 			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
-			glm::vec2 deltaMousePos = (mouse - mInitialMousePosition) * 0.003f;
+			glm::vec2 deltaMousePos = (mouse - mInitialMousePosition) * 3.0f;
 			mInitialMousePosition = mouse;
 
 			//Yaw - Mouse
