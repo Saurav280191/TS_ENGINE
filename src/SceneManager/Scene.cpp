@@ -73,7 +73,7 @@ namespace TS_ENGINE
 		//ModelLoader::GetInstance()->Flush();
 	}
 
-	void Scene::Update(double _deltaTime)
+	void Scene::Update(float _deltaTime)
 	{
 		for (auto& [name, rootNodeAndModelPair] : Factory::GetInstance()->mLoadedModelNodeMap)
 		{

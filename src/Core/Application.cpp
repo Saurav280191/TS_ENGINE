@@ -91,7 +91,7 @@ namespace TS_ENGINE
 		while (mRunning)
 		{
 			float currentFrame = static_cast<float>(glfwGetTime());
-			mDeltaTime = (currentFrame - mLastFrame) * 1000.0f;
+			mDeltaTime = currentFrame - mLastFrame; // deltaTime in seconds
 			mLastFrame = currentFrame;
 
 			//TS_CORE_INFO("FPS: {0}, {1} ms/frame", 1000.0f / mDeltaTime, mDeltaTime);

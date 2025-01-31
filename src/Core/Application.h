@@ -68,7 +68,7 @@ namespace TS_ENGINE
 		LayerStack mLayerStack;
 
 		float mLastFrame;
-		float mDeltaTime;
+		float mDeltaTime;// DeltaTime in seconds
 
 		uint32_t mDrawCalls;
 		uint32_t mTotalVertices;

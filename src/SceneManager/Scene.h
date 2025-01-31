@@ -87,7 +87,7 @@ namespace TS_ENGINE {
 		//void OnBatched();
 		//void OnUnBatched();
 
-		void Update(double _deltaTime);
+		void Update(float _deltaTime);
 
 		// 1. Binds camera's framebuffer
 		// 2. Clears color
