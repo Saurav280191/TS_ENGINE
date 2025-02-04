@@ -43,6 +43,12 @@ namespace TS_ENGINE {
 		{
 			return mTextureIdAndTexture2DMap;
 		}
+
+		static Ref <TS_ENGINE::Texture2D> FindLoadedTexture(std::string& _name)
+		{
+			uint32_t textureID = mTextureStrAndIdMap[_name];
+			return mTextureIdAndTexture2DMap[textureID];
+		}
 		
 		virtual const std::string& GetPath() const override
 		{
