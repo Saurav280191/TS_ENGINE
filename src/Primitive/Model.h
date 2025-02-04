@@ -40,7 +40,7 @@ namespace TS_ENGINE {
 		// Sets nodes for bones
 		void SetNodesForBones();		
 		// Created GUI nodes for bones
-		void InitializeBones();
+		void CreateBoneGuis();
 	public:
 		void UpdateBone(Ref<Shader> _shader);
 		void RenderBones(Ref<Shader> _shader);

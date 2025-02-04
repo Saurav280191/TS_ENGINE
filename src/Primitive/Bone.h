@@ -33,7 +33,9 @@ namespace TS_ENGINE {
 		Ref<Node> GetNode();
 		int GetId();
 
-		void Initialize(const std::string& _name);
+		// Creates joint and bone Guis for picking
+		void CreateGui(const std::string& _name);
+
 		void Update(Ref<Shader> _shader);
 		void Render(Ref<Shader> _shader);
 

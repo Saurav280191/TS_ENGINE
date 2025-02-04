@@ -37,7 +37,7 @@ namespace TS_ENGINE {
 		return mId;
 	}
 	
-	void Bone::Initialize(const std::string& _name)
+	void Bone::CreateGui(const std::string& _name)
 	{
 		// Create sphere Gui to show joint
 		mJointGuiNode = Factory::GetInstance()->InstantiateSphere(_name + "-SphereGui", nullptr);

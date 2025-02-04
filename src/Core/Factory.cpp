@@ -49,7 +49,7 @@ namespace TS_ENGINE
 
 	Ref<Node> Factory::InstantitateDuplicateSceneCamera(Ref<SceneCamera> sceneCamera)
 	{
-		Scene* scene = SceneManager::GetInstance()->GetCurrentScene().get();
+		Ref<Scene>& scene = SceneManager::GetInstance()->GetCurrentScene();
 
 #ifdef TS_ENGINE_EDITOR
 		Ref<SceneCamera> duplicateSceneCamera = CreateRef<SceneCamera>("SceneCamera", scene->GetEditorCamera());

@@ -18,7 +18,9 @@ namespace TS_ENGINE {
 		mAssimpScene = nullptr;
 		mRendererID = 0;
 
+		// Fetch Model Directory
 		Utility::GetDirectory(modelPath, mModelDirectory);
+		// Load Model(ProcessMesh, ProcessMaterial, ProcessAnimations etc..)
 		LoadModel(modelPath);
 	}
 
@@ -90,13 +92,14 @@ namespace TS_ENGINE {
 		}
 
 		// The bone data has been created in ProcessMesh function.
-		// The node need to be set for each bone.
+		// A node needs to be set for each bone.
 		SetNodesForBones();
 
 		// Initialize transform for root node and it's children
 		mRootNode->Initialize(mRootNode->mName, EntityType::MODELROOTNODE);
 
-		InitializeBones();
+		// Create bone gui nodes
+		CreateBoneGuis();
 
 		// Process animations
 		if (mAssimpScene->HasAnimations())
@@ -402,8 +405,8 @@ namespace TS_ENGINE {
 
 	const Ref<Bone>& Model::FindBoneByName(const std::string& _name)
 	{
-		TS_CORE_ASSERT(mBoneInfoMap[_name]);
-		return mBoneInfoMap[_name];
+		mBoneInfoMap[_name] ? void() : TS_CORE_ERROR("Node named: {0} not found", _name);
+		return mBoneInfoMap[_name];	
 	}
 
 	void Model::ExtractBoneWeightForVertices(std::vector<Vertex>& _vertices, aiMesh* _aiMesh, const aiScene* _aiScene)
@@ -475,12 +478,14 @@ namespace TS_ENGINE {
 		}
 	}
 
-	void Model::InitializeBones()
+	void Model::CreateBoneGuis()
 	{
 		for (auto& [name, bone] : mBoneInfoMap)
 		{
-			if(bone)
-				bone->Initialize(name);
+			if (bone)
+			{
+				bone->CreateGui(name);
+			}
 		}
 	}
 
