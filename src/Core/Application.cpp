@@ -192,10 +192,20 @@ namespace TS_ENGINE
 		mWireframeMode = !mWireframeMode;
 		RenderCommand::EnableWireframe(mWireframeMode);
 	}
-
+	
 	void Application::ToggleTextures()
 	{
 		mTextureModeEnabled = !mTextureModeEnabled;
+	}
+	
+	void Application::ToggleBoneView()
+	{
+		mBoneView = !mBoneView;
+	}
+	
+	void Application::ToggleBoneInfluence()
+	{
+		mBoneInfluence = !mBoneInfluence;
 	}
 
 	void Application::ResetDrawCall()

@@ -38,8 +38,9 @@ namespace TS_ENGINE
 		void ResetStats();
 
 		void ToggleWireframeMode();
-
 		void ToggleTextures();
+		void ToggleBoneView();
+		void ToggleBoneInfluence();
 
 		void ResetDrawCall();
 
