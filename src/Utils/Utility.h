@@ -167,13 +167,14 @@ namespace TS_ENGINE
 		static glm::mat4 GetLookatAtRotationMatrix(const glm::vec3& objectPos, const glm::vec3& targetPos, const glm::vec3& up)
 		{
 			glm::vec3 forward = glm::normalize(targetPos - objectPos);
-			glm::vec3 right = glm::normalize(glm::cross(forward, up));
-			glm::vec3 newUp = glm::cross(right, forward);
+			glm::vec3 right = glm::normalize(glm::cross(up, forward));
+			glm::vec3 newUp = glm::cross(forward, right);
 
 			glm::mat4 rotationMatrix(1.0f);
 			rotationMatrix[0] = glm::vec4(right, 0.0f);
 			rotationMatrix[1] = glm::vec4(newUp, 0.0f);
-			rotationMatrix[2] = glm::vec4(forward, 0.0f);
+			rotationMatrix[2] = glm::vec4(-forward, 0.0f);
+			rotationMatrix[3] = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
 			return rotationMatrix;
 		}
