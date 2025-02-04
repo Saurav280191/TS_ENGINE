@@ -209,7 +209,10 @@ namespace TS_ENGINE
 			sceneCameras.push_back(sceneCamera);
 		}
 
-		Ref<Scene> scene = CreateRef<Scene>(sceneName);					// Create new scene
+		Ref<Scene> scene = CreateRef<Scene>();							// Create new scene
+		scene->SetName(sceneName);
+		scene->Initialize();
+
 		scene->AddEditorCamera(editorCamera);							// Add editor camera to scene
 
 		for (auto& sceneCamera : sceneCameras)							// Add scene cameras to scene

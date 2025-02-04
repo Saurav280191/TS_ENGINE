@@ -15,7 +15,9 @@
 
 namespace TS_ENGINE
 {
-	Scene::Scene(std::string name)
+	Scene::Scene():
+		mSelectedBoneId(-1),
+		mName("Default")
 	{
 		mSceneNode = CreateRef<Node>();
 		mSceneNode->SetNodeRef(mSceneNode);
@@ -25,12 +27,21 @@ namespace TS_ENGINE
 
 		mSkybox = CreateRef<Skybox>();	
 
-		mSceneNode->Initialize(name, EntityType::SCENE);//Needs to be done at the end to initialize the hierarchy once
 	}
 
 	Scene::~Scene()
 	{
 		Flush();
+	}
+
+	void Scene::SetName(const std::string& _name)
+	{
+		mName = _name;
+	}
+
+	void Scene::Initialize()
+	{
+		mSceneNode->Initialize(mName, EntityType::SCENE);//Needs to be done at the end to initialize the hierarchy once
 	}
 
 	void Scene::AddEditorCamera(Ref<EditorCamera> editorCamera)

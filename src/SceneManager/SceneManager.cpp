@@ -69,7 +69,9 @@ namespace TS_ENGINE
 	void SceneManager::CreateNewScene(const std::string& sceneName)
 	{
 		// Create scene for editor or sandbox
-		Ref<Scene> scene = CreateRef<Scene>(sceneName);																				// Create Scene
+		Ref<Scene> scene = CreateRef<Scene>();																						// Create Scene
+		scene->SetName(sceneName);																									// Set Scene Name
+		scene->Initialize();																										// Initialize Scene
 
 		// Create editor and scene camera for Editor or Sandbox
 #ifdef TS_ENGINE_EDITOR

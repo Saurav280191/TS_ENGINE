@@ -74,9 +74,11 @@ namespace TS_ENGINE {
 	class Scene
 	{
 	public:
-		Scene(std::string name);
+		Scene();
 		~Scene();
 		
+		void SetName(const std::string& _name);
+		void Initialize();
 		void AddEditorCamera(Ref<EditorCamera> editorCamera);
 		void AddSceneCamera(Ref<SceneCamera> sceneCamera);
 
@@ -128,6 +130,8 @@ namespace TS_ENGINE {
 		// Scene camera
 		std::vector<Ref<SceneCamera>> mSceneCameras = {};
 		int mCurrentSceneCameraIndex = 0;
+
+		std::string mName;
 
 		// Root node
 		Ref<Node> mSceneNode;
