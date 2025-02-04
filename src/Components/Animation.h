@@ -55,17 +55,17 @@ namespace TS_ENGINE {
 		float GetDuration() { return mDuration; }
 		bool IsPlaying() { return mIsPlaying; }
 
-		const std::unordered_map<Ref<Node>, KeyTransforms>& GetNodeKeyTransformMap() { return mNodeAndKeyTransformsMap; }
+		std::unordered_map<Ref<Node>, KeyTransforms>& GetNodeKeyTransformMap() { return mNodeAndKeyTransformsMap; }
 		
-		int mCurrentFrame;		// CurrentFrame
-		int mTotalFrames;		// TotalFrames
-		float mTicksPerSecond;	// TicksPerSecond
-		float mCurrentTime;		// CurrentTime
-		float mTotalTimeInSeconds;
+		int mCurrentFrame;			// CurrentFrame
+		int mTotalFrames;			// TotalFrames
+		float mTicksPerSecond;		// TicksPerSecond
+		float mCurrentTime;			// CurrentTime
+		float mTotalTimeInSeconds;	// Total 
 	private:
-		std::string mName;		// Name
-		float mDuration;		// Duration
-		bool mIsPlaying;		// IsPlaying
+		std::string mName;			// Name
+		float mDuration;			// Duration
+		bool mIsPlaying;			// IsPlaying
 
 
 		// Stores Bone Name and KeyTransforms
