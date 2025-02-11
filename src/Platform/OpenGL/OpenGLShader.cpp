@@ -41,16 +41,20 @@ namespace TS_ENGINE {
 		const char* vShaderCode = vertexCode.c_str();
 		const char* fShaderCode = fragmentCode.c_str();
 
+		TS_CORE_INFO("Compiling vertex shader from: {0}", vertexShaderPath);
+
 		GLuint vShaderID = glCreateShader(GL_VERTEX_SHADER);
 		glShaderSource(vShaderID, 1, &vShaderCode, NULL);
 		glCompileShader(vShaderID);
 		CheckCompileErrors(vShaderID, "VERTEX");
 
+		TS_CORE_INFO("Compiling fragment shader from: {0}", fragmentShaderPath);
 		GLuint fShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 		glShaderSource(fShaderID, 1, &fShaderCode, NULL);
 		glCompileShader(fShaderID);
 		CheckCompileErrors(fShaderID, "FRAGMENT");
 
+		TS_CORE_INFO("Linking shaders");
 		mRendererID = glCreateProgram();
 		glAttachShader(mRendererID, vShaderID);
 		glAttachShader(mRendererID, fShaderID);
@@ -70,9 +74,11 @@ namespace TS_ENGINE {
 	{
 		int success;
 		GLchar infoLog[1024];
+		
 		if (type != "PROGRAM")
 		{
 			glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+			
 			if (!success)
 			{
 				glGetShaderInfoLog(shader, 1024, NULL, infoLog);
@@ -82,10 +88,11 @@ namespace TS_ENGINE {
 		else
 		{
 			glGetProgramiv(shader, GL_LINK_STATUS, &success);
+
 			if (!success)
 			{
 				glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-				TS_CORE_ERROR("ERROR::PROGRAM_LINKING_ERROR of type:{0}\n{1", type.c_str(), infoLog);
+				TS_CORE_ERROR("ERROR::PROGRAM_LINKING_ERROR of type: {0}\n{1}", type.c_str(), infoLog);
 			}
 		}
 	}
