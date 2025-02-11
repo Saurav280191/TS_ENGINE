@@ -238,7 +238,7 @@ ${RendererSrc} 			# Renderer Filter
 ${LightingSrc} 			# Renderer/Lighting Filter
 ${CameraSrc} 			# Renderer/Camera Filter
 ${SceneManagerSrc} 		# SceneManager Filter
-${EntityManagerSrc} 	# EntityManager Filter
+#${EntityManagerSrc} 	# EntityManager Filter
 ${UtilsSrc} 			# Utils Filter
 ${ComponentsSrc}		# Components Filter
 )

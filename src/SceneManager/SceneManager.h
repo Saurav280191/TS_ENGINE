@@ -21,18 +21,35 @@ namespace TS_ENGINE
 		void LoadScene(const std::string& savedScenePath);
 		Ref<Scene>& GetCurrentScene();
 
-		void FlushCurrentScene();
+		void ClearCurrentScene();
+		void ClearNodeMaps();
+
+		// Adds node to map and returns the id from map
+		uint32_t Register(Ref<Node> _node);
+		// Removes the node from mNodeMap and adds the removed Id in mFreeIds queue
+		void Deregister(uint32_t _id);
+
+		Ref<Node> GetNode(int _id)
+		{
+			TS_CORE_ASSERT(mNodeMap[_id]);
+			return mNodeMap[_id];
+		}
 	private:
-		static SceneManager* mInstance;
-		Ref<Scene> mCurrentScene;
 		SceneManager();
 		~SceneManager();
 
+		Ref<Node> GetCurrentSceneNode();
+
+		static SceneManager* mInstance;
+		Ref<Scene> mCurrentScene;
+
 #ifdef TS_ENGINE_EDITOR
 		Ref<SceneSerializer> mSceneSerializer;
-#endif
+#endif				
 
-		Ref<Node> GetCurrentSceneNode();
+		std::unordered_map<uint32_t, Ref<Node>> mNodeMap = {};	// Unique Id and Node Map
+		std::queue<uint32_t> mFreeIds;							// ID recycling queue
+		uint32_t mNextId = 1;									// Unique Id Counter
 	};
 }
 

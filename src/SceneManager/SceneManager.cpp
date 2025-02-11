@@ -47,12 +47,21 @@ namespace TS_ENGINE
 		return mCurrentScene;
 	}
 
-	void SceneManager::FlushCurrentScene()
+	void SceneManager::ClearCurrentScene()
 	{
 		if(mCurrentScene)
-			mCurrentScene->Flush();
+		{
+			mCurrentScene = nullptr;
+		}
 
-		mCurrentScene.reset();
+		ClearNodeMaps();
+	}
+
+	void SceneManager::ClearNodeMaps()
+	{
+		mNodeMap.clear();
+		mNextId = 1;
+		std::queue<uint32_t>().swap(mFreeIds);// Reset queue
 	}
 
 	Ref<Node> SceneManager::GetCurrentSceneNode()
@@ -69,30 +78,30 @@ namespace TS_ENGINE
 	void SceneManager::CreateNewScene(const std::string& sceneName)
 	{
 		// Create scene for editor or sandbox
-		Ref<Scene> scene = CreateRef<Scene>();																						// Create Scene
-		scene->SetName(sceneName);																									// Set Scene Name
-		scene->Initialize();																										// Initialize Scene
+		Ref<Scene> scene = CreateRef<Scene>();																// Create Scene
+		scene->SetName(sceneName);																			// Set Scene Name
+		scene->Initialize();																				// Initialize Scene
 
 		// Create editor and scene camera for Editor or Sandbox
 #ifdef TS_ENGINE_EDITOR
 		// Initialize editor camera
-		Ref<EditorCamera> editorCamera = CreateRef<EditorCamera>("EditorCamera");													// Create Editor Camera
-		editorCamera->SetPerspective(TS_ENGINE::Camera::Perspective(60.0f, 1.77f, 0.1f, 1000.0f));									
+		Ref<EditorCamera> editorCamera = CreateRef<EditorCamera>("EditorCamera");							// Create Editor Camera
+		editorCamera->SetPerspective(TS_ENGINE::Camera::Perspective(60.0f, 1.77f, 0.1f, 1000.0f));			
 		editorCamera->GetNode()->GetTransform()->SetLocalPosition(-0.738f, 5.788f, 14.731f);
 		editorCamera->GetNode()->GetTransform()->SetLocalEulerAngles(-18.102f, 0.066f, 0.0f);
-		editorCamera->CreateFramebuffer(1920, 1080);																				// Create Framebuffer For EditorCamera
+		editorCamera->CreateFramebuffer(1920, 1080);														// Create Framebuffer For EditorCamera
 		editorCamera->Initialize();
 		editorCamera->GetNode()->ReInitializeTransforms();
 
 		// Initialize scene camera for editor
-		auto sceneCameraNode = Factory::GetInstance()->InstantitateSceneCamera("SceneCamera", editorCamera);						// Instantiate Scene Camera For Editor
+		auto sceneCameraNode = Factory::GetInstance()->InstantitateSceneCamera("SceneCamera", editorCamera);// Instantiate Scene Camera For Editor
 		sceneCameraNode->GetTransform()->SetLocalPosition(7.156f, 2.951f, 8.770f);
 		sceneCameraNode->GetTransform()->SetLocalEulerAngles(-13.235f, 38.064f, 0.0f);
 		
 		// Add editor camera to scene
 		scene->AddEditorCamera(editorCamera);
 		// Add scene camera to scene
-		scene->AddSceneCamera(sceneCameraNode->GetSceneCamera());																	// Add Editor Camera To Scene
+		scene->AddSceneCamera(sceneCameraNode->GetSceneCamera());											// Add Editor Camera To Scene
 #else
 		// Initialize editor camera
 		Ref<Node> sceneCameraNode = Factory::GetInstance()->InstantitateSceneCamera("SceneCamera");									// Instantiate Scene Camera
@@ -149,15 +158,14 @@ namespace TS_ENGINE
 #endif
 
 		// Default Ground
-		auto groundNode = Factory::GetInstance()->InstantiateQuad("Ground", scene->GetSceneNode());									// Instantiate Ground
+		auto groundNode = Factory::GetInstance()->InstantiateQuad("Ground", scene->GetSceneNode());			// Instantiate Ground
 		groundNode->GetTransform()->SetLocalEulerAngles(-90.0f, 0.0f, 0.0f);
 		groundNode->GetTransform()->SetLocalScale(10.0f, 10.0f, 10.0f);
-		auto groundMesh = groundNode->GetMeshes()[0];
-		auto groundMaterial = groundMesh->GetMaterial();
-		groundMaterial->SetAmbientColor(Vector4(0.7f, 0.7f, 0.7f, 1.0f));
+		auto& groundMesh = groundNode->GetMesh();
+		groundMesh->GetMaterial()->SetAmbientColor(Vector4(0.7f, 0.7f, 0.7f, 1.0f));
 		groundNode->ComputeTransformMatrices();
 
-		mCurrentScene = scene;																										// Set Scene As Current Scene
+		mCurrentScene = scene;																				// Set Scene As Current Scene
 	}
 
 	void SceneManager::SaveCurrentScene()
@@ -179,5 +187,41 @@ namespace TS_ENGINE
 #ifdef TS_ENGINE_EDITOR
 		mSceneSerializer->Load(savedScenePath);
 #endif
+	}
+
+	uint32_t SceneManager::Register(Ref<Node> _node)
+	{
+		uint32_t id;
+
+		// Reuse an old ID if available
+		if (!mFreeIds.empty())
+		{
+			id = mFreeIds.front();
+			mFreeIds.pop();
+		}
+		else
+		{
+			id = mNextId++;
+		}
+
+		TS_CORE_INFO("Registered node with Id: {0}, Name: {1}", id, _node->GetName());
+
+		mNodeMap[id] = _node;	// Add node to map
+		_node->mId = id;		// Set node Id
+		return id;
+	}
+
+	void SceneManager::Deregister(uint32_t _id)
+	{
+		auto it = mNodeMap.find(_id);
+
+		if (it != mNodeMap.end())
+		{
+			TS_CORE_INFO("Deregistered node with Id: {0}, Name: {1}", _id, it->second->GetName());
+			
+			// Ref<Node> will be deleted automatically as it is smart pointer
+			mNodeMap.erase(it);
+			mFreeIds.push(_id);
+		}
 	}
 }
