@@ -33,11 +33,12 @@ namespace TS_ENGINE {
 	class Animation
 	{
 	public:
+		Animation();
 		Animation(aiAnimation* _aiAnimation);
 		~Animation();
 
 		// Fetches node of loaded Model from Factory class by name
-		void InitializeNodesForAnimation();
+		void InitializeNodesForAnimation(const Ref<Node>& _node);
 		void Update(float _deltaTime);
 		void UpdateBoneTransforms(float _animationTime);
 
@@ -55,6 +56,8 @@ namespace TS_ENGINE {
 		float GetDuration() { return mDuration; }
 		bool IsPlaying() { return mIsPlaying; }
 
+		void CopyFrom(const Ref<Animation>& _other);
+
 		std::unordered_map<Ref<Node>, KeyTransforms>& GetNodeKeyTransformMap() { return mNodeAndKeyTransformsMap; }
 		
 		int mCurrentFrame;			// CurrentFrame
@@ -62,16 +65,17 @@ namespace TS_ENGINE {
 		float mTicksPerSecond;		// TicksPerSecond
 		float mCurrentTime;			// CurrentTime
 		float mTotalTimeInSeconds;	// Total 
+		
+		bool mInitializedNodesForAnimation;	// InitializedNodesForAnimation
+		// Stores Node and KeyTransforms
+		std::unordered_map<Ref<Node>, KeyTransforms> mNodeAndKeyTransformsMap;
 	private:
 		std::string mName;			// Name
 		float mDuration;			// Duration
 		bool mIsPlaying;			// IsPlaying
 
-
 		// Stores Bone Name and KeyTransforms
 		std::unordered_map<std::string, KeyTransforms> mNodeNameAndKeyTransformsMap;
-		// Stores Node and KeyTransforms
-		std::unordered_map<Ref<Node>, KeyTransforms> mNodeAndKeyTransformsMap;
 	};
 }
 

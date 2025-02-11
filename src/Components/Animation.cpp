@@ -3,6 +3,22 @@
 #include "Core/Factory.h"
 
 namespace TS_ENGINE {
+    
+    Animation::Animation() :
+        mName("AnimationNameNotSet"),
+        mCurrentFrame(0),
+        mTotalFrames(),
+        mDuration(0.0f),
+        mTicksPerSecond(0.0f),
+        mCurrentTime(0.0f),
+        mIsPlaying(false),
+        mTotalTimeInSeconds(0.0f),
+        mNodeNameAndKeyTransformsMap({}),
+        mNodeAndKeyTransformsMap({}),
+        mInitializedNodesForAnimation(false)
+    {
+
+    }
 
     Animation::Animation(aiAnimation* _aiAnimation) :
         mName("AnimationNameNotSet"),
@@ -14,7 +30,8 @@ namespace TS_ENGINE {
         mIsPlaying(false),
         mTotalTimeInSeconds(0.0f),
         mNodeNameAndKeyTransformsMap({}),
-        mNodeAndKeyTransformsMap({})
+        mNodeAndKeyTransformsMap({}),
+        mInitializedNodesForAnimation(false)
 	{
 		//TS_CORE_TRACE("Animation " + std::to_string(i) + ": " + _aiAnimation->mName.C_Str());
 		//TS_CORE_TRACE("Duration: " + std::to_string(_aiAnimation->mDuration));
@@ -81,18 +98,23 @@ namespace TS_ENGINE {
         TS_CORE_INFO("Destroying Animation named: {0}", mName);
 	}
 
-    void Animation::InitializeNodesForAnimation()
+    void Animation::InitializeNodesForAnimation(const Ref<Node>& _node)
     {
-        mNodeAndKeyTransformsMap.clear();
+        if (!mInitializedNodesForAnimation)
+        {
+            mNodeAndKeyTransformsMap.clear();
 
-		for (auto& [nodeName, keyTransform] : mNodeNameAndKeyTransformsMap)
-		{
-			// Search Nodes in Factory to fetch respective node with same nodeName 
-			if (const auto& node = Factory::GetInstance()->FindNodeByName(nodeName))
-			{
-				mNodeAndKeyTransformsMap.insert({ node, keyTransform });
-			}
-		}
+		    for (auto& [nodeName, keyTransform] : mNodeNameAndKeyTransformsMap)
+		    {
+		    	// Search Nodes in Factory to fetch respective node with same nodeName 
+		    	if (const auto& node = _node->FindNodeByName(nodeName))
+		    	{
+		    		mNodeAndKeyTransformsMap.insert({ node, keyTransform });
+		    	}
+		    }
+
+            mInitializedNodesForAnimation = true;
+        }
     }
 
     void Animation::Update(float _deltaTime)
@@ -100,21 +122,20 @@ namespace TS_ENGINE {
         if (mIsPlaying)
         {
             mCurrentTime += _deltaTime;
+
+            // Calculate current time        
+            (mCurrentTime > mTotalTimeInSeconds) ? mCurrentTime = 0.0f : void();
+
+		    // Convert to animation time (in ticks)
+		    float animationTime = mCurrentTime * mTicksPerSecond;
+            animationTime = fmod(animationTime, mDuration);
+
+		    // Calculate the current frame index            
+		    mCurrentFrame = (mCurrentTime == mTotalTimeInSeconds) ? mCurrentFrame = static_cast<int>(mDuration) : static_cast<int>(animationTime); // Current frame index
+
+            // Update Skeleton Hierarchy
+		    UpdateBoneTransforms(animationTime);        
         }
-
-        // Calculate current time        
-        (mCurrentTime > mTotalTimeInSeconds) ? mCurrentTime = 0.0f : void();
-
-		// Convert to animation time (in ticks)
-		float animationTime = mCurrentTime * mTicksPerSecond;
-        animationTime = fmod(animationTime, mDuration);
-
-		// Calculate the current frame index            
-		mCurrentFrame = (mCurrentTime == mTotalTimeInSeconds) ? mCurrentFrame = static_cast<int>(mDuration) : static_cast<int>(animationTime); // Current frame index
-
-        // Update Skeleton Hierarchy
-		UpdateBoneTransforms(animationTime);
-        
     }
 
     void Animation::UpdateBoneTransforms(float _animationTime)
@@ -222,5 +243,23 @@ namespace TS_ENGINE {
     void Animation::ToggleIsPlaying()
     {
         mIsPlaying = !mIsPlaying;
+    }
+
+    void Animation::CopyFrom(const Ref<Animation>& _other)
+    {
+        mNodeAndKeyTransformsMap.clear();
+
+        mCurrentFrame = _other->mCurrentFrame;
+        mTotalFrames = _other->mTotalFrames;
+        mTicksPerSecond = _other->mTicksPerSecond;
+        mCurrentTime = _other->mCurrentTime;
+        mTotalTimeInSeconds = _other->mTotalTimeInSeconds;
+    
+        mName = _other->mName;
+        mDuration = _other->mDuration;
+        mIsPlaying = _other->mIsPlaying;
+
+        mNodeNameAndKeyTransformsMap = _other->mNodeNameAndKeyTransformsMap;
+        //InitializeNodesForAnimation(_node);// This will find node and insert Node and KeyTransform in mNodeAndKeyTransformsMap
     }
 }
