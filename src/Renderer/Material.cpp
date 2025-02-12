@@ -80,31 +80,31 @@ namespace TS_ENGINE {
 		this->mDepthTestEnabled = material->mDepthTestEnabled;
 	}
 
-	void Material::CloneMaterialProperties(Ref<Material> material)
+	void Material::CloneMaterialProperties(const Ref<Material>& _material)
 	{
-		this->mName = material->mName;
-		this->mShader = material->mShader;
+		this->mName = _material->mName;
+		this->mShader = _material->mShader;
 
-		this->mAmbientColor = material->mAmbientColor;
+		this->mAmbientColor = _material->mAmbientColor;
 		
-		this->mDiffuseColor = material->mDiffuseColor;
-		this->mDiffuseMap = material->mDiffuseMap;
-		this->mDiffuseMapOffset = material->mDiffuseMapOffset;
-		this->mDiffuseMapTiling = material->mDiffuseMapTiling;
+		this->mDiffuseColor = _material->mDiffuseColor;
+		this->mDiffuseMap = _material->mDiffuseMap;
+		this->mDiffuseMapOffset = _material->mDiffuseMapOffset;
+		this->mDiffuseMapTiling = _material->mDiffuseMapTiling;
 
-		this->mSpecularColor = material->mSpecularColor;
-		this->mSpecularMap = material->mSpecularMap;
-		this->mSpecularMapOffset = material->mSpecularMapOffset;
-		this->mSpecularMapTiling = material->mSpecularMapTiling;
-		this->mShininess = material->mShininess;
+		this->mSpecularColor = _material->mSpecularColor;
+		this->mSpecularMap = _material->mSpecularMap;
+		this->mSpecularMapOffset = _material->mSpecularMapOffset;
+		this->mSpecularMapTiling = _material->mSpecularMapTiling;
+		this->mShininess = _material->mShininess;
 
-		this->mNormalMap = material->mNormalMap;
-		this->mNormalMapOffset = material->mNormalMapOffset;
-		this->mNormalMapTiling = material->mNormalMapTiling;
-		this->mBumpValue = material->mBumpValue;
+		this->mNormalMap = _material->mNormalMap;
+		this->mNormalMapOffset = _material->mNormalMapOffset;
+		this->mNormalMapTiling = _material->mNormalMapTiling;
+		this->mBumpValue = _material->mBumpValue;
 
-		this->mAlphaBlendingEnabled = material->mAlphaBlendingEnabled;
-		this->mDepthTestEnabled = material->mDepthTestEnabled;
+		this->mAlphaBlendingEnabled = _material->mAlphaBlendingEnabled;
+		this->mDepthTestEnabled = _material->mDepthTestEnabled;
 	}
 
 	const Ref<Shader> Material::GetShader()
