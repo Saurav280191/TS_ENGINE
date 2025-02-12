@@ -126,20 +126,20 @@ namespace TS_ENGINE
 
 	void Node::Destroy()
 	{
-		//TS_CORE_INFO("Deleting node named: {0}", mNode->GetName().c_str());
-		//SceneManager::GetInstance()->Deregister(mId);
+		TS_CORE_INFO("Deleting node named: {0}", mName.c_str());
+		SceneManager::GetInstance()->Deregister(mId);
 
-//#ifdef TS_ENGINE_EDITOR
-//		mEnabled = false;
-//#endif
-//		if(mParentNode)
-//			mParentNode->RemoveChild(NodeRef);
-//
-//		mMeshes.clear();
-//		mModelPath = "";
-//
-//		mChildren.clear();
-//		mSceneCamera = nullptr;
+#ifdef TS_ENGINE_EDITOR
+		mEnabled = false;
+#endif
+		if(mParentNode)
+			mParentNode->RemoveChild(NodeRef);
+
+		mMeshes.clear();
+		mModelPath = "";
+
+		mChildren.clear();
+		mSceneCamera = nullptr;
 	}
 
 	Ref<Node> Node::Duplicate()
