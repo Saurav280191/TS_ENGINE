@@ -96,7 +96,7 @@ namespace TS_ENGINE {
 
 #ifdef  TS_ENGINE_EDITOR
 		// Material Render (Sets Render Commands. Passes properties to fragement shader)
-		void Render(int _entityID, bool _enableTextures);
+		void Render(int _nodeID, bool _enableTextures);
 #else
 		// Material Render (Sets Render Commands. Passes properties to fragement shader)
 		void Render(bool _enabledTextures);

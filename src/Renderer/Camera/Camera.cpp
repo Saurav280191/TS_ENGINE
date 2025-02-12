@@ -17,16 +17,20 @@ namespace TS_ENGINE {
 
 	Camera::~Camera()
 	{
+		TS_CORE_INFO("Deleting camera");
+
 		mDefaultPos = Vector3(0, 0, 0);
 		mDefaultEulerAngles = Vector3(0, 0, 0);
 		mMoveSpeed = 0.02f;
 		mRotateSpeed = 0.02f;
 		mProjectionType = ProjectionType::PERSPECTIVE;
+
+		Clear();
 	}
 
-	void Camera::Flush()
+	void Camera::Clear()
 	{
-		mFramebuffer.reset();
+		mFramebuffer = nullptr;
 	}
 
 	void Camera::CreateFramebuffer(uint32_t _width, uint32_t _height)

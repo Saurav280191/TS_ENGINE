@@ -69,7 +69,7 @@ namespace TS_ENGINE
 
 		Camera(const std::string& name);
 		~Camera();
-		void Flush();
+		void Clear();
 
 		virtual void Initialize() = 0;
 		virtual void Update(Ref<TS_ENGINE::Shader> shader, float deltaTime) = 0;

@@ -113,7 +113,7 @@ namespace TS_ENGINE {
 	}
 
 #ifdef  TS_ENGINE_EDITOR
-	void Material::Render(int _entityID, bool _enableTextures)
+	void Material::Render(int _nodeId, bool _enableTextures)
 #else
 	void Material::Render(bool _enableTextures)
 #endif
@@ -125,7 +125,7 @@ namespace TS_ENGINE {
 		if (mShader)												// *** Set Shader Properties ***
 		{
 #ifdef  TS_ENGINE_EDITOR											
-			mShader->SetInt("u_EntityID", _entityID);						// Entity ID
+			mShader->SetInt("u_NodeId", _nodeId);							// Node ID
 #endif
 
 			mShader->SetVec4("u_AmbientColor", mAmbientColor);				// Ambient Color
