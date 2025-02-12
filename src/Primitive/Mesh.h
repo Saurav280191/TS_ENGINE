@@ -35,9 +35,9 @@ namespace TS_ENGINE {
 		Vector3 normal = Vector3(0, 0, 0);			// Normal
 
 		// Bone indices that will influence vertex
-		int mBoneIds[MAX_BONE_INFLUENCE] = { -1, -1, -1, -1 };			// Bone Ids
+		int boneIds[MAX_BONE_INFLUENCE] = { -1, -1, -1, -1 };			// Bone Ids
 		// Weights from each bone
-		float mWeights[MAX_BONE_INFLUENCE] = {0.0f, 0.0f, 0.0f, 0.0f };	// Bone Weights
+		float weights[MAX_BONE_INFLUENCE] = {0.0f, 0.0f, 0.0f, 0.0f };	// Bone Weights
 
 		Vertex()
 		{
@@ -63,13 +63,36 @@ namespace TS_ENGINE {
 			texCoord = _texCoord;
 			normal = _normal;
 		}
+
+		void ResetBoneInfoToDefault()
+		{
+			for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
+			{
+				boneIds[i] = -1;
+				weights[i] = 0.0f;
+			}
+		}
+
+		void SetBoneIdAndWeight(int _boneId, float _weight)
+		{
+			for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
+			{
+				if (boneIds[i] == -1)
+				{
+					boneIds[i] = _boneId;
+					weights[i] = _weight;
+					break;
+				}
+			}
+		}
 	};
 
-	enum DrawMode
+	enum class DrawMode
 	{
 		TRIANGLE,
 		LINE
 	};
+
 
 	class Mesh
 	{
@@ -81,7 +104,7 @@ namespace TS_ENGINE {
 		void SetPrimitiveType(PrimitiveType primitiveType);
 		void SetMaterial(Ref<Material> material);
 		void SetVertices(std::vector<Vertex> vertices);
-		void SetIndices(std::vector<uint32_t> indices);		
+		void SetIndices(std::vector<uint32_t> indices);
 
 		void AddVertex(Vertex vertex);
 		void AddIndex(uint32_t index);
@@ -118,7 +141,7 @@ namespace TS_ENGINE {
 		uint32_t GetNumIndices();		
 		
 		void SetHasBoneInfluence(bool _hasBoneInfluence);
-		bool HasBoneInfluence() { return mHasBoneInfluence; }
+		bool HasBoneInfluence() { return mHasBoneInfluence; }		
 	private:
 		std::string mName;
 		PrimitiveType mPrimitiveType;

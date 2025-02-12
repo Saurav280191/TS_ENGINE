@@ -2,6 +2,7 @@
 #include "Mesh.h"
 #include "Application.h"
 #include "Renderer/RenderCommand.h"
+#include "Renderer/MaterialManager.h"
 
 namespace TS_ENGINE {
 
@@ -12,8 +13,9 @@ namespace TS_ENGINE {
 	{
 		mPrimitiveType = PrimitiveType::MODEL;
 		std::string shaderDir = Application::s_ResourcesDir.string() + "\\Shaders\\";
-		Ref<Shader> unlitShader = Shader::Create("UnlitShader", shaderDir + "Unlit.vert", shaderDir + "Unlit.frag");
-		mMaterial = CreateRef<Material>("UnlitMaterial", unlitShader);
+		//Ref<Shader> unlitShader = Shader::Create("UnlitShader", shaderDir + "Unlit.vert", shaderDir + "Unlit.frag");
+		//mMaterial = CreateRef<Material>("UnlitMaterial", unlitShader);
+		mMaterial = CreateRef<Material>(*MaterialManager::GetInstance()->GetMaterial("Unlit"));
 	}
 
 	Mesh::~Mesh()
@@ -149,15 +151,22 @@ namespace TS_ENGINE {
 
 	void Mesh::CloneMesh(Ref<Mesh> mesh)
 	{
-		this->mName = mesh->mName;
-		this->mVertices = mesh->GetVertices();
-		this->mIndices = mesh->GetIndices();
-		this->mPrimitiveType = mesh->mPrimitiveType;
-		this->mDrawMode = mesh->mDrawMode;
+		mName = mesh->mName;					// Name
+		mVertices = mesh->GetVertices();		// Vertices
 
-		Create(this->mDrawMode);
+		mIndices = mesh->GetIndices();			// Indices
+		mPrimitiveType = mesh->mPrimitiveType;	// PrimitiveType
+		mDrawMode = mesh->mDrawMode;			// DrawMode
 
-		this->mMaterial->CloneMaterialProperties(mesh->GetMaterial());
+		// 1. Sets draw mode(Triangle/Line) 
+		// 2. Creates vertex array 
+		// 3. Creates vertex buffer and sets layout for it 
+		// 4. Sets vertex buffer in created vertex array 
+		// 5. Creates index buffer and sets that in vertex array
+		Create(mDrawMode);
+
+		mMaterial->CloneMaterialProperties(mesh->GetMaterial());
+		//mMaterial = CreateRef<Material>(*mesh->GetMaterial());// Deep copy to avoid shared material
 	}
 
 	std::vector<Vertex> Mesh::GetWorldSpaceVertices(Vector3 position = Vector3(0, 0, 0), Vector3 eulerAngles = Vector3(0, 0, 0), Vector3 scale = Vector3(1, 1, 1))
