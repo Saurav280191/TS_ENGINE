@@ -108,7 +108,7 @@ namespace TS_ENGINE
 
 		void SetModelPath(std::string modelPath);
 
-		void PrintChildrenName();//Only for testing
+		void PrintChildrenName();// Only for testing
 
 		void PrintLocalPosition();
 		void PrintLocalEulerAngles();

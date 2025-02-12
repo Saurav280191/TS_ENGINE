@@ -55,7 +55,6 @@ namespace TS_ENGINE {
 
 		// Render Skybox's mesh 
 #ifdef  TS_ENGINE_EDITOR
-		
 		GetMesh()->Render(mId, true);
 #else
 		GetMesh()->Render(true);

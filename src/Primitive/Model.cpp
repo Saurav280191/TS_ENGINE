@@ -189,7 +189,6 @@ namespace TS_ENGINE {
 		std::vector<Vertex> vertices;
 		std::vector<GLuint> indices;
 		std::vector<Texture> textures;
-		//std::vector<Ref<CBone>> bones;
 
 		std::string meshName = aiMesh->mName.C_Str();
 
@@ -235,6 +234,7 @@ namespace TS_ENGINE {
 			}
 		}
 
+		// Set BoneId and BoneWeight for vertices
 		ExtractBoneWeightForVertices(vertices, aiMesh);
 		
 		// Fetch Material Info From mProcessedMaterials
