@@ -178,7 +178,7 @@ namespace TS_ENGINE
 		// mSelectedModelRootNodeEntityId);
 
 		// Set selected modelCopyId
-		shader->SetInt("u_SelectedModelRootNodeEntityId",	// Pass selected modelCopyId to shader
+		shader->SetInt("u_SelectedModelRootNodeId",			// Pass selected modelCopyId to shader
 			mSelectedModelRootNodeId);
 
 		// Set selected bone Id

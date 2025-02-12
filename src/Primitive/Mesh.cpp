@@ -20,6 +20,8 @@ namespace TS_ENGINE {
 
 	Mesh::~Mesh()
 	{
+		TS_CORE_INFO("Destroying mesh named: {0}", mName);
+
 		mVertices.clear();
 		mIndices.clear();
 		mVertexArray = nullptr;
