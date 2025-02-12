@@ -5,7 +5,7 @@
 #include "Renderer/RenderCommand.h"
 
 namespace TS_ENGINE {
-	
+
 	Bone::Bone() :
 		mId(0),
 		mOffsetMatrix(Matrix4(1)),
@@ -16,9 +16,39 @@ namespace TS_ENGINE {
 
 	}
 
+	void Bone::Update(Ref<Shader> _shader)
+	{
+		// Set boneTransform matrix in bone space
+		mBoneTransformMatrix = mNode->GetTransform()->GetWorldTransformationMatrix() * mOffsetMatrix;
+		_shader->SetMat4(std::string("finalBonesMatrices[" + std::to_string(mId) + "]").c_str(), mBoneTransformMatrix);
+
+		UpdateBoneGui();
+		RenderBoneGui(_shader);
+	}
+
+	bool Bone::PickNode(int _entityId)
+	{
+		// If JointGuiNode's entity Id matches
+		if (mJointGuiNode->mId == _entityId)
+		{
+			return true;
+		}
+
+		// If boneGuiNode's entity Id matches
+		for (auto& boneGuiNode : mBoneGuiNodes)
+		{
+			if (boneGuiNode->mId == _entityId)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	void Bone::SetParams(int _id, const Matrix4& _offsetMatrix)
 	{
-		mId = _id;		
+		mId = _id;
 		mOffsetMatrix = _offsetMatrix;
 	}
 
@@ -29,18 +59,20 @@ namespace TS_ENGINE {
 
 	Ref<Node> Bone::GetNode()
 	{
-		return mNode; 
+		return mNode;
 	}
 
 	int Bone::GetId()
 	{
 		return mId;
 	}
-	
-	void Bone::CreateGui(const std::string& _name)
+
+	void Bone::CreateGui()
 	{
+		mBoneGuiNodes.clear();
+
 		// Create sphere Gui to show joint
-		mJointGuiNode = Factory::GetInstance()->InstantiateSphere(_name + "-SphereGui", nullptr);
+		mJointGuiNode = Factory::GetInstance()->InstantiateSphereGui(mNode->mName + "-SphereGui", nullptr);
 
 		// Set mesh color to Orange
 		mJointGuiNode->GetMesh()->GetMaterial()->SetAmbientColor(Vector4(1.0f, 0.647f, 0.0f, 1.0f));
@@ -49,27 +81,20 @@ namespace TS_ENGINE {
 		for (auto& child : mNode->GetChildren())
 		{
 			// Create bone Gui
-			Ref<Node> boneGuiNode = Factory::GetInstance()->InstantiateBone(_name + "-BoneGui", nullptr);
+			Ref<Node> boneGuiNode = Factory::GetInstance()->InstantiateBone(mNode->mName + "-BoneGui", nullptr);
 			// Set mesh color to Orange
 			boneGuiNode->GetMesh()->GetMaterial()->SetAmbientColor(Vector4(1.0f, 0.647f, 0.0f, 1.0f));
-			
+
 			mBoneGuiNodes.push_back(boneGuiNode);
 		}
 	}
 
-	void Bone::Update(Ref<Shader> _shader)
-	{
-		// Set boneTransform matrix in bone space
-		mBoneTransformMatrix = mNode->GetTransform()->GetWorldTransformationMatrix() * mOffsetMatrix;
-		_shader->SetMat4(std::string("finalBonesMatrices[" + std::to_string(mId) + "]").c_str(), mBoneTransformMatrix);
-	}
-
-	void Bone::UpdateBoneGui(Ref<Node> _rootNode)
+	void Bone::UpdateBoneGui()
 	{
 		Matrix4 jointWorldTransform = mNode->GetTransform()->GetWorldTransformationMatrix();
 		mJointGuiNode->mTransform->SetWorldTransformationMatrix(jointWorldTransform);
-		
-		for (int i = 0; i < mNode->GetChildCount(); i++)
+
+		for (int i = 0; i < mNode->GetChildCount(); ++i)
 		{
 			Vector3 point1 = mNode->GetTransform()->GetPosition();
 			Vector3 point2 = mNode->GetChildAt(i)->GetTransform()->GetPosition();
@@ -80,8 +105,8 @@ namespace TS_ENGINE {
 			mBoneGuiNodes[i]->GetTransform()->SetLocalPosition((point1 + point2) * 0.5f);
 			mBoneGuiNodes[i]->GetTransform()->SetLocalRotation(rotation);
 
-			mBoneGuiNodes[i]->GetTransform()->SetLocalScale(glm::vec3(boneLength, 
-				1.5f * glm::length(mNode->GetTransform()->GetScale()), 
+			mBoneGuiNodes[i]->GetTransform()->SetLocalScale(glm::vec3(boneLength,
+				1.5f * glm::length(mNode->GetTransform()->GetScale()),
 				1.5f * glm::length(mNode->GetTransform()->GetScale())));
 
 			mBoneGuiNodes[i]->GetTransform()->ComputeTransformationMatrix(nullptr);
@@ -89,54 +114,37 @@ namespace TS_ENGINE {
 		}
 	}
 
-	void Bone::Render(Ref<Shader> _shader)
+	void Bone::RenderBoneGui(Ref<Shader> _shader)
 	{
-		// Make sure bone is never rendered in wireframe
-		RenderCommand::EnableWireframe(false);
+		if (Application::GetInstance().mBoneView)
+		{
+			// Make sure bone is never rendered in wireframe
+			RenderCommand::EnableWireframe(false);
 
-		// Render mJointGuiNode 
-		_shader->SetMat4("u_Model", mJointGuiNode->mTransform->GetWorldTransformationMatrix());
+			// Render mJointGuiNode 
+			_shader->SetMat4("u_Model", mJointGuiNode->mTransform->GetWorldTransformationMatrix());
 #ifdef TS_ENGINE_EDITOR
-		mJointGuiNode->GetMesh()->Render(mJointGuiNode->GetEntity()->GetEntityID(), false);
+			mJointGuiNode->GetMesh()->Render(mJointGuiNode->mId, false);
 #else
-		mJointGuiNode->GetMesh()->Render(false);
+			mJointGuiNode->GetMesh()->Render(false);
 #endif
 
-		// Render all boneGuiNodes 
-		for(auto& boneGuiNode : mBoneGuiNodes)
-		{
-			_shader->SetMat4("u_Model", boneGuiNode->mTransform->GetWorldTransformationMatrix());
-#ifdef TS_ENGINE_EDITOR		
-			boneGuiNode->GetMesh()->Render(boneGuiNode->GetEntity()->GetEntityID(), false);
-#else		
-			boneGuiNode->GetMesh()->Render(false);
-#endif
-		}
-
-		// If wireframe mode is enabled, re-enable it for other meshes
-		if (Application::GetInstance().IsWireframeModeEnabled())
-		{
-			RenderCommand::EnableWireframe(true);
-		}
-	}
-
-	bool Bone::PickNode(int _entityId)
-	{
-		// If JointGuiNode's entity Id matches
-		if(mJointGuiNode->GetEntity()->GetEntityID() == _entityId)
-		{
-			return true;
-		}
-
-		// If boneGuiNode's entity Id matches
-		for (auto& boneGuiNode : mBoneGuiNodes)
-		{
-			if (boneGuiNode->GetEntity()->GetEntityID() == _entityId)
+			// Render all boneGuiNodes 
+			for (auto& boneGuiNode : mBoneGuiNodes)
 			{
-				return true;
+				_shader->SetMat4("u_Model", boneGuiNode->mTransform->GetWorldTransformationMatrix());
+#ifdef TS_ENGINE_EDITOR		
+				boneGuiNode->GetMesh()->Render(boneGuiNode->mId, false);
+#else		
+				boneGuiNode->GetMesh()->Render(false);
+#endif
+			}
+
+			// If wireframe mode is enabled, re-enable it for other meshes
+			if (Application::GetInstance().IsWireframeModeEnabled())
+			{
+				RenderCommand::EnableWireframe(true);
 			}
 		}
-
-		return false;
 	}
 }
