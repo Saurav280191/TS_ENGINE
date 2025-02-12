@@ -12,34 +12,30 @@ namespace TS_ENGINE {
 	public:
 		static Ref<MaterialManager> GetInstance();
 		void LoadAllShadersAndCreateMaterials();
-
-		Ref<Material> GetUnlitMaterial();
-		Ref<Material> GetSkinnedMeshUnlitMaterial();
-		Ref<Material> GetLitMaterial();
 		
 		const char* mMaterialNameList[2] = {
 			"Unlit",
 			"Lit"
 		};
 
-		const std::vector<Ref<Material>> GetAllMaterials() { return mAllMaterials; }
+		const Ref<Material>& GetMaterial(const std::string& _materialName);
 
 	private:
 		static Ref<MaterialManager> mInstance;		
 		
 		Ref<Shader> mUnlitShader;
-		Ref<Shader> mSkinnedMeshUnlitShader;
 		Ref<Shader> mLitShader;
-		Ref<Shader> mHdrLitShader;
-		Ref<Shader> mBatchLitShader;
+		//Ref<Shader> mSkinnedMeshUnlitShader;
+		//Ref<Shader> mHdrLitShader;
+		//Ref<Shader> mBatchLitShader;
 
 		Ref<Material> mUnlitMat;
-		Ref<Material> mSkinnedMeshUnlitMat;
 		Ref<Material> mLitMat;
-		Ref<Material> mHdrLitMat;
-		Ref<Material> mBatchLitMat;
+		//Ref<Material> mSkinnedMeshUnlitMat;
+		//Ref<Material> mHdrLitMat;
+		//Ref<Material> mBatchLitMat;
 
-		std::vector<Ref<Material>> mAllMaterials;
+		std::unordered_map<std::string, Ref<Material>> mAllMaterials;
 	};
 }
 
