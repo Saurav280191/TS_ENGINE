@@ -22,7 +22,7 @@ namespace TS_ENGINE
 	namespace Utility
 	{
 		// Converts Assimp matrix to glm matrix
-		static const Matrix4 AssimpMatToGlmMat4(aiMatrix4x4& _aiMatrix)
+		static const Matrix4 AssimpMat4ToGlmMat4(aiMatrix4x4& _aiMatrix)
 		{
 			glm::mat4 glmMatrix;
 			//the a,b,c,d in assimp is the row ; the 1,2,3,4 is the column

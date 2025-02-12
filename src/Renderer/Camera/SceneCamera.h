@@ -17,6 +17,8 @@ namespace TS_ENGINE {
 #else
 		SceneCamera(const std::string& name);
 #endif
+		~SceneCamera();
+
 		// Inherited via Camera
 		virtual void Initialize() override;
 		virtual void Update(Ref<Shader> shader, float deltaTime) override;
@@ -26,7 +28,7 @@ namespace TS_ENGINE {
 
 #ifdef TS_ENGINE_EDITOR
 		void ShowFrustrumGUI(Ref<Shader> shader, float deltaTime);
-		bool IsSceneCameraGuiSelected(int entityID);
+		bool IsSceneCameraGuiSelected(int _nodeId);
 		void RefreshFrustrumGUI();
 		Ref<Node> GetSceneCameraGui() { return mSceneCameraGuiNode; }
 #else

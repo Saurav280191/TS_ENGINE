@@ -27,6 +27,18 @@ namespace TS_ENGINE {
 			w = _w;
 			h = _h;
 		}
+		
+		void SetPosition(float _x, float _y)
+		{
+			x = _x;
+			y = _y;
+		}
+
+		void SetSize(float _w, float _h)
+		{
+			w = _w;
+			h = _h;
+		}
 	};
 
 	struct Slot

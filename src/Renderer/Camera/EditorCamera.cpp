@@ -10,7 +10,6 @@ namespace TS_ENGINE {
 		Camera(name)
 	{
 		mCameraNode = CreateRef<Node>();
-		mCameraNode->SetNodeRef(mCameraNode);
 		//mCameraNode->SetName(name);
 		mCameraType = TS_ENGINE::Camera::Type::EDITORCAMERA;
 
@@ -19,12 +18,12 @@ namespace TS_ENGINE {
 
 		mCameraNode->GetTransform()->SetLocalPosition(mDefaultPos);
 		mCameraNode->GetTransform()->SetLocalEulerAngles(mDefaultEulerAngles);
-		mCameraNode->Initialize(name, EntityType::CAMERA);
+		mCameraNode->Initialize(name, NodeType::CAMERA);
 	}
 
 	EditorCamera::~EditorCamera()
 	{
-
+		TS_CORE_INFO("Deleting editor camera");
 	}
 
 	void EditorCamera::Initialize()

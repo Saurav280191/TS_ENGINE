@@ -8,22 +8,30 @@ namespace TS_ENGINE {
 
 #ifdef TS_ENGINE_EDITOR
 	SceneCamera::SceneCamera(const std::string& name, Ref<Camera> editorCamera) : 
-		Camera(name)
+		Camera(name),
+		mSceneCameraFrustrumNode(nullptr),
+		mSceneCameraGuiNode(nullptr)
 	{
 		mCameraNode = CreateRef<Node>();
-		mCameraNode->SetNodeRef(mCameraNode);
 		mCameraType = Type::SCENECAMERA;
 		mEditorCamera = editorCamera;
 	}
 #else
 	SceneCamera::SceneCamera(const std::string& name) : 
-		Camera(name)
+		Camera(name),
+		mSceneCameraFrustrumNode(nullptr),
+		mSceneCameraGuiNode(nullptr)
 	{
 		mCameraNode = CreateRef<Node>();
 		mCameraNode->SetNodeRef(mCameraNode);
 		mCameraType = Type::SCENECAMERA;
 	}
 #endif
+
+	SceneCamera::~SceneCamera()
+	{
+		TS_CORE_INFO("Deleting scene camera");
+	}
 
 	void SceneCamera::Initialize()
 	{
@@ -136,9 +144,9 @@ namespace TS_ENGINE {
 	}
 	
 
-	bool SceneCamera::IsSceneCameraGuiSelected(int entityID)
+	bool SceneCamera::IsSceneCameraGuiSelected(int _nodeId)
 	{
-		if (entityID == mSceneCameraGuiNode->GetEntity()->GetEntityID())
+		if (_nodeId == mSceneCameraGuiNode->mId)
 			return true;
 		else
 			return false;
