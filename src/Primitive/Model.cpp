@@ -7,10 +7,11 @@
 
 namespace TS_ENGINE {
 
-	Model::Model()
+	Model::Model() :
+		mAssimpScene(nullptr),
+		mRendererID(0)
 	{
-		mAssimpScene = nullptr;
-		mRendererID = 0;
+
 	}
 
 	Model::Model(const std::string& modelPath)
@@ -22,18 +23,6 @@ namespace TS_ENGINE {
 		Utility::GetDirectory(modelPath, mModelDirectory);
 		// Load Model(ProcessMesh, ProcessMaterial, ProcessAnimations etc..)
 		LoadModel(modelPath);
-	}
-
-	void Model::CopyFrom(Ref<Model> model)// TODO:: Check why this does not work
-	{
-		mAssimpScene = model->mAssimpScene;
-		mRendererID = model->mRendererID;
-		mAssimpMaterial = model->mAssimpMaterial;
-		mModelDirectory = model->mModelDirectory;
-		mRootNode = model->mRootNode;
-		mProcessedMaterials = model->mProcessedMaterials;
-		mProcessedMeshes = model->mProcessedMeshes;
-		mProcessedNodes = model->mProcessedNodes;
 	}
 
 	Model::~Model()
@@ -49,6 +38,8 @@ namespace TS_ENGINE {
 
 	void Model::LoadModel(const std::string& modelPath)
 	{
+		TS_CORE_TRACE("Loading model from: {0}", modelPath);
+
 		Assimp::Importer importer;
 		importer.SetPropertyInteger(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, 0);
 		mAssimpScene = importer.ReadFile(modelPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices | aiProcess_OptimizeGraph | aiProcess_OptimizeMeshes);
@@ -96,7 +87,15 @@ namespace TS_ENGINE {
 		SetNodesForBones();
 
 		// Initialize transform for root node and it's children
-		mRootNode->Initialize(mRootNode->mName, EntityType::MODELROOTNODE);
+		mRootNode->Initialize(mRootNode->mName, NodeType::MODELROOTNODE);
+
+		TS_CORE_TRACE("Model is loaded\n");
+
+		// Set modelRootNodeId for all the model children nodes
+		for (auto& child : mRootNode->GetChildren())
+		{
+			child->SetModelRootNodeId(mRootNode->mId);
+		}
 
 		// Create bone gui nodes
 		CreateBoneGuis();
@@ -135,8 +134,7 @@ namespace TS_ENGINE {
 
 	Ref<Node> Model::ProcessNode(aiNode* aiNode, Ref<Node> _parentNode, const aiScene* scene)
 	{
-		Ref<Node> node = CreateRef<Node>();
-		node->SetNodeRef(node);							// NodeRef		
+		Ref<Node> node = CreateRef<Node>();			
 		std::string nodeName = aiNode->mName.C_Str();
 		node->mName = nodeName;							// Name
 
@@ -157,7 +155,7 @@ namespace TS_ENGINE {
 		// Process Bones Or Meshes
 		if (aiNode->mNumMeshes == 0)// *** Process Bone ***
 		{
-			node->Initialize(aiNode->mName.C_Str(), EntityType::BONE);	// Register Entity As Bone
+			node->Initialize(aiNode->mName.C_Str(), NodeType::BONE);	// Register Entity As Bone
 		}
 		else						// *** Process Meshes ***
 		{
@@ -170,7 +168,7 @@ namespace TS_ENGINE {
 				node->AddMesh(processedMesh);
 			}
 
-			node->Initialize(aiNode->mName.C_Str(), EntityType::MESH);	// Register Entity As Mesh
+			node->Initialize(aiNode->mName.C_Str(), NodeType::MESH);	// Register Entity As Mesh
 		}
 
 		// Process nodes
@@ -199,7 +197,7 @@ namespace TS_ENGINE {
 		for (GLuint i = 0; i < aiMesh->mNumVertices; i++)
 		{
 			Vertex vertex;
-			SetVertexBoneDataToDefault(vertex);
+			vertex.ResetBoneInfoToDefault();
 
 			// Position
 			Vector4 position = Vector4(Utility::AssimpVec3ToGlmVec3(aiMesh->mVertices[i]), 1.0f);
@@ -237,7 +235,7 @@ namespace TS_ENGINE {
 			}
 		}
 
-		ExtractBoneWeightForVertices(vertices, aiMesh, scene);
+		ExtractBoneWeightForVertices(vertices, aiMesh);
 		
 		// Fetch Material Info From mProcessedMaterials
 		Ref<Material> material = nullptr;
@@ -259,7 +257,7 @@ namespace TS_ENGINE {
 
 		for(auto& vertex : mesh->GetVertices())
 		{
-			for(auto& weight : vertex.mWeights)
+			for(auto& weight : vertex.weights)
 			{
 				if (weight != 0.0f)
 				{
@@ -361,8 +359,8 @@ namespace TS_ENGINE {
 		//Ref<Texture2D> emmisiveMap = ProcessTexture(_assimpMaterial, aiTextureType_EMISSIVE, numEmissiveMaps);
 
 		// Get Unlit Material And Pass To Material
-		Ref<Material> unlitMaterial = MaterialManager::GetInstance()->GetUnlitMaterial();
-		Ref<Material> skinnedMeshUnlitMaterial = MaterialManager::GetInstance()->GetSkinnedMeshUnlitMaterial();
+		Ref<Material> unlitMaterial = MaterialManager::GetInstance()->GetMaterial("Unlit");
+		//Ref<Material> skinnedMeshUnlitMaterial = MaterialManager::GetInstance()->GetSkinnedMeshUnlitMaterial();
 
 		Ref<Material> material = nullptr;
 
@@ -409,7 +407,7 @@ namespace TS_ENGINE {
 		return mBoneInfoMap[_name];	
 	}
 
-	void Model::ExtractBoneWeightForVertices(std::vector<Vertex>& _vertices, aiMesh* _aiMesh, const aiScene* _aiScene)
+	void Model::ExtractBoneWeightForVertices(std::vector<Vertex>& _vertices, aiMesh* _aiMesh)
 	{
 		for (int boneIndex = 0; boneIndex < (int)_aiMesh->mNumBones; ++boneIndex)
 		{
@@ -420,7 +418,7 @@ namespace TS_ENGINE {
 			if (mBoneInfoMap.find(boneName) == mBoneInfoMap.end())
 			{
 				Ref<Bone> bone = CreateRef<Bone>();
-				bone->SetParams(mBoneCounter, Utility::AssimpMatToGlmMat4(_aiMesh->mBones[boneIndex]->mOffsetMatrix));
+				bone->SetParams(mBoneCounter, Utility::AssimpMat4ToGlmMat4(_aiMesh->mBones[boneIndex]->mOffsetMatrix));
 				mBoneInfoMap[boneName] = bone;
 				boneID = mBoneCounter;
 				mBoneCounter++;
@@ -442,29 +440,7 @@ namespace TS_ENGINE {
 
 				TS_CORE_ASSERT(vertexId <= _vertices.size());
 
-				SetVertexBoneData(_vertices[vertexId], boneID, weight);
-			}
-		}
-	}
-
-	void Model::SetVertexBoneDataToDefault(Vertex& _vertex)
-	{
-		for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
-		{
-			_vertex.mBoneIds[i] = -1;
-			_vertex.mWeights[i] = 0.0f;
-		}
-	}
-
-	void Model::SetVertexBoneData(Vertex& _vertex, int _boneID, float _weight)
-	{
-		for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
-		{
-			if (_vertex.mBoneIds[i] < 0)
-			{
-				_vertex.mWeights[i] = _weight;
-				_vertex.mBoneIds[i] = _boneID;
-				break;
+				_vertices[vertexId].SetBoneIdAndWeight(boneID, weight);
 			}
 		}
 	}
@@ -473,40 +449,23 @@ namespace TS_ENGINE {
 	{
 		for (auto& [name, bone] : mBoneInfoMap)
 		{
-			if(bone)
-				bone->SetNode(mProcessedNodes[name]);
+			if (bone)
+			{
+				Ref<Node> node = mProcessedNodes[name];
+				bone->SetNode(node);
+				node->SetBone(bone);
+			}
 		}
 	}
-
+	
 	void Model::CreateBoneGuis()
 	{
 		for (auto& [name, bone] : mBoneInfoMap)
 		{
 			if (bone)
 			{
-				bone->CreateGui(name);
+				bone->CreateGui();
 			}
-		}
-	}
-
-	void Model::UpdateBone(Ref<Shader> _shader)
-	{
-		for (auto& [name, bone] : mBoneInfoMap)
-		{
-			if (bone)
-			{
-				bone->Update(_shader);
-				bone->UpdateBoneGui(mRootNode);
-			}
-		}
-	}
-
-	void Model::RenderBones(Ref<Shader> _shader)
-	{
-		for (auto& [name, bone] : mBoneInfoMap)
-		{
-			if (bone)			
-				bone->Render(_shader);			
 		}
 	}
 }

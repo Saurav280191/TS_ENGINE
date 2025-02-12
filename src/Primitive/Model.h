@@ -15,11 +15,9 @@ namespace TS_ENGINE {
 		Model(const std::string& modelPath);		
 		~Model();		
 		
-		void LoadModel(const std::string& modelPath);
-		void CopyFrom(Ref<Model> model);
+		void LoadModel(const std::string& modelPath);		
 
-		Ref<Node> GetRootNode() { return mRootNode; }	
-		std::unordered_map<std::string, Ref<Bone>>& GetBoneInfoMap() { return mBoneInfoMap;  };
+		Ref<Node> GetRootNode() { return mRootNode; }
 	private:
 		Ref<Texture2D> ProcessTexture(aiMaterial* _assimpMaterial, aiTextureType _textureType, uint32_t _numMaps);	// Process Texture		
 		Ref<Material> ProcessMaterial(aiMaterial* _assimpMaterial);													// Process Material		
@@ -32,18 +30,15 @@ namespace TS_ENGINE {
 		const Ref<Node> FindNodeByName(const std::string& _name);
 		// Used to find bone id in Factory's GetBoneIdByName function  
 		const Ref<Bone>& FindBoneByName(const std::string& _name);
+		
+		const std::unordered_map<std::string, Ref<Bone>>& GetBoneInfoMap() { return mBoneInfoMap; }
 	private:
-		void ExtractBoneWeightForVertices(std::vector<Vertex>& _vertices, aiMesh* _aiMesh, const aiScene* _aiScene);
-		void SetVertexBoneDataToDefault(Vertex& _vertex);
-		void SetVertexBoneData(Vertex& _vertex, int _boneID, float _weight);
+		void ExtractBoneWeightForVertices(std::vector<Vertex>& _vertices, aiMesh* _aiMesh);
 		
 		// Sets nodes for bones
-		void SetNodesForBones();		
 		// Created GUI nodes for bones
 		void CreateBoneGuis();
-	public:
-		void UpdateBone(Ref<Shader> _shader);
-		void RenderBones(Ref<Shader> _shader);
+		void SetNodesForBones();
 #pragma endregion
 
 	private:
