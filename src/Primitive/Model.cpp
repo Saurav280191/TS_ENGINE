@@ -155,7 +155,7 @@ namespace TS_ENGINE {
 		// Process Bones Or Meshes
 		if (aiNode->mNumMeshes == 0)// *** Process Bone ***
 		{
-			node->Initialize(aiNode->mName.C_Str(), NodeType::BONE);	// Register Entity As Bone
+			node->Initialize(aiNode->mName.C_Str(), NodeType::BONE);	// Register Node As BoneType
 		}
 		else						// *** Process Meshes ***
 		{
@@ -168,7 +168,7 @@ namespace TS_ENGINE {
 				node->AddMesh(processedMesh);
 			}
 
-			node->Initialize(aiNode->mName.C_Str(), NodeType::MESH);	// Register Entity As Mesh
+			node->Initialize(aiNode->mName.C_Str(), NodeType::MESH);	// Register Node As MeshType
 		}
 
 		// Process nodes

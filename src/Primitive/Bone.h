@@ -12,7 +12,7 @@ namespace TS_ENGINE {
 
 		void Update(Ref<Shader> _shader);
 
-		bool PickNode(int _entityId);
+		bool PickNode(int _nodeId);
 		
 		void SetParams(int _id, const Matrix4& _offsetMatrix);
 		void SetNode(Ref<Node> _node);

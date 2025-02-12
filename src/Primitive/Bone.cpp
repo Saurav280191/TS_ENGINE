@@ -26,18 +26,18 @@ namespace TS_ENGINE {
 		RenderBoneGui(_shader);
 	}
 
-	bool Bone::PickNode(int _entityId)
+	bool Bone::PickNode(int _nodeId)
 	{
-		// If JointGuiNode's entity Id matches
-		if (mJointGuiNode->mId == _entityId)
+		// If JointGuiNode's node Id matches
+		if (mJointGuiNode->mId == _nodeId)
 		{
 			return true;
 		}
 
-		// If boneGuiNode's entity Id matches
+		// If boneGuiNode's node Id matches
 		for (auto& boneGuiNode : mBoneGuiNodes)
 		{
-			if (boneGuiNode->mId == _entityId)
+			if (boneGuiNode->mId == _nodeId)
 			{
 				return true;
 			}

@@ -123,7 +123,7 @@ namespace TS_ENGINE {
 		void Create(DrawMode drawMode = DrawMode::TRIANGLE);
 
 #ifdef TS_ENGINE_EDITOR
-		void Render(int entityID, bool _enableTextures);
+		void Render(int _nodeId, bool _enableTextures);
 #else
 		void Render(bool _enableTextures);
 #endif

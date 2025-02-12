@@ -92,14 +92,14 @@ namespace TS_ENGINE {
 	}
 
 #ifdef TS_ENGINE_EDITOR
-	void Mesh::Render(int entityID, bool _enableTextures)
+	void Mesh::Render(int _nodeId, bool _enableTextures)
 #else
 	void Mesh::Render(bool _enableTextures)
 #endif
 	{
 		// Render Material
 #ifdef TS_ENGINE_EDITOR
-		mMaterial->Render(entityID, _enableTextures);
+		mMaterial->Render(_nodeId, _enableTextures);
 #else
 		mMaterial->Render(_enableTextures);
 #endif
