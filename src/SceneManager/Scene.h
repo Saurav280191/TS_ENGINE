@@ -70,7 +70,6 @@ namespace TS_ENGINE {
 	class Camera;
 	class SceneCamera;
 
-
 	class Scene
 	{
 	public:
@@ -81,8 +80,6 @@ namespace TS_ENGINE {
 		void Initialize();
 		void AddEditorCamera(Ref<EditorCamera> editorCamera);
 		void AddSceneCamera(Ref<SceneCamera> sceneCamera);
-
-		void Flush();
 
 		//BatchButton m_BatchButton;
 		//bool m_BatchingEnabled;
@@ -101,9 +98,8 @@ namespace TS_ENGINE {
 		
 		void UpdateCameraRT(Ref<Camera> camera, Ref<Shader> shader, float deltaTime, bool isEditorCamera);
 #ifdef TS_ENGINE_EDITOR
-		int GetSkyboxEntityID();
+		int GetSkyboxNodeId();
 #endif
-
 		void SetCurrentSceneCamera(Ref<SceneCamera> sceneCamera);
 		void SwitchToAnotherSceneCamera(Ref<SceneCamera> sceneCamera);
 		void RemoveSceneCamera(Ref<SceneCamera> sceneCamera);
@@ -118,28 +114,31 @@ namespace TS_ENGINE {
 		void ShowSceneCameraGUI(Ref<Shader> shader, float deltaTime);
 		Ref<EditorCamera> GetEditorCamera() { return mEditorCamera; }
 #endif
-		int mSelectedBoneId;
 
 		void AddAnimation(Ref<Animation> _animation);
-
+	public:
+		std::string mName;										// Name
 	private:
 		// Editor camera
 #ifdef TS_ENGINE_EDITOR
-		Ref<EditorCamera> mEditorCamera = nullptr;
+		Ref<EditorCamera> mEditorCamera = nullptr;				// Editor Camera
 #endif
-		// Scene camera
-		std::vector<Ref<SceneCamera>> mSceneCameras = {};
-		int mCurrentSceneCameraIndex = 0;
-
-		std::string mName;
-
-		// Root node
-		Ref<Node> mSceneNode;
-
-		std::unordered_map<std::string, Ref<Animation>> mAnimations = {};
+		// Scene cameras
+		std::vector<Ref<SceneCamera>> mSceneCameras = {};		// Scene Cameras
+		int mCurrentSceneCameraIndex = 0;						
 
 		// Skybox
-		Ref<TS_ENGINE::Skybox> mSkybox;
+		Ref<TS_ENGINE::Skybox> mSkybox;							// Skybox
 		//ButtonHandler mBatchButtonHandler;
+
+		// Root node
+		Ref<Node> mSceneNode;									// Scene root node
+
+		std::unordered_map<std::string,							// Animations 
+			Ref<Animation>> mAnimations;
+	
+	public:
+		int mSelectedBoneId;									// SelectedBoneId
+		int mSelectedModelRootNodeId;							// SelectedModelRootNodeId
 	};
 }

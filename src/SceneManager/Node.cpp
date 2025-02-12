@@ -6,122 +6,227 @@
 #include <imgui.h>
 #endif // TS_ENGINE_EDITOR
 
+// Returns a smart pointer of this node
+#define NodeRef std::static_pointer_cast<Node>(shared_from_this())
+
 namespace TS_ENGINE
 {
-	Node::Node()
+	Node::Node() :
+		mType(NodeType::EMPTY),
+		mId(0),
+		mName(""),
+		//mTransform(nullptr),
+		mRootNodeNodeId(-1),
+		mEnabled(true),
+		mIsInitialized(false),
+		mParentNode(nullptr),
+		mChildren({}),
+		//mIsVisibleInEditor(true),
+		mSiblings({}),
+		mBone(nullptr),
+		mMeshes({}),
+		mModelPath(""),
+		mSceneCamera(nullptr),
+		mHasBoneInfluence(false),
+		mAnimations({}),
+		mCurrentAnimation(nullptr)
 	{
-		mIsInitialized = false;
 		mTransform = CreateRef<Transform>();
-		mParentNode = nullptr;
-		mMeshes = {};
-		mModelPath = "";
+
 #ifdef TS_ENGINE_EDITOR
 		mIsVisibleInEditor = true;
 #endif
-		mSceneCamera = nullptr;
-		mHasBoneInfluence = false;
 	}
 
 	Node::~Node()
 	{
+		TS_CORE_INFO("Deleting node with id: {0}, name: {1}", mId, mName);
+		
+		for (auto& child : mChildren)
+			child = nullptr;
+
 		Destroy();
+	}
+
+	void Node::Initialize(const std::string& name, const NodeType& _type)
+	{
+		mName = name;																	// Set Name
+		mType = _type;
+
+		SceneManager::GetInstance()->Register(NodeRef);	// Register the current node as a shared pointer in the scene
+		
+		ComputeTransformMatrices();														// Computer transformation matrices for this node
+		mIsInitialized = true;															// Set IsInitialized
+	}
+
+	bool Node::CheckSelectedModelRootNodeId(int _selectedModelRootNodeId)
+	{
+		if (mRootNodeNodeId == _selectedModelRootNodeId)
+		{
+			return true;
+		}
+
+		for (auto child : mChildren)
+		{
+			child->CheckSelectedModelRootNodeId(_selectedModelRootNodeId);
+		}
+
+		return false;
+	}
+
+	// If there is no parent set parentTransformModelMatrix to identity
+	void Node::Update(Ref<Shader> shader, float deltaTime)
+	{
+		TS_CORE_ASSERT(mIsInitialized, "Node is not initialized!");
+
+		// Send ModelMatrix to vertex shader
+		shader->SetMat4("u_Model",								// Pass worldTransformationMatrix to shader 
+			mTransform->GetWorldTransformationMatrix());
+
+		// Set selected modelCopyId
+		shader->SetInt("u_ModelRootNodeId", mRootNodeNodeId);	// Pass modelCopyId to shader
+
+		if (mBone)
+		{
+			mBone->Update(shader);
+		}
+
+#ifdef TS_ENGINE_EDITOR
+		if (mEnabled)
+#endif
+		{
+			// Draw Meshes
+			for (auto& mesh : mMeshes)
+			{
+#ifdef TS_ENGINE_EDITOR
+				mesh->Render(mId, Application::GetInstance().IsTextureModeEnabled());
+#else
+				mesh->Render(Application::GetInstance().IsTextureModeEnabled());
+#endif
+			}
+
+			// Send children modelMatrix to shader and draw gameobject with attached to child
+			for (auto& child : mChildren)
+			{
+				child->Update(shader, deltaTime);
+			}
+		}
+	}
+
+	void Node::AnimationUpdate(float _deltaTime)
+	{
+		// Animation Update
+		mCurrentAnimation ? mCurrentAnimation->Update(_deltaTime) : void();
+
+		for (auto& child : mChildren)
+		{
+			child->AnimationUpdate(_deltaTime);
+		}
 	}
 
 	void Node::Destroy()
 	{
-		TS_CORE_INFO("Deleting node named: {0}", mNodeRef->GetEntity()->GetName().c_str());
-		EntityManager::GetInstance()->Remove(mNodeRef->GetEntity()->GetEntityID());
+		//TS_CORE_INFO("Deleting node named: {0}", mNode->GetName().c_str());
+		//SceneManager::GetInstance()->Deregister(mId);
 
-#ifdef TS_ENGINE_EDITOR
-		m_Enabled = false;
-#endif
-
-		mParentNode->RemoveChild(mNodeRef);
-
-		mMeshes.clear();
-		this->mModelPath = "";
-
-		mTransform.reset();
-
-		for (auto& child : mChildren)
-		{
-			child.reset();
-		}
-
-		mParentNode.reset();
-		mChildren.clear();
-		mSceneCamera = nullptr;
+//#ifdef TS_ENGINE_EDITOR
+//		mEnabled = false;
+//#endif
+//		if(mParentNode)
+//			mParentNode->RemoveChild(NodeRef);
+//
+//		mMeshes.clear();
+//		mModelPath = "";
+//
+//		mChildren.clear();
+//		mSceneCamera = nullptr;
 	}
 
 	Ref<Node> Node::Duplicate()
 	{
 		Ref<Node> duplicateNode = CreateRef<Node>();
-		duplicateNode->mNodeRef = duplicateNode;
-		duplicateNode->mNodeRef->CloneMeshes(mNodeRef->mMeshes);
-		duplicateNode->mNodeRef->mModelPath = mNodeRef->mModelPath;
 
-		duplicateNode->mNodeRef->mTransform = CreateRef<Transform>();
-		duplicateNode->mNodeRef->mTransform->mLocalPosition = mNodeRef->mTransform->mLocalPosition;
-		duplicateNode->mNodeRef->mTransform->mLocalRotation = mNodeRef->mTransform->mLocalRotation;
-		duplicateNode->mNodeRef->mTransform->mLocalScale = mNodeRef->mTransform->mLocalScale;
-
-#ifdef TS_ENGINE_EDITOR
-		duplicateNode->mNodeRef->mIsVisibleInEditor = mNodeRef->mIsVisibleInEditor;
-#endif
-
-		duplicateNode->mParentNode = mNodeRef->mParentNode;
-
-		for (auto& child : mNodeRef->mChildren)
+		Ref<Transform> duplicateNodeTransform = CreateRef<Transform>();				// Transform
 		{
-			duplicateNode->AddChild(child->Duplicate());
+			duplicateNodeTransform->mLocalPosition = mTransform->mLocalPosition;
+			duplicateNodeTransform->mLocalRotation = mTransform->mLocalRotation;
+			duplicateNodeTransform->mLocalScale = mTransform->mLocalScale;
+
+			duplicateNode->mTransform = duplicateNodeTransform;
 		}
 
-		duplicateNode->mNodeRef->Initialize(mNodeRef->mEntity->GetName(), mNodeRef->mEntity->GetEntityType());
-		duplicateNode->mNodeRef->UpdateSiblings();
+		for (const auto& mesh : mMeshes)											// Meshes
+		{
+			duplicateNode->CloneMesh(mesh);
+		}
 
-		duplicateNode->mNodeRef->mSceneCamera = mNodeRef->mSceneCamera;
+		duplicateNode->SetHasBoneInfluence(HasBoneInfluence());						// HasBoneInfluence
+
+		duplicateNode->mModelPath = mModelPath;										// Model Path
+
+#ifdef TS_ENGINE_EDITOR
+		duplicateNode->mIsVisibleInEditor = mIsVisibleInEditor;						// Visibility
+#endif
+
+		duplicateNode->Initialize(mName, mType);									// Initialize
+		duplicateNode->UpdateSiblings();											// Update Siblings To Set Order In Hierarchy
+
+		duplicateNode->mSceneCamera = mSceneCamera;									// Scene Camera
+
+		for (auto& child : mChildren)												// Children Nodes
+		{
+			duplicateNode->AddChild(child->Duplicate());								
+		}
 
 		return duplicateNode;
 	}
 
-	/*void Node::SetEntityType(EntityType entityType)
+	void Node::CloneMesh(const Ref<Mesh>& _originalMesh)
 	{
-		mEntityType = entityType;
-	}*/
+		//Ref<Mesh> clonedMesh = CreateRef<Mesh>();
+		//clonedMesh->CloneMesh(_originalMesh);
 
-	void Node::SetNodeRef(Ref<Node> node)
-	{
-		mNodeRef = node;
+		Ref<Mesh> clonedMesh = CreateRef<Mesh>(*_originalMesh);
+		clonedMesh->SetName(_originalMesh->GetName() + "-Copy");
+
+		// Clone material
+		Ref<Material> originalMaterial = _originalMesh->GetMaterial();
+		Ref<Material> clonedMaterial = originalMaterial ? CreateRef<Material>(*originalMaterial) : nullptr;
+		clonedMaterial->SetName(originalMaterial->GetName() + "-Copy");
+
+		clonedMesh->SetMaterial(clonedMaterial);
+
+		AddMesh(clonedMesh);
 	}
 
 	void Node::SetParent(Ref<Node> parentNode)
 	{
-		//TS_CORE_INFO("Setting parent of {0} as {1}", mEntity->GetName().c_str(), parentNode->mEntity->GetName().c_str());
-
 		if (parentNode)
 		{
-			if (mNodeRef->mParentNode)
-			{
-				mNodeRef->mParentNode->RemoveChild(mNodeRef);
-			}
+			TS_CORE_INFO("Changed parent of {0} to {1}", mName.c_str(), parentNode->mName.c_str());
+			
+			// Set node from current parent
+			mParentNode ? mParentNode->RemoveChild(NodeRef) : void();
 
-			parentNode->AddChild(mNodeRef);
-			mNodeRef->GetTransform()->ComputeTransformationMatrix(parentNode);
+			// Add node to new parent
+			parentNode->AddChild(NodeRef);
+
+			// Computer transforms after parent change
+			mTransform->ComputeTransformationMatrix(parentNode);
 		}
 	}
 
 	void Node::ChangeParent(Ref<Node> parentNode)
 	{
-		TS_CORE_INFO("Changed parent of {0} to {1}", mEntity->GetName().c_str(), parentNode->mEntity->GetName().c_str());
+		TS_CORE_INFO("Changed parent of {0} to {1}", mName.c_str(), parentNode->mName.c_str());
 
 		if (parentNode)
 		{
-			if (mNodeRef->mParentNode)
-			{
-				mNodeRef->mParentNode->RemoveChild(mNodeRef);
-			}
+			// Set node from current parent
+			mParentNode ? mParentNode->RemoveChild(NodeRef) : void();
 
-			parentNode->AddChild(mNodeRef);
+			// Add node to new parent
+			parentNode->AddChild(NodeRef);
 		}
 	}
 
@@ -203,24 +308,29 @@ namespace TS_ENGINE
 		mTransform->SetLocalTransform(_localPosition, _localQuaternion, _localScale, mParentNode);
 	}
 
+	void Node::SetLocalTransform(const Ref<Transform> _transform)
+	{
+		mTransform->SetLocalTransform(_transform->GetLocalPosition(), _transform->GetLocalRotation(), _transform->GetLocalScale(), mParentNode);
+	}
+
 	void Node::SetSceneCamera(Ref<SceneCamera> sceneCamera)
 	{
 		mSceneCamera = sceneCamera;
 	}
 
-	void Node::AddChild(Ref<Node> child)
+	void Node::AddChild(Ref<Node> _child)
 	{
-		child->mParentNode = mNodeRef;
-		mChildren.push_back(child);
-		//TS_CORE_INFO("{0} is set as child of {1}", child->mEntity->GetName().c_str(), mNodeRef->mEntity->GetName().c_str());
+		_child->mParentNode = NodeRef;
+		mChildren.push_back(_child);
+		//TS_CORE_INFO("{0} is set as child of {1}", _child->mName.c_str(), mName.c_str());
 
-		child->UpdateSiblings();
+		_child->UpdateSiblings();
 	}
 
-	void Node::RemoveChild(Ref<Node> child)
+	void Node::RemoveChild(Ref<Node> _child)
 	{
-		mChildren.erase(std::remove(mChildren.begin(), mChildren.end(), child), mChildren.end());
-		child->UpdateSiblings();
+		mChildren.erase(std::remove(mChildren.begin(), mChildren.end(), _child), mChildren.end());
+		_child->UpdateSiblings();
 	}
 
 	void Node::RemoveAllChildren()
@@ -252,14 +362,29 @@ namespace TS_ENGINE
 		for (int i = 0; i < mChildren.size(); i++)
 		{
 			if (mChildren[i] == node)
-			{
-				TS_CORE_ERROR("Sibling index for: {0} is: {1}", node->GetEntity()->GetName().c_str(), i);
+			{				
+				TS_CORE_ERROR("Sibling index for: {0} is: {1}", node->mName.c_str(), i);
 				return i;
 			}
 		}
 
-		TS_CORE_ERROR("Could not find sibling index for: {0}", node->GetEntity()->GetName().c_str());
+		TS_CORE_ERROR("Could not find sibling index for: {0}", mName.c_str());
 		return 0;
+	}
+
+	int Node::GetModelRootNodeId()
+	{
+		return mRootNodeNodeId;
+	}
+
+	void Node::SetName(std::string& _name)
+	{
+		mName = _name;
+	}
+
+	void Node::SetBone(Ref<Bone> _bone)
+	{
+		mBone = _bone;
 	}
 
 	void Node::SetHasBoneInfluence(bool _hasBoneInfluence)
@@ -272,14 +397,41 @@ namespace TS_ENGINE
 		mAnimations.insert({ _animation->GetName(), _animation });
 	}
 
-	void Node::SetAnimations(std::unordered_map<std::string, Ref<Animation>>& _animations)
+	void Node::SetAnimations(const std::unordered_map<std::string, Ref<Animation>>& _animations)
 	{
 		mAnimations = _animations;
+	}
+
+	void Node::SetCurrentAnimation(int _index)
+	{
+		int i = 0;
+
+		auto& it = mAnimations.begin();
+		if (i < _index)
+		{
+			it++;
+			i++;
+		}
+
+		mCurrentAnimation = (*it).second;
 	}
 
 	void Node::SetCurrentAnimation(std::string _name)
 	{
 		mCurrentAnimation = mAnimations[_name];
+	}
+
+	void Node::SetModelRootNodeId(int _rootNodeId)
+	{
+		//std::string name = mName;
+		mRootNodeNodeId = _rootNodeId;
+
+		TS_CORE_INFO("Setting mRootNodeId = {0} for {1}", mRootNodeNodeId, mName);
+
+		for (auto& child : mChildren)
+		{
+			child->SetModelRootNodeId(_rootNodeId);
+		}
 	}
 
 	void Node::UpdateSiblings()
@@ -290,13 +442,13 @@ namespace TS_ENGINE
 
 			for (auto& child : mParentNode->mChildren)
 			{
-				if (child != mNodeRef)
+				if (child != NodeRef)
 					mSiblings.push_back(child);
 			}
 		}
 		else
 		{
-			TS_CORE_ERROR("There is no parent for {0}", mNodeRef->mEntity->GetName().c_str());
+			TS_CORE_ERROR("There is no parent for {0}", mName.c_str());
 		}
 	}
 
@@ -304,17 +456,17 @@ namespace TS_ENGINE
 	{
 		if (mParentNode)
 		{
-			int siblingIndex = mParentNode->GetSiblingIndex(mNodeRef);
+			int siblingIndex = mParentNode->GetSiblingIndex(NodeRef);
 
 			if (siblingIndex == index)
-			{
-				TS_CORE_INFO("Sibling index for: {0} is already {1}", mNodeRef->GetEntity()->GetName().c_str(), index);
+			{				
+				TS_CORE_INFO("Sibling index for: {0} is already {1}", mName.c_str(), index);
 			}
 			else
 			{
-				auto elementToMove = mNodeRef->mChildren[index];
-				mNodeRef->mChildren.erase(mNodeRef->mChildren.begin() + siblingIndex);
-				mNodeRef->mChildren.insert(mNodeRef->mChildren.begin() + index, elementToMove);
+				auto elementToMove = mChildren[index];
+				mChildren.erase(mChildren.begin() + siblingIndex);
+				mChildren.insert(mChildren.begin() + index, elementToMove);
 			}
 		}
 		else
@@ -325,13 +477,10 @@ namespace TS_ENGINE
 
 	void Node::ComputeTransformMatrices()
 	{
-		if (mEntity)
+		if(!mHasBoneInfluence)
 		{
-			if(!mHasBoneInfluence)
-			{
-				mTransform->ComputeTransformationMatrix(mParentNode);
-			}
-		}
+			mTransform->ComputeTransformationMatrix(mParentNode);
+		}		
 
 		for (auto& child : mChildren)
 		{
@@ -339,53 +488,9 @@ namespace TS_ENGINE
 		}
 	}
 
-	/// <summary>
-	/// Sets name and registers entityType
-	/// </summary>
-	/// <param name="name"></param>
-	/// <param name="entityType"></param>
-	void Node::Initialize(const std::string& name, const EntityType& entityType)
-	{
-		mName = name;
-		mNodeRef->mEntity = EntityManager::GetInstance()->Register(name, entityType);
-		ComputeTransformMatrices();
-
-		mIsInitialized = true;
-	}
-
 	void Node::ReInitializeTransforms()
 	{
 		ComputeTransformMatrices();
-	}
-
-	// If there is no parent set parentTransformModelMatrix to identity
-	void Node::Update(Ref<Shader> shader, float deltaTime)
-	{
-		TS_CORE_ASSERT(mIsInitialized, "Node is not initialized!");
-
-		// Send ModelMatrix to vertex shader
-		shader->SetMat4("u_Model", mTransform->GetWorldTransformationMatrix());
-
-#ifdef TS_ENGINE_EDITOR
-		if (m_Enabled)
-#endif
-		{
-			// Draw Meshes
-			for (auto& mesh : mMeshes)
-			{
-#ifdef TS_ENGINE_EDITOR
-				mesh->Render(mEntity->GetEntityID(), Application::GetInstance().IsTextureModeEnabled());
-#else
-				mesh->Render(Application::GetInstance().IsTextureModeEnabled());
-#endif
-			}
-
-			// Send children modelMatrix to shader and draw gameobject with attached to child
-			for (auto& child : mChildren)
-			{
-				child->Update(shader, deltaTime);
-			}
-		}
 	}
 
 	const Ref<Node> Node::FindNodeByName(std::string _name)
@@ -394,7 +499,7 @@ namespace TS_ENGINE
 
 		if (_name == mName)
 		{
-			foundNode = mNodeRef;
+			foundNode = NodeRef;
 		}
 		else
 		{
@@ -431,7 +536,7 @@ namespace TS_ENGINE
 
 	void Node::ChangeMesh(PrimitiveType primitiveType)
 	{
-		Factory::GetInstance()->ChangeMeshForNode(mNodeRef, primitiveType);
+		Factory::GetInstance()->ChangeMeshForNode(NodeRef, primitiveType);
 	}
 
 	void Node::AddMesh(Ref<Mesh> mesh)
@@ -461,24 +566,13 @@ namespace TS_ENGINE
 
 	void Node::PrintChildrenName()
 	{
-		TS_CORE_TRACE("Node {0} has children named: ", mEntity->GetName().c_str());
+		TS_CORE_TRACE("Node {0} has children named: ", mName.c_str());
 
 		for (auto& child : mChildren)
 		{
-			TS_CORE_TRACE("{0} ", child->mEntity->GetName().c_str());
+			TS_CORE_TRACE("{0} ", child->mName.c_str());
 			child->PrintChildrenName();
 		}
-	}
-
-	void Node::CloneMeshes(std::vector<Ref<Mesh>> meshes)
-	{
-		for (auto mesh : meshes)
-		{
-			Ref<Mesh> clonedMesh = CreateRef<Mesh>();
-			clonedMesh->CloneMesh(mesh);
-			mNodeRef->AddMesh(clonedMesh);
-		}
-
 	}
 
 	void Node::PrintLocalPosition()
@@ -513,4 +607,45 @@ namespace TS_ENGINE
 		mIsVisibleInEditor = false;
 	}
 #endif
+
+	std::string Node::GetNodeTypeStr(const NodeType& _nodeType)
+	{
+		const char* typeStr = "";
+
+		switch (_nodeType)
+		{
+		case NodeType::PRIMITIVE:
+			typeStr = "PRIMITIVE";
+			break;
+		case NodeType::MESH:
+			typeStr = "MESH";
+			break;
+		case NodeType::MODELROOTNODE:
+			typeStr = "MODELROOTNODE";
+			break;
+		case NodeType::BONE:
+			typeStr = "BONE";
+			break;
+		case NodeType::BONEGUI:
+			typeStr = "BONEGUI";
+			break;
+		case NodeType::CAMERA:
+			typeStr = "CAMERA";
+			break;
+		case NodeType::SKYBOX:
+			typeStr = "SKYBOX";
+			break;
+		case NodeType::SCENE:
+			typeStr = "SCENE";
+			break;
+		case NodeType::LIGHT:
+			typeStr = "LIGHT";
+			break;
+		case NodeType::EMPTY:
+			typeStr = "EMPTY";
+			break;
+		}
+		
+		return typeStr;
+	}
 }

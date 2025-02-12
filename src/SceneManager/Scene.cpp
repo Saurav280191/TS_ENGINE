@@ -17,21 +17,39 @@ namespace TS_ENGINE
 {
 	Scene::Scene():
 		mSelectedBoneId(-1),
-		mName("Default")
+		mName("Default"),
+		mSelectedModelRootNodeId(-1),
+		mAnimations({})
 	{
-		mSceneNode = CreateRef<Node>();
-		mSceneNode->SetNodeRef(mSceneNode);
+		mSceneNode = CreateRef<Node>();		
 
 		mCurrentSceneCameraIndex = 0;
 		//m_BatchButton.RegisterClickHandler(std::bind(&ButtonHandler::OnButtonClicked, &mBatchButtonHandler, std::placeholders::_1, std::placeholders::_2));
 
-		mSkybox = CreateRef<Skybox>();	
-
+		mSkybox = CreateRef<Skybox>();
+		mSkybox->Initialize("Skybox", NodeType::SKYBOX);
 	}
 
 	Scene::~Scene()
 	{
-		Flush();
+		TS_CORE_INFO("Deleting scene named: {0}", mName);
+
+#ifdef TS_ENGINE_EDITOR
+		mEditorCamera.reset();
+#endif
+		for (auto sceneCamera : mSceneCameras)
+			sceneCamera.reset();
+
+		// TODO: Check why the destructors for the scene variables are not getting called?
+
+		mSceneCameras.clear();
+
+		Factory::GetInstance()->Clear();
+
+		mSceneNode = nullptr;
+
+		//mSceneNode.reset();
+		//ModelLoader::GetInstance()->Flush();
 	}
 
 	void Scene::SetName(const std::string& _name)
@@ -41,7 +59,7 @@ namespace TS_ENGINE
 
 	void Scene::Initialize()
 	{
-		mSceneNode->Initialize(mName, EntityType::SCENE);//Needs to be done at the end to initialize the hierarchy once
+		mSceneNode->Initialize(mName, NodeType::SCENE);// Needs to be initialize at the end to initialize the hierarchy once
 	}
 
 	void Scene::AddEditorCamera(Ref<EditorCamera> editorCamera)
@@ -69,28 +87,9 @@ namespace TS_ENGINE
 		}
 	}
 
-	void Scene::Flush()
-	{
-#ifdef TS_ENGINE_EDITOR
-		mEditorCamera->Flush();
-#endif
-
-		for (auto sceneCamera : mSceneCameras)
-			sceneCamera->Flush();
-
-		EntityManager::GetInstance()->Flush();
-		Factory::GetInstance()->Flush();
-		mSceneNode.reset();
-		//ModelLoader::GetInstance()->Flush();
-	}
-
 	void Scene::Update(float _deltaTime)
 	{
-		for (auto& [name, rootNodeAndModelPair] : Factory::GetInstance()->mLoadedModelNodeMap)
-		{
-			auto& [rootNode, model] = rootNodeAndModelPair;
-			rootNode->GetCurrentAnimation()->Update(_deltaTime);
-		}
+		mSceneNode->AnimationUpdate(_deltaTime);
 	}
 
 	/*void Scene::OnBatched()
@@ -159,40 +158,38 @@ namespace TS_ENGINE
 		//mDirectionalLight->GetNode()->GetTransform()->GetForward(), Vector3(0.5f), Vector3(0.5f), Vector3(0.5f));
 
 		// Render Skybox
-		camera->SetIsDistanceIndependent(true);	// Make Camera Distance Independent For Rendering Skybox
-		camera->Update(shader, deltaTime);		// Camera's View And Projection Matrix Updates 
-		mSkybox->Render();						// Render Skybox
-		camera->SetIsDistanceIndependent(false);// Disable Camera Distance Independent For Rendering Other World Objects
+		camera->SetIsDistanceIndependent(true);				// Make Camera Distance Independent For Rendering Skybox
+		camera->Update(shader, deltaTime);					// Camera's View And Projection Matrix Updates 
+		mSkybox->Render();									// Render Skybox
+		camera->SetIsDistanceIndependent(false);			// Disable Camera Distance Independent For Rendering Other World Objects
 
-		TS_CORE_ASSERT(mSceneNode);				// Make Sure Scene Node Is Set
+		TS_CORE_ASSERT(mSceneNode);							// Make Sure Scene Node Is Set
 
-		camera->Update(shader, deltaTime);		// Camera's View And Projection Matrix Updates 
+		camera->Update(shader, deltaTime);					// Camera's View And Projection Matrix Updates 
 		
-		mSceneNode->Update(shader, deltaTime);	// Updates Shader Parameters And Renders Scene Hierarchy
-		
+		mSceneNode->Update(shader, deltaTime);				// Updates Shader Parameters And Renders Scene Hierarchy
+
+		//if(mSelectedModelRootNodeEntityId != -1)			// Check mSelectedModelRootNodeEntityId match on CPU
+		//	mSceneNode->CheckSelectedModelRootNodeEntityId(
+		// mSelectedModelRootNodeEntityId);
+
+		// Set selected modelCopyId
+		shader->SetInt("u_SelectedModelRootNodeEntityId",	// Pass selected modelCopyId to shader
+			mSelectedModelRootNodeId);
+
 		// Set selected bone Id
-		shader->SetInt("selectedBoneId",		// Pass selected bone to shader
+		shader->SetInt("u_SelectedBoneId",					// Pass selected bone to shader
 			mSelectedBoneId);
-		
+
 		// Set bone influence view
-		shader->SetInt("boneInfluence",			// Pass bone influence to shader
+		shader->SetInt("u_BoneInfluence",					// Pass bone influence to shader
 			(int)Application::GetInstance().mBoneInfluence);
-
-		// Update & Render bones
-		for (auto& [modelName, pair] : Factory::GetInstance()->mLoadedModelNodeMap)
-		{
-			Ref<Model> model = pair.second;
-			model->UpdateBone(shader);			// Bone Gui Update
-
-			if (Application::GetInstance().mBoneView)
-				model->RenderBones(shader);			// Bone Gui Render
-		}
 	}
 
 #ifdef TS_ENGINE_EDITOR
-	int Scene::GetSkyboxEntityID()
+	int Scene::GetSkyboxNodeId()
 	{
-		return mSkybox->GetEntity()->GetEntityID();
+		return mSkybox->mId;
 	}
 #endif
 
@@ -214,7 +211,7 @@ namespace TS_ENGINE
 		{
 			if (mSceneCameras[i] != sceneCamera)
 			{
-				TS_CORE_INFO("Switched current scene camera to: {0}", mSceneCameras[i]->GetNode()->GetEntity()->GetName().c_str());
+				TS_CORE_INFO("Switched current scene camera to: {0}", mSceneCameras[i]->GetNode()->mName.c_str());
 				mCurrentSceneCameraIndex = i;
 				return;
 			}
@@ -230,9 +227,10 @@ namespace TS_ENGINE
 		if(mSceneCameras.size() > 0)
 			mSceneCameras[mCurrentSceneCameraIndex]->ShowFrustrumGUI(shader, deltaTime);
 	}
+#endif
+
 	void Scene::AddAnimation(Ref<Animation> _animation)
 	{
 		mAnimations.insert({ _animation->GetName(), _animation });
 	}
-#endif
 }

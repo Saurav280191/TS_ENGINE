@@ -4,27 +4,57 @@
 #include "Core/Transform.h"
 #include "Renderer/Shader.h"
 #include "Primitive/Mesh.h"
-#include "EntityManager/Entity.h"
-#include "EntityManager/EntityManager.h"
 #include "Components/Animation.h"
 
 namespace TS_ENGINE
 {
+	enum NodeType
+	{
+		PRIMITIVE,
+		MESH,
+		MODELROOTNODE,
+		BONE,
+		BONEGUI,
+		CAMERA,
+		SKYBOX,
+		SCENE,
+		LIGHT,
+		EMPTY
+	};
+
+	class Bone;
 	class Transform;
 	class SceneCamera;
 	class Animation;
-	class Node
+
+	// Enable shared_from_this for Node class objects
+	class Node	: public std::enable_shared_from_this<Node>
 	{		
 	public:
 		Node();
 		~Node();	
 
-		void Destroy();
+		// Registers node and initializes transformation matrix
+		virtual void Initialize(const std::string& name, const NodeType& _type);
+
+		// To check mSelectedModelRootNodeId match on CPU
+		bool CheckSelectedModelRootNodeId(int _selectedModelRootNodeId);
+		
+		// Sets model matrix in shader. Renders mesh. Then updates children.
+		void Update(Ref<Shader> shader, float deltaTime);
+		
+		// Animation Update
+		void AnimationUpdate(float _deltaTime);
+
+		void Destroy();		
 		Ref<Node> Duplicate();
 
-		//This is important to keep a reference of the smart pointer create in Object class
-		void SetNodeRef(Ref<Node> node);
+		void CloneMesh(const Ref<Mesh>& _originalMesh);
+
+		// Changes the parent and computes transforms
 		void SetParent(Ref<Node> parentNode);
+
+		// Changes the parent without computing transforms
 		void ChangeParent(Ref<Node> parentNode);
 
 		void SetPosition(aiVector3D _assimpPosition);
@@ -48,10 +78,12 @@ namespace TS_ENGINE
 		// Sets local transform in Transform
 		void SetLocalTransform(Vector3 _localPosition, Quaternion _localQuaternion, Vector3 _localScale);
 
+		void SetLocalTransform(const Ref<Transform> _transform);
+
 		void SetSceneCamera(Ref<SceneCamera> sceneCamera);
 
-		void AddChild(Ref<Node> child);
-		void RemoveChild(Ref<Node> child);
+		void AddChild(Ref<Node> _child);
+		void RemoveChild(Ref<Node> _child);
 		void RemoveAllChildren();
 		void UpdateSiblings();
 		void SetSiblingIndex(int index);
@@ -59,14 +91,8 @@ namespace TS_ENGINE
 		// Updates local and global model matrices for itself and for children
 		void ComputeTransformMatrices();	
 		
-		// Registers entity amd initializes transformation matrix
-		void Initialize(const std::string& name, const EntityType& entityType);
-		
-		// Initializes transformation matrices of node and it's children with registering entity again
+		// Initializes transformation matrices of node and it's children with registering node again
 		void ReInitializeTransforms();
-
-		// Sets model matrix in shader. Renders mesh. Then updates children.
-		void Update(Ref<Shader> shader, float deltaTime);
 
 		const Ref<Node> FindNodeByName(std::string _name);
 
@@ -84,8 +110,6 @@ namespace TS_ENGINE
 
 		void PrintChildrenName();//Only for testing
 
-		void CloneMeshes(std::vector<Ref<Mesh>> meshes);
-
 		void PrintLocalPosition();
 		void PrintLocalEulerAngles();
 		void PrintLocalScale();
@@ -93,13 +117,14 @@ namespace TS_ENGINE
 		void PrintTransform();
 
 #ifdef TS_ENGINE_EDITOR
-		const bool IsVisibleInEditor() const { return mIsVisibleInEditor; }
 		void HideInEditor();					
 #endif
 
 #pragma region Getters
-		Ref<Node> GetNode() const { return mNodeRef; }		
-		const Ref<Entity> GetEntity() const { return mEntity; }		
+		const std::string& GetName() { return mName; }
+		NodeType GetNodeType() { return mType; }
+		std::string GetNodeTypeStr(const NodeType& _nodeType);
+		const bool IsVisibleInEditor() const { return mIsVisibleInEditor; }			
 		Ref<Node> GetChildAt(uint32_t childIndex) const;
 		Ref<Node> GetParentNode() const { return mParentNode; }
 		std::vector<Ref<Node>> GetChildren() const { return mChildren; }
@@ -107,48 +132,59 @@ namespace TS_ENGINE
 		const Ref<Transform> GetTransform() const { return mTransform; }
 		const size_t GetChildCount() const { return mChildren.size(); }
 		std::vector<Ref<Mesh>> GetMeshes() const { return mMeshes; }
-		Ref<Mesh> GetMesh() const { return mMeshes[0]; }
 		Ref<SceneCamera> GetSceneCamera() { return mSceneCamera; }
+		Ref<Mesh> GetMesh() const { return mMeshes[0]; }
+		Ref<Bone> GetBone() { return mBone; }
 		std::string GetModelPath() { return mModelPath; }
 		const int GetSiblingIndex(Ref<Node> node);
+		
+		// Finds and returns root node's Id
+		int GetModelRootNodeId();
+
+		const Ref<Animation> GetCurrentAnimation() const { return mCurrentAnimation; }
+		const std::unordered_map<std::string, Ref<Animation>> GetAnimations() const { return mAnimations; }
 #pragma endregion
 
-		std::string mName;
-		Ref<Transform> mTransform;
-
-#ifdef TS_ENGINE_EDITOR
-		bool m_Enabled = true;//For IMGUI
-#endif
+		void SetName(std::string& _name);
+		void SetBone(Ref<Bone> _bone);
 		void SetHasBoneInfluence(bool _hasBoneInfluence);
 		bool HasBoneInfluence() { return mHasBoneInfluence; }
 		void AddAnimation(Ref<Animation>& _animation);
-		void SetAnimations(std::unordered_map<std::string, Ref<Animation>>& _animations);
+		void SetAnimations(const std::unordered_map<std::string, Ref<Animation>>& _animations);
+		void SetCurrentAnimation(int _index);
 		void SetCurrentAnimation(std::string _name);
+		void SetModelRootNodeId(int _rootNodeId);
 
-		const Ref<Animation>& GetCurrentAnimation() { return mCurrentAnimation; }
-		const std::unordered_map<std::string, Ref<Animation>>& GetAnimations() { return mAnimations; }
-	
-	protected:
-		Ref<Entity> mEntity;				// Entity		
-		Ref<Node> mNodeRef;					// This will be used for referencing everywhere instead of Node*
 	private:
-		bool mIsInitialized;		
-		Ref<Node> mParentNode;
-		std::vector<Ref<Node>> mChildren;
-
-		std::vector<Ref<Node>> mSiblings = {};
-		std::vector<Ref<Mesh>> mMeshes;
-		std::string mModelPath;		
-		Ref<SceneCamera> mSceneCamera;		// Only used incase of scene camera node
+		NodeType mType;							// Node Type
+	public:
+		uint32_t mId;							// Id. Get's set while being Registered in Scene class
+		std::string mName;						// Name
+		Ref<Transform> mTransform;				// Transform
+		int mRootNodeNodeId;					// Model's root node Id
 #ifdef TS_ENGINE_EDITOR
-		bool mIsVisibleInEditor = true;
+		bool mEnabled = true;					// Enabled
 #endif
-		bool mHasBoneInfluence;				// This helps in identifying mesh nodes have bone influence and need to be ignored while computing transforms in ComputeTransformMatrices function
+	private:
+		bool mIsInitialized;					// Initialize		
+		Ref<Node> mParentNode;					// Parent Node
+		std::vector<Ref<Node>> mChildren;		// Children Nodes
+
+#ifdef TS_ENGINE_EDITOR
+		bool mIsVisibleInEditor = true;			// Visible(Not In Use. Can be used for Toggle Mesh Visibility)
+#endif
+		
+		std::vector<Ref<Node>> mSiblings = {};	// Siblings
+
+		Ref<Bone> mBone;						// Bone
+
+		std::vector<Ref<Mesh>> mMeshes;			// Meshes
+		std::string mModelPath;					// Model Path (Used to save model path in scene serializer)
+		Ref<SceneCamera> mSceneCamera;			// Only used incase of scene camera node
+		bool mHasBoneInfluence;					// This helps in identifying mesh nodes have bone influence and need to be ignored while computing transforms in ComputeTransformMatrices function
 		
 		std::unordered_map<std::string, 
-			Ref<Animation>> mAnimations;	// Name & Animation Map
-		
-		Ref<Animation> mCurrentAnimation;
+			Ref<Animation>> mAnimations;		// Name & Animation Map
+		Ref<Animation> mCurrentAnimation;		// Current Animation			
 	};
 }
-

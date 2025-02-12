@@ -19,7 +19,7 @@ namespace TS_ENGINE
 	void SceneSerializer::Save(Ref<Scene> scene)
 	{
 		nlohmann::json json;
-		std::string sceneName = scene->GetSceneNode()->GetEntity()->GetName();
+		std::string sceneName = scene->GetSceneNode()->mName;
 
 		json["Scene"]["Name"] = sceneName;
 
@@ -65,7 +65,7 @@ namespace TS_ENGINE
 			for (int i = 0; i < scene->GetSceneCameras().size(); i++)
 			{
 				// Name
-				json["Scene"]["SceneCameras"][i]["Name"] = scene->GetSceneCameras()[i]->GetNode()->GetEntity()->GetName();
+				json["Scene"]["SceneCameras"][i]["Name"] = scene->GetSceneCameras()[i]->GetNode()->mName;
 
 				// Transform
 				json["Scene"]["SceneCameras"][i]["Transform"] =
@@ -218,7 +218,7 @@ namespace TS_ENGINE
 		for (auto& sceneCamera : sceneCameras)							// Add scene cameras to scene
 		{
 			scene->AddSceneCamera(sceneCamera);
-			sceneCamera->GetNode()->SetParent(scene->GetSceneNode());
+			sceneCamera->GetNode()->SetParent(scene->GetSceneNode());	
 		}
 
 		// Iterate through all the children nodes for root node
@@ -239,20 +239,20 @@ namespace TS_ENGINE
 	{
 		nlohmann::json jsonNode;
 
-		jsonNode["Name"] = node->GetEntity()->GetName().c_str();
+		jsonNode["Name"] = node->mName.c_str();
 
 #ifdef TS_ENGINE_EDITOR
-		jsonNode["Enabled"] = node->m_Enabled;
+		jsonNode["Enabled"] = node->mEnabled;
 #endif
 		
-		jsonNode["EntityType"] = node->GetEntity()->GetEntityType();
+		jsonNode["NodeType"] = node->GetNodeType();
 
 		// EntityType And PrimitiveType
-		if (node->GetEntity()->GetEntityType() == EntityType::PRIMITIVE)
+		if (node->GetNodeType() == NodeType::PRIMITIVE)
 		{
 			jsonNode["PrimitiveType"] = node->GetMeshes()[0]->GetPrimitiveType();
 		}
-		else if (node->GetEntity()->GetEntityType() == EntityType::MODELROOTNODE)
+		else if (node->GetNodeType() == NodeType::MODELROOTNODE)
 		{
 			if (node->GetModelPath() != "")
 			{
@@ -261,7 +261,7 @@ namespace TS_ENGINE
 		}
 
 		// Mesh And Material
-		if (node->GetEntity()->GetEntityType() == EntityType::PRIMITIVE || node->GetEntity()->GetEntityType() == EntityType::MESH)
+		if (node->GetNodeType() == NodeType::PRIMITIVE || node->GetNodeType() == NodeType::MESH)
 		{
 			for (int i = 0; i < node->GetMeshes().size(); i++)
 			{
@@ -320,7 +320,7 @@ namespace TS_ENGINE
 		if(node->GetChildren().size() > 0)
 			jsonNode["Children"] = childrenJson;
 
-		TS_CORE_INFO(node->GetEntity()->GetName() + " node serialized!");
+		TS_CORE_INFO(node->GetName() + " node serialized!");
 		
 		return jsonNode;
 	}
@@ -355,14 +355,14 @@ namespace TS_ENGINE
 	void SceneSerializer::DeserializeNode(Ref<Node> parentNode, nlohmann::json& jsonNode, Ref<EditorCamera> editorCamera)
 	{
 		std::string name = jsonNode["Name"];
-		EntityType entityType = (EntityType)jsonNode["EntityType"];
+		NodeType nodeType = (NodeType)jsonNode["NodeType"];
 
 		if (name == "Ground")
 		{
 			TS_CORE_INFO("DeserializeNode called -> Instantiating ground!");
 		}
 
-		if (entityType == EntityType::PRIMITIVE)
+		if (nodeType == NodeType::PRIMITIVE)
 		{
 			PrimitiveType primitiveType = (PrimitiveType)jsonNode["PrimitiveType"];
 
@@ -400,17 +400,17 @@ namespace TS_ENGINE
 			break;
 			}
 		}
-		else if (entityType == EntityType::MODELROOTNODE)
+		else if (nodeType == NodeType::MODELROOTNODE)
 		{
 			auto it = jsonNode.find("ModelPath");
 
 			if (it != jsonNode.end())// For Model's RootNode
 			{
 				// Load model
-				Ref<Node> modelRootNode = Factory::GetInstance()->InstantiateModel(jsonNode["ModelPath"], parentNode);				
+				auto& rootNodeAndModelPair = Factory::GetInstance()->InstantiateModel(jsonNode["ModelPath"], parentNode);				
 				
 				// Apply saved transform to nodes
-				ApplyAndDeserializeChildrenNode(modelRootNode, jsonNode, editorCamera);
+				ApplyAndDeserializeChildrenNode(rootNodeAndModelPair.first, jsonNode, editorCamera);
 				
 				// Deserialization not needed for Model root childern children since it is taken care of while Instantiating Model
 				/*for (int i = 0; i < modelRootNode->GetChildCount(); i++)
@@ -420,19 +420,19 @@ namespace TS_ENGINE
 				}*/				
 			}
 		}
-		else if (entityType == EntityType::BONE)
+		else if (nodeType == NodeType::BONE)
 		{
 
 		}
-		else if (entityType == EntityType::BONEGUI)
+		else if (nodeType == NodeType::BONEGUI)
 		{
 
 		}
-		else if (entityType == EntityType::MESH)
+		else if (nodeType == NodeType::MESH)
 		{
 			// TODO: Can be extended later to save models in custom encrypted model format
 		}
-		else if (entityType == EntityType::CAMERA)
+		else if (nodeType == NodeType::CAMERA)
 		{
 			Ref<Node> sceneCameraNode = nullptr;
 #ifdef TS_ENGINE_EDITOR
@@ -443,7 +443,7 @@ namespace TS_ENGINE
 			ApplyAndDeserializeChildrenNode(sceneCameraNode, jsonNode, editorCamera);
 			//mSceneCameraNodes.push_back(sceneCameraNode);
 		}
-		else if (entityType == EntityType::EMPTY)
+		else if (nodeType == NodeType::EMPTY)
 		{
 			Ref<Node> node = Factory::GetInstance()->InstantitateEmptyNode(name, parentNode);
 			ApplyAndDeserializeChildrenNode(node, jsonNode, editorCamera);
@@ -466,7 +466,7 @@ namespace TS_ENGINE
 	
 		TS_CORE_ASSERT(name != "");
 
-		EntityType entityType = (EntityType)jsonNode["EntityType"];
+		NodeType nodeType = (NodeType)jsonNode["NodeType"];
 		
 		ApplyAndDeserializeChildrenNode(node, jsonNode, editorCamera);
 
@@ -482,7 +482,7 @@ namespace TS_ENGINE
 		if (node != nullptr)
 		{
 			std::string name = jsonNode["Name"];
-			EntityType entityType = (EntityType)jsonNode["EntityType"];
+			NodeType nodeType = (NodeType)jsonNode["NodeType"];
 
 			if (name == "Ground")
 			{
@@ -624,7 +624,7 @@ namespace TS_ENGINE
 		// Apply Enabled
 		bool enabled = jsonNode["Enabled"];
 #ifdef TS_ENGINE_EDITOR
-		node->m_Enabled = enabled;
+		node->mEnabled = enabled;
 #endif
 	}
 }
