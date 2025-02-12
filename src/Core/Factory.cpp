@@ -18,9 +18,8 @@ namespace TS_ENGINE
 	Ref<Node> Factory::InstantitateEmptyNode(const std::string& name, Ref<Node> parentNode)
 	{
 		Ref<Node> emptyNode = CreateRef<Node>();
-		emptyNode->SetNodeRef(emptyNode);
 		emptyNode->SetParent(parentNode);
-		emptyNode->Initialize(name, EntityType::EMPTY);
+		emptyNode->Initialize(name, NodeType::EMPTY);
 
 		return emptyNode;
 	}
@@ -41,8 +40,7 @@ namespace TS_ENGINE
 		sceneCamera->CreateFramebuffer(800, 600);
 		sceneCamera->Initialize();
 		sceneCamera->GetNode()->SetSceneCamera(sceneCamera);
-		sceneCamera->GetNode()->Initialize(name, EntityType::CAMERA);
-		sceneCamera->GetNode()->SetNodeRef(sceneCamera->GetNode());
+		sceneCamera->GetNode()->Initialize(name, NodeType::CAMERA);
 
 		return sceneCamera->GetNode();
 	}
@@ -66,7 +64,7 @@ namespace TS_ENGINE
 		duplicateSceneCamera->Initialize();
 		duplicateSceneCamera->GetNode()->SetSceneCamera(duplicateSceneCamera);
 		duplicateSceneCamera->GetNode()->SetParent(sceneCamera->GetNode()->GetParentNode());
-		duplicateSceneCamera->GetNode()->Initialize(sceneCamera->GetNode()->GetEntity()->GetName() + " - Copy", EntityType::CAMERA);
+		duplicateSceneCamera->GetNode()->Initialize(sceneCamera->GetNode()->mName + " - Copy", NodeType::CAMERA);
 
 		duplicateSceneCamera->GetNode()->GetTransform()->SetLocalPosition(sceneCamera->GetNode()->GetTransform()->GetLocalPosition());
 		duplicateSceneCamera->GetNode()->GetTransform()->SetLocalRotation(sceneCamera->GetNode()->GetTransform()->GetLocalRotation());
@@ -86,11 +84,10 @@ namespace TS_ENGINE
 		mesh->SetName(name);
 		
 		// Create Node for line mesh
-		Ref<Node> lineNode = CreateRef<Node>();
-		lineNode->SetNodeRef(lineNode);
+		Ref<Node> lineNode = CreateRef<Node>();		
 		lineNode->AddMesh(mesh);
 		lineNode->SetParent(parentNode);
-		lineNode->Initialize(name, EntityType::PRIMITIVE);
+		lineNode->Initialize(name, NodeType::PRIMITIVE);
 	
 		return lineNode;
 	}
@@ -98,42 +95,95 @@ namespace TS_ENGINE
 	Ref<Node> Factory::InstantiateQuad(const std::string& name, Ref<Node> parentNode)
 	{
 		Ref<Node> quadNode = CreateRef<Node>();
-		quadNode->SetNodeRef(quadNode);
-		Ref<Mesh> mesh = CreateRef<Quad>()->GetMesh();
+		Ref<Quad> quad = CreateRef<Quad>();
+		Ref<Mesh> mesh = quad->GetMesh();
 		mesh->SetName(name);
 		quadNode->AddMesh(mesh);
 		quadNode->SetParent(parentNode);
-		quadNode->Initialize(name, EntityType::PRIMITIVE);
+		quadNode->Initialize(name, NodeType::PRIMITIVE);
 		return quadNode;
 	}
 
 	Ref<Node> Factory::InstantiateCube(const std::string& name, Ref<Node> parentNode)
 	{
 		Ref<Node> cubeNode = CreateRef<Node>();
-		cubeNode->SetNodeRef(cubeNode);
 		Ref<Mesh> mesh = CreateRef<Cube>()->GetMesh();
 		mesh->SetName(name);
 		cubeNode->AddMesh(mesh);
 		cubeNode->SetParent(parentNode);
-		cubeNode->Initialize(name, EntityType::PRIMITIVE);
+		cubeNode->Initialize(name, NodeType::PRIMITIVE);
 		return cubeNode;
+	}
+
+	Ref<Node> Factory::InstantiateSphere(const std::string& name, Ref<Node> parentNode)
+	{
+		Ref<Node> sphereNode = CreateRef<Node>();;
+		Ref<Mesh> mesh = CreateRef<Sphere>()->GetMesh();
+		mesh->SetName(name);
+		sphereNode->AddMesh(mesh);
+		sphereNode->SetParent(parentNode);
+		sphereNode->Initialize(name, NodeType::PRIMITIVE);
+		return sphereNode;
+	}
+
+	Ref<Node> Factory::InstantiateSphere(const std::string& _name, float _radius, Ref<Node> _parentNode)
+	{
+		Ref<Node> sphereNode = CreateRef<Node>();
+		Ref<Mesh> mesh = CreateRef<Sphere>(_radius)->GetMesh();
+		mesh->SetName(_name);
+		sphereNode->AddMesh(mesh);
+		sphereNode->SetParent(_parentNode);
+		sphereNode->Initialize(_name, NodeType::PRIMITIVE);
+		return sphereNode;
+	}
+
+	Ref<Node> Factory::InstantiateCylinder(const std::string& name, Ref<Node> parentNode)
+	{
+		Ref<Node> cylinderNode = CreateRef<Node>();
+		Ref<Mesh> mesh = CreateRef<Cylinder>()->GetMesh();
+		mesh->SetName(name);
+		cylinderNode->AddMesh(mesh);
+		cylinderNode->SetParent(parentNode);
+		cylinderNode->Initialize(name, NodeType::PRIMITIVE);
+		return cylinderNode;
+	}
+
+	Ref<Node> Factory::InstantiateCone(const std::string& name, Ref<Node> parentNode)
+	{
+		Ref<Node> coneNode = CreateRef<Node>();
+		Ref<Mesh> mesh = CreateRef<Cone>()->GetMesh();
+		mesh->SetName(name);
+		coneNode->AddMesh(mesh);
+		coneNode->SetParent(parentNode);
+		coneNode->Initialize(name, NodeType::PRIMITIVE);
+		return coneNode;
+	}
+
+	Ref<Node> Factory::InstantiateSphereGui(const std::string& name, Ref<Node> parentNode)
+	{
+		Ref<Node> sphereNode = CreateRef<Node>();		
+		Ref<Mesh> mesh = CreateRef<Sphere>()->GetMesh();
+		mesh->SetName(name);
+		sphereNode->AddMesh(mesh);
+		sphereNode->SetParent(parentNode);
+		sphereNode->Initialize(name, NodeType::BONEGUI);
+		return sphereNode;
 	}
 
 	Ref<Node> Factory::InstantiateBone(const std::string& name, Ref<Node> parentNode)
 	{
-		Ref<Node> boneNode = CreateRef<Node>();
-		boneNode->SetNodeRef(boneNode);
+		Ref<Node> boneNode = CreateRef<Node>();		
 		Ref<Mesh> mesh = CreateRef<Mesh>();
-		
+
 		mesh->AddVertex(Vertex(Vector3(-0.5f, 0.0f, 0.0f)));// Left Tip
 
-		mesh->AddVertex(Vertex(Vector3(0.3f,-0.5f,-0.5f)));	// Bottom-left
-		mesh->AddVertex(Vertex(Vector3(0.3f,-0.5f, 0.5f)));	// Bottom-right
+		mesh->AddVertex(Vertex(Vector3(0.3f, -0.5f, -0.5f)));	// Bottom-left
+		mesh->AddVertex(Vertex(Vector3(0.3f, -0.5f, 0.5f)));	// Bottom-right
 		mesh->AddVertex(Vertex(Vector3(0.3f, 0.5f, 0.5f)));	// Top-right
-		mesh->AddVertex(Vertex(Vector3(0.3f, 0.5f,-0.5f)));	// Top-left
+		mesh->AddVertex(Vertex(Vector3(0.3f, 0.5f, -0.5f)));	// Top-left
 
 		mesh->AddVertex(Vertex(Vector3(0.5f, 0.0f, 0.0f)));	// Right Tip
-		
+
 		// Left pyramid
 		mesh->AddIndex(0);
 		mesh->AddIndex(1);
@@ -152,20 +202,20 @@ namespace TS_ENGINE
 		mesh->AddIndex(1);
 
 		// Right pyramid
-		mesh->AddIndex(5); 
-		mesh->AddIndex(1); 
+		mesh->AddIndex(5);
+		mesh->AddIndex(1);
 		mesh->AddIndex(2);
 
-		mesh->AddIndex(5); 
-		mesh->AddIndex(2); 
+		mesh->AddIndex(5);
+		mesh->AddIndex(2);
 		mesh->AddIndex(3);
 
-		mesh->AddIndex(5); 
-		mesh->AddIndex(3); 
+		mesh->AddIndex(5);
+		mesh->AddIndex(3);
 		mesh->AddIndex(4);
 
-		mesh->AddIndex(5); 
-		mesh->AddIndex(4); 
+		mesh->AddIndex(5);
+		mesh->AddIndex(4);
 		mesh->AddIndex(1);
 
 		mesh->Create(DrawMode::TRIANGLE);
@@ -173,82 +223,82 @@ namespace TS_ENGINE
 		mesh->SetName(name);
 		boneNode->AddMesh(mesh);
 		boneNode->SetParent(parentNode);
-		boneNode->Initialize(name, EntityType::PRIMITIVE);
+		boneNode->Initialize(name, NodeType::BONEGUI);
 		return boneNode;
 	}
 
-	Ref<Node> Factory::InstantiateSphere(const std::string& name, Ref<Node> parentNode)
+	std::pair<Ref<Node>, Ref<Model>> Factory::InstantiateModel(const std::string& modelPath, Ref<Node> parentNode)
 	{
-		Ref<Node> sphereNode = CreateRef<Node>();
-		sphereNode->SetNodeRef(sphereNode);
-		Ref<Mesh> mesh = CreateRef<Sphere>()->GetMesh();
-		mesh->SetName(name);
-		sphereNode->AddMesh(mesh);
-		sphereNode->SetParent(parentNode);
-		sphereNode->Initialize(name, EntityType::PRIMITIVE);
-		return sphereNode;
-	}
-
-	Ref<Node> Factory::InstantiateSphere(const std::string& _name, float _radius, Ref<Node> _parentNode)
-	{
-		Ref<Node> sphereNode = CreateRef<Node>();
-		sphereNode->SetNodeRef(sphereNode);
-		Ref<Mesh> mesh = CreateRef<Sphere>(_radius)->GetMesh();
-		mesh->SetName(_name);
-		sphereNode->AddMesh(mesh);
-		sphereNode->SetParent(_parentNode);
-		sphereNode->Initialize(_name, EntityType::PRIMITIVE);
-		return sphereNode;
-	}
-
-	Ref<Node> Factory::InstantiateCylinder(const std::string& name, Ref<Node> parentNode)
-	{
-		Ref<Node> cylinderNode = CreateRef<Node>();
-		cylinderNode->SetNodeRef(cylinderNode);
-		Ref<Mesh> mesh = CreateRef<Cylinder>()->GetMesh();
-		mesh->SetName(name);
-		cylinderNode->AddMesh(mesh);
-		cylinderNode->SetParent(parentNode);
-		cylinderNode->Initialize(name, EntityType::PRIMITIVE);
-		return cylinderNode;
-	}
-
-	Ref<Node> Factory::InstantiateCone(const std::string& name, Ref<Node> parentNode)
-	{
-		Ref<Node> coneNode = CreateRef<Node>();
-		coneNode->SetNodeRef(coneNode);
-		Ref<Mesh> mesh = CreateRef<Cone>()->GetMesh();
-		mesh->SetName(name);
-		coneNode->AddMesh(mesh);
-		coneNode->SetParent(parentNode);
-		coneNode->Initialize(name, EntityType::PRIMITIVE);
-		return coneNode;
-	}
-
-	Ref<Node> Factory::InstantiateModel(const std::string& modelPath, Ref<Node> parentNode)
-	{
-		Ref<Node> mModelNode = nullptr;
+		Ref<Node> modelRootNode = nullptr;
 		Ref<Model> model = nullptr;
 
 		auto it = mLoadedModelNodeMap.find(modelPath);
 
+		// If model is found in map
 		if (it != mLoadedModelNodeMap.end())
 		{
-			mModelNode = it->second.first->Duplicate();
-			mModelNode->GetTransform()->Reset();
+			auto&[originalRootNode, originalModel] = it->second;
+			
+			std::unordered_map<std::string, Ref<Bone>> boneInfoMap = {};
+
+			for (auto& [originalBoneName, originalBone] : originalModel->GetBoneInfoMap())
+			{
+				if (originalBone)
+				{
+					Ref<Bone> bone = CreateRef<Bone>(*originalBone);
+					boneInfoMap.insert({ originalBoneName, bone });
+				}
+			}
+
+			modelRootNode = originalRootNode->Duplicate(); 
+			
+			for (auto& child : modelRootNode->GetChildren())
+			{
+				child->SetModelRootNodeId(modelRootNode->mId);
+			}
+
+			// SetNodesForBones
+			for (auto& [name, bone] : boneInfoMap)
+			{
+				if (bone)
+				{
+					Ref<Node> node = modelRootNode->FindNodeByName(name);
+					bone->SetNode(node);
+					node->SetBone(bone);
+				}
+			}
+			
+			// CreateBoneGuis
+			for (auto& [name, bone] : boneInfoMap)
+			{
+				if (bone)
+				{
+					bone->CreateGui();
+				}
+			}
+
+			// Duplicate animation
+			for (auto& [originalAnimationName, originalAnimation] : originalRootNode->GetAnimations())
+			{
+				Ref<Animation> duplicateAnimation = CreateRef<Animation>(*originalAnimation);
+				duplicateAnimation->mInitializedNodesForAnimation = false;
+				modelRootNode->AddAnimation(duplicateAnimation);
+			}
+			modelRootNode->SetCurrentAnimation(0);
 		}
-		else
+		else// New model
 		{
 			model = ModelLoader::GetInstance()->LoadModel(modelPath);
-			mModelNode = model->GetRootNode();
+			modelRootNode = model->GetRootNode();
 			
-			mLoadedModelNodeMap.insert(std::pair<std::string, std::pair<Ref<Node>, Ref<Model>>>(modelPath, { mModelNode, model }));
+			mLoadedModelNodeMap.insert(std::pair<std::string, std::pair<Ref<Node>, Ref<Model>>>(modelPath, { modelRootNode, model }));
 		}
 
-		mModelNode->SetModelPath(modelPath);
-		mModelNode->SetParent(parentNode);
+		modelRootNode->SetModelPath(modelPath);
+		//modelRootNode->SetParent(parentNode);
+		parentNode->AddChild(modelRootNode);
 
-		return mModelNode;
+		return { modelRootNode, model };
 	}
 
 	void Factory::ChangeMeshForNode(Ref<Node> node, PrimitiveType primitive)
@@ -285,7 +335,7 @@ namespace TS_ENGINE
 		node->AddMesh(mesh);
 	}
 
-	void Factory::Flush()
+	void Factory::Clear()
 	{
 		mLoadedModelNodeMap.clear();
 	}

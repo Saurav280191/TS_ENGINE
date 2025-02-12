@@ -33,20 +33,23 @@ namespace TS_ENGINE
 		);
 
 		Ref<Node> InstantitateDuplicateSceneCamera(Ref<SceneCamera> sceneCamera);
-		
+
 		Ref<Node> InstantiateLine(const std::string& name, Ref<Node> parentNode, const std::vector<Vector3>& points);
 		Ref<Node> InstantiateQuad(const std::string& name, Ref<Node> parentNode);
 		Ref<Node> InstantiateCube(const std::string& name, Ref<Node> parentNode);
-		Ref<Node> InstantiateBone(const std::string& name, Ref<Node> parentNode);
 		Ref<Node> InstantiateSphere(const std::string& name, Ref<Node> parentNode);
 		Ref<Node> InstantiateSphere(const std::string& _name, float _radius, Ref<Node> _parentNode);
 		Ref<Node> InstantiateCylinder(const std::string& name, Ref<Node> parentNode);
-		Ref<Node> InstantiateCone(const std::string& name, Ref<Node> parentNode);
-		Ref<Node> InstantiateModel(const std::string& modelPath, Ref<Node> parentNode);
+		Ref<Node> InstantiateCone(const std::string& name, Ref<Node> parentNode);				
+
+		Ref<Node> InstantiateSphereGui(const std::string& name, Ref<Node> parentNode);
+		Ref<Node> InstantiateBone(const std::string& name, Ref<Node> parentNode);
+
+		std::pair<Ref<Node>, Ref<Model>> InstantiateModel(const std::string& modelPath, Ref<Node> parentNode);
 
 		void ChangeMeshForNode(Ref<Node> node, PrimitiveType primitive);
 		//Ref<Light> CreateLight(Light::Type lightType);
-		void Flush();
+		void Clear();
 
 		const Ref<Node> FindNodeByName(const std::string& _name);
 
