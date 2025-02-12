@@ -35,10 +35,14 @@ namespace TS_ENGINE
 		TS_CORE_INFO("Deleting scene named: {0}", mName);
 
 #ifdef TS_ENGINE_EDITOR
-		mEditorCamera.reset();
+		mEditorCamera->Clear();
+		mEditorCamera = nullptr;
 #endif
 		for (auto sceneCamera : mSceneCameras)
-			sceneCamera.reset();
+		{
+			sceneCamera->Clear();
+			sceneCamera = nullptr;
+		}
 
 		// TODO: Check why the destructors for the scene variables are not getting called?
 

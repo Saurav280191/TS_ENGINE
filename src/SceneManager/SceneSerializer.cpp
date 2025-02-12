@@ -153,7 +153,7 @@ namespace TS_ENGINE
 
 		editorCamera->GetNode()->GetTransform()->SetLocalPosition(localPosition);
 		editorCamera->GetNode()->GetTransform()->SetLocalEulerAngles(localEulerAngles);
-		editorCamera->CreateFramebuffer(1920, 1080);//Create framebuffer for editorCamera
+		editorCamera->CreateFramebuffer(1920, 1080);// Create framebuffer for editorCamera
 		editorCamera->Initialize();
 		editorCamera->GetNode()->ReInitializeTransforms();
 
