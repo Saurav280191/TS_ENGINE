@@ -55,56 +55,62 @@ namespace TS_ENGINE {
 
 	Material::Material(const Ref<Material>& material)
 	{
-		this->mName = material->mName;
-		this->mShader = material->mShader;
+		mName = material->mName;
+		mShader = material->mShader;
 
-		this->mAmbientColor = material->mAmbientColor;
+		mAmbientColor = material->mAmbientColor;
 
-		this->mDiffuseColor = material->mDiffuseColor;
-		this->mDiffuseMap = material->mDiffuseMap;
-		this->mDiffuseMapOffset = material->mDiffuseMapOffset;
-		this->mDiffuseMapTiling = material->mDiffuseMapTiling;
+		mDiffuseColor = material->mDiffuseColor;
+		mDiffuseMap = material->mDiffuseMap;
+		mDiffuseMapOffset = material->mDiffuseMapOffset;
+		mDiffuseMapTiling = material->mDiffuseMapTiling;
 
-		this->mSpecularColor = material->mSpecularColor;
-		this->mSpecularMap = material->mSpecularMap;
-		this->mSpecularMapOffset = material->mSpecularMapOffset;
-		this->mSpecularMapTiling = material->mSpecularMapTiling;
-		this->mShininess = material->mShininess;
+		mSpecularColor = material->mSpecularColor;
+		mSpecularMap = material->mSpecularMap;
+		mSpecularMapOffset = material->mSpecularMapOffset;
+		mSpecularMapTiling = material->mSpecularMapTiling;
+		mShininess = material->mShininess;
 
-		this->mNormalMap = material->mNormalMap;
-		this->mNormalMapOffset = material->mNormalMapOffset;
-		this->mNormalMapTiling = material->mNormalMapTiling;
-		this->mBumpValue = material->mBumpValue;
+		mNormalMap = material->mNormalMap;
+		mNormalMapOffset = material->mNormalMapOffset;
+		mNormalMapTiling = material->mNormalMapTiling;
+		mBumpValue = material->mBumpValue;
 
-		this->mAlphaBlendingEnabled = material->mAlphaBlendingEnabled;
-		this->mDepthTestEnabled = material->mDepthTestEnabled;
+		mAlphaBlendingEnabled = material->mAlphaBlendingEnabled;
+		mDepthTestEnabled = material->mDepthTestEnabled;
 	}
 
 	void Material::CloneMaterialProperties(const Ref<Material>& _material)
 	{
-		this->mName = _material->mName;
-		this->mShader = _material->mShader;
+		mName = _material->mName;
+		mShader = _material->mShader;
 
-		this->mAmbientColor = _material->mAmbientColor;
+		mAmbientColor = _material->mAmbientColor;
 		
-		this->mDiffuseColor = _material->mDiffuseColor;
-		this->mDiffuseMap = _material->mDiffuseMap;
-		this->mDiffuseMapOffset = _material->mDiffuseMapOffset;
-		this->mDiffuseMapTiling = _material->mDiffuseMapTiling;
+		mDiffuseColor = _material->mDiffuseColor;
+		mDiffuseMap = _material->mDiffuseMap;
+		mDiffuseMapOffset = _material->mDiffuseMapOffset;
+		mDiffuseMapTiling = _material->mDiffuseMapTiling;
 
-		this->mSpecularColor = _material->mSpecularColor;
-		this->mSpecularMap = _material->mSpecularMap;
-		this->mSpecularMapOffset = _material->mSpecularMapOffset;
-		this->mSpecularMapTiling = _material->mSpecularMapTiling;
-		this->mShininess = _material->mShininess;
+		mSpecularColor = _material->mSpecularColor;
+		mSpecularMap = _material->mSpecularMap;
+		mSpecularMapOffset = _material->mSpecularMapOffset;
+		mSpecularMapTiling = _material->mSpecularMapTiling;
+		mShininess = _material->mShininess;
 
-		this->mNormalMap = _material->mNormalMap;
-		this->mNormalMapOffset = _material->mNormalMapOffset;
-		this->mNormalMapTiling = _material->mNormalMapTiling;
-		this->mBumpValue = _material->mBumpValue;
+		mNormalMap = _material->mNormalMap;
+		mNormalMapOffset = _material->mNormalMapOffset;
+		mNormalMapTiling = _material->mNormalMapTiling;
+		mBumpValue = _material->mBumpValue;
 
-		this->mAlphaBlendingEnabled = _material->mAlphaBlendingEnabled;
-		this->mDepthTestEnabled = _material->mDepthTestEnabled;
+		mAlphaBlendingEnabled = _material->mAlphaBlendingEnabled;
+		mDepthTestEnabled = _material->mDepthTestEnabled;
+	}
+
+	void Material::SetName(const std::string& _name)
+	{
+		TS_CORE_INFO("Setting material name to: {0}", _name.c_str());
+		mName = _name;		
 	}
 
 	const Ref<Shader> Material::GetShader()
@@ -156,8 +162,8 @@ namespace TS_ENGINE {
 
 	void Material::ShowGUI(int meshIndex, bool treeOpen)
 	{	
-		//Material name		
-		if (ImGui::TreeNodeEx(mName.c_str(), treeOpen ? ImGuiTreeNodeFlags_DefaultOpen : ImGuiTreeNodeFlags_None))
+		//	Material name		
+		if (ImGui::TreeNodeEx((mName != "" ? mName.c_str() : "Unnamed material"), treeOpen ? ImGuiTreeNodeFlags_DefaultOpen : ImGuiTreeNodeFlags_None))
 		{
 			//Material context menu
 			{

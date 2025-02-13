@@ -45,7 +45,7 @@ namespace TS_ENGINE {
 		const std::string& GetName() const { return mName;  }
 
 		// Name
-		void SetName(std::string name) { mName = name; }
+		void SetName(const std::string& _name);
 
 		// Ambient
 		void SetAmbientColor(const Vector4& ambientColor) { mAmbientColor = ambientColor; }
