@@ -211,7 +211,10 @@ namespace TS_ENGINE
 
 		Ref<Scene> scene = CreateRef<Scene>();							// Create new scene
 		scene->SetName(sceneName);
-		scene->Initialize();
+		
+		Ref<Skybox> skybox = CreateRef<Skybox>();						// Create skybox
+		skybox->Initialize("Skybox", NodeType::SKYBOX);
+		scene->AttachSkybox(skybox);									// Attach skybox to scene
 
 		scene->AddEditorCamera(editorCamera);							// Add editor camera to scene
 
@@ -232,6 +235,7 @@ namespace TS_ENGINE
 			}
 		}
 
+		scene->Initialize();											// Initialize scene at the end
 		SceneManager::GetInstance()->SetCurrentScene(scene);
 	}
 
