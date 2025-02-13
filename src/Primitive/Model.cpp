@@ -320,14 +320,16 @@ namespace TS_ENGINE {
 
 	Ref<Material> Model::ProcessMaterial(aiMaterial* _assimpMaterial)
 	{
-		std::string materialName = _assimpMaterial->GetName().C_Str();
+		if (_assimpMaterial->Get(AI_MATKEY_NAME, mAssimpMaterial.name) != AI_SUCCESS)
+		{
+			TS_CORE_ERROR("Could not fetch material name!");
+		}
 
-		_assimpMaterial->Get(AI_MATKEY_NAME, this->mAssimpMaterial.name);
-		//aiMat->Get(AI_MATKEY_COLOR_AMBIENT, this->mMaterial.ambient);
-		_assimpMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, this->mAssimpMaterial.diffuse);
-		_assimpMaterial->Get(AI_MATKEY_COLOR_SPECULAR, this->mAssimpMaterial.specular);
-		_assimpMaterial->Get(AI_MATKEY_OPACITY, this->mAssimpMaterial.opacity);
-		_assimpMaterial->Get(AI_MATKEY_SHININESS, this->mAssimpMaterial.shininess);
+		//_assimpMaterial->Get(AI_MATKEY_COLOR_AMBIENT, mMaterial.ambient);
+		_assimpMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, mAssimpMaterial.diffuse);
+		_assimpMaterial->Get(AI_MATKEY_COLOR_SPECULAR, mAssimpMaterial.specular);
+		_assimpMaterial->Get(AI_MATKEY_OPACITY, mAssimpMaterial.opacity);
+		_assimpMaterial->Get(AI_MATKEY_SHININESS, mAssimpMaterial.shininess);
 
 		//TS_CORE_INFO("Material {0} has {1} diffuse textures", this->material.name.C_Str(), diffTexCount);
 
@@ -339,6 +341,8 @@ namespace TS_ENGINE {
 		uint32_t shininessTexCount = material->GetTextureCount(aiTextureType_SHININESS);
 		uint32_t lightMapTexCount = material->GetTextureCount(aiTextureType_LIGHTMAP);
 		uint32_t reflectionTexCount = material->GetTextureCount(aiTextureType_REFLECTION);*/
+
+		std::string materialName = mAssimpMaterial.name.C_Str();
 
 		Vector4 ambientColor(mAssimpMaterial.ambient.r, mAssimpMaterial.ambient.g, mAssimpMaterial.ambient.b, 1);
 		Vector4 diffuseColor(mAssimpMaterial.diffuse.r, mAssimpMaterial.diffuse.g, mAssimpMaterial.diffuse.b, 1);
@@ -360,13 +364,9 @@ namespace TS_ENGINE {
 
 		// Get Unlit Material And Pass To Material
 		Ref<Material> unlitMaterial = MaterialManager::GetInstance()->GetMaterial("Unlit");
-		//Ref<Material> skinnedMeshUnlitMaterial = MaterialManager::GetInstance()->GetSkinnedMeshUnlitMaterial();
 
 		Ref<Material> material = nullptr;
 
-		/*if(mBones.size() > 0)
-			material = CreateRef<Material>(skinnedMeshUnlitMaterial);
-		else*/
 		material = CreateRef<Material>(unlitMaterial);
 
 		material->SetName(materialName);			// Name
