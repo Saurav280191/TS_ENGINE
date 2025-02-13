@@ -16,20 +16,20 @@ namespace TS_ENGINE
 	}
 
 	SceneManager::SceneManager() :
-		mCurrentScene(NULL)
+		mCurrentScene(NULL),
+		mNodeMap({}),
+		mFreeIds(std::queue<uint32_t>()),
+		mNextId(1)
 	{
 		
 	}
 
 	SceneManager::~SceneManager()
 	{
-#ifdef TS_ENGINE_EDITOR
-		mSceneSerializer.reset();
-#endif
+		mSceneSerializer = nullptr;
+
 		if (mCurrentScene)
 		{
-			mCurrentScene->~Scene();
-			mCurrentScene.reset();
 			mCurrentScene = nullptr;
 		}
 
@@ -51,17 +51,26 @@ namespace TS_ENGINE
 	{
 		if(mCurrentScene)
 		{
+			mCurrentScene->Destroy();
 			mCurrentScene = nullptr;
 		}
 
-		ClearNodeMaps();
-	}
+		if (mNodeMap.size() > 0)
+		{
+			// Deregister all nodes
+			while(mNodeMap.size() > 0)
+			{
+				auto it = mNodeMap.begin();
+				Deregister(it->first);
+			}
+		}
 
-	void SceneManager::ClearNodeMaps()
-	{
+		// Clear mNodeMaps 
 		mNodeMap.clear();
+		// Clear FreeIds 
+		mFreeIds = std::queue<uint32_t>();
+		// Set mNextId to default value 
 		mNextId = 1;
-		std::queue<uint32_t>().swap(mFreeIds);// Reset queue
 	}
 
 	Ref<Node> SceneManager::GetCurrentSceneNode()
@@ -80,7 +89,10 @@ namespace TS_ENGINE
 		// Create scene for editor or sandbox
 		Ref<Scene> scene = CreateRef<Scene>();																// Create Scene
 		scene->SetName(sceneName);																			// Set Scene Name
-		scene->Initialize();																				// Initialize Scene
+
+		Ref<Skybox> skybox = CreateRef<Skybox>();															// Create skybox
+		skybox->Initialize("Skybox", NodeType::SKYBOX);
+		scene->AttachSkybox(skybox);																		// Attach skybox to scene
 
 		// Create editor and scene camera for Editor or Sandbox
 #ifdef TS_ENGINE_EDITOR
@@ -165,6 +177,8 @@ namespace TS_ENGINE
 		groundMesh->GetMaterial()->SetAmbientColor(Vector4(0.7f, 0.7f, 0.7f, 1.0f));
 		groundNode->ComputeTransformMatrices();
 
+		scene->Initialize();																				// Initialize Scene
+		
 		mCurrentScene = scene;																				// Set Scene As Current Scene
 	}
 

@@ -22,7 +22,6 @@ namespace TS_ENGINE
 		Ref<Scene>& GetCurrentScene();
 
 		void ClearCurrentScene();
-		void ClearNodeMaps();
 
 		// Adds node to map and returns the id from map
 		uint32_t Register(Ref<Node> _node);
