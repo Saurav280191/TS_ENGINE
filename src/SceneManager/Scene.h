@@ -80,6 +80,8 @@ namespace TS_ENGINE {
 		void Initialize();
 		void AddEditorCamera(Ref<EditorCamera> editorCamera);
 		void AddSceneCamera(Ref<SceneCamera> sceneCamera);
+		
+		void AttachSkybox(Ref<Skybox> _skybox);
 
 		//BatchButton m_BatchButton;
 		//bool m_BatchingEnabled;
@@ -116,6 +118,8 @@ namespace TS_ENGINE {
 #endif
 
 		void AddAnimation(Ref<Animation> _animation);
+		
+		void Destroy();
 	public:
 		std::string mName;										// Name
 	private:

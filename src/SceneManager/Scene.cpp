@@ -16,6 +16,7 @@
 namespace TS_ENGINE
 {
 	Scene::Scene():
+		mSkybox(nullptr),
 		mSelectedBoneId(-1),
 		mName("Default"),
 		mSelectedModelRootNodeId(-1),
@@ -25,9 +26,6 @@ namespace TS_ENGINE
 
 		mCurrentSceneCameraIndex = 0;
 		//m_BatchButton.RegisterClickHandler(std::bind(&ButtonHandler::OnButtonClicked, &mBatchButtonHandler, std::placeholders::_1, std::placeholders::_2));
-
-		mSkybox = CreateRef<Skybox>();
-		mSkybox->Initialize("Skybox", NodeType::SKYBOX);
 	}
 
 	Scene::~Scene()
@@ -50,7 +48,9 @@ namespace TS_ENGINE
 
 		Factory::GetInstance()->Clear();
 
-		mSceneNode = nullptr;
+		//mSceneNode->Destroy();
+
+		//mSceneNode = nullptr;
 
 		//mSceneNode.reset();
 		//ModelLoader::GetInstance()->Flush();
@@ -164,7 +164,7 @@ namespace TS_ENGINE
 		// Render Skybox
 		camera->SetIsDistanceIndependent(true);				// Make Camera Distance Independent For Rendering Skybox
 		camera->Update(shader, deltaTime);					// Camera's View And Projection Matrix Updates 
-		mSkybox->Render();									// Render Skybox
+		mSkybox ? mSkybox->Render() : void();				// Render Skybox
 		camera->SetIsDistanceIndependent(false);			// Disable Camera Distance Independent For Rendering Other World Objects
 
 		TS_CORE_ASSERT(mSceneNode);							// Make Sure Scene Node Is Set
@@ -188,6 +188,11 @@ namespace TS_ENGINE
 		// Set bone influence view
 		shader->SetInt("u_BoneInfluence",					// Pass bone influence to shader
 			(int)Application::GetInstance().mBoneInfluence);
+	}
+
+	void Scene::AttachSkybox(Ref<Skybox> _skybox)
+	{
+		mSkybox = _skybox;
 	}
 
 #ifdef TS_ENGINE_EDITOR
@@ -236,5 +241,16 @@ namespace TS_ENGINE
 	void Scene::AddAnimation(Ref<Animation> _animation)
 	{
 		mAnimations.insert({ _animation->GetName(), _animation });
+	}
+
+	void Scene::Destroy()
+	{
+		mSkybox = nullptr;
+		mSelectedBoneId = -1;
+		mName = "Default";
+		mSelectedModelRootNodeId = -1;
+		mAnimations = {};
+		mSceneNode = nullptr;
+		mCurrentSceneCameraIndex = 0;
 	}
 }
