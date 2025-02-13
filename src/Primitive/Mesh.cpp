@@ -167,8 +167,7 @@ namespace TS_ENGINE {
 		// 5. Creates index buffer and sets that in vertex array
 		Create(mDrawMode);
 
-		mMaterial->CloneMaterialProperties(mesh->GetMaterial());
-		//mMaterial = CreateRef<Material>(*mesh->GetMaterial());// Deep copy to avoid shared material
+		mMaterial->CloneMaterialProperties(mesh->GetMaterial());		
 	}
 
 	std::vector<Vertex> Mesh::GetWorldSpaceVertices(Vector3 position = Vector3(0, 0, 0), Vector3 eulerAngles = Vector3(0, 0, 0), Vector3 scale = Vector3(1, 1, 1))
