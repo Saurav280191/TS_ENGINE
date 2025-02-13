@@ -45,18 +45,18 @@ namespace TS_ENGINE
 		for (auto& child : mChildren)
 			child = nullptr;
 
-		Destroy();
+		//Destroy();
 	}
 
 	void Node::Initialize(const std::string& name, const NodeType& _type)
 	{
-		mName = name;																	// Set Name
-		mType = _type;
+		mName = name;									// Set Name
+		mType = _type;									// Set Type
 
 		SceneManager::GetInstance()->Register(NodeRef);	// Register the current node as a shared pointer in the scene
 		
-		ComputeTransformMatrices();														// Computer transformation matrices for this node
-		mIsInitialized = true;															// Set IsInitialized
+		ComputeTransformMatrices();						// Computer transformation matrices for this node
+		mIsInitialized = true;							// Set IsInitialized
 	}
 
 	bool Node::CheckSelectedModelRootNodeId(int _selectedModelRootNodeId)
@@ -137,9 +137,6 @@ namespace TS_ENGINE
 
 		mMeshes.clear();
 		mModelPath = "";
-
-		mChildren.clear();
-		mSceneCamera = nullptr;
 	}
 
 	Ref<Node> Node::Duplicate()
@@ -183,19 +180,8 @@ namespace TS_ENGINE
 
 	void Node::CloneMesh(const Ref<Mesh>& _originalMesh)
 	{
-		//Ref<Mesh> clonedMesh = CreateRef<Mesh>();
-		//clonedMesh->CloneMesh(_originalMesh);
-
-		Ref<Mesh> clonedMesh = CreateRef<Mesh>(*_originalMesh);
-		clonedMesh->SetName(_originalMesh->GetName() + "-Copy");
-
-		// Clone material
-		Ref<Material> originalMaterial = _originalMesh->GetMaterial();
-		Ref<Material> clonedMaterial = originalMaterial ? CreateRef<Material>(*originalMaterial) : nullptr;
-		clonedMaterial->SetName(originalMaterial->GetName() + "-Copy");
-
-		clonedMesh->SetMaterial(clonedMaterial);
-
+		Ref<Mesh> clonedMesh = CreateRef<Mesh>();
+		clonedMesh->CloneMesh(_originalMesh);
 		AddMesh(clonedMesh);
 	}
 
@@ -329,6 +315,7 @@ namespace TS_ENGINE
 
 	void Node::RemoveChild(Ref<Node> _child)
 	{
+		TS_CORE_INFO("Removing {0} from parent {1}", _child->mName, mName);
 		mChildren.erase(std::remove(mChildren.begin(), mChildren.end(), _child), mChildren.end());
 		_child->UpdateSiblings();
 	}
@@ -418,7 +405,7 @@ namespace TS_ENGINE
 
 	void Node::SetCurrentAnimation(std::string _name)
 	{
-		mCurrentAnimation = mAnimations[_name];
+		mCurrentAnimation = mAnimations[_name];		
 	}
 
 	void Node::SetModelRootNodeId(int _rootNodeId)

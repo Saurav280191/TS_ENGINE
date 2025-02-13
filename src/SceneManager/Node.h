@@ -131,6 +131,7 @@ namespace TS_ENGINE
 		const std::vector<Ref<Node>> GetSiblings() const { return mSiblings; }
 		const Ref<Transform> GetTransform() const { return mTransform; }
 		const size_t GetChildCount() const { return mChildren.size(); }
+		Ref<Mesh> GetMesh(uint32_t _meshIndex) { return mMeshes[_meshIndex]; }
 		std::vector<Ref<Mesh>> GetMeshes() const { return mMeshes; }
 		Ref<SceneCamera> GetSceneCamera() { return mSceneCamera; }
 		Ref<Mesh> GetMesh() const { return mMeshes[0]; }
