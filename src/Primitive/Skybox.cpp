@@ -25,8 +25,7 @@ namespace TS_ENGINE {
 		// Add sphere mesh to node
 		AddMesh(sphereMesh);
 
-		// Set Transform
-		mTransform = CreateRef<Transform>();
+		// Set Transform		
 		mTransform->SetLocalScale(1600.0f, 1600.0f, 1600.0f);
 		mTransform->SetLocalEulerAngles(Vector3(90.0f, 235.0f, 0.0f));
 
