@@ -17,7 +17,11 @@ namespace TS_ENGINE
 		mName(""),
 		//mTransform(nullptr),
 		mRootNodeNodeId(-1),
+
+#ifdef TS_ENGINE_EDITOR
 		mEnabled(true),
+#endif
+
 		mIsInitialized(false),
 		mParentNode(nullptr),
 		mChildren({}),

@@ -18,12 +18,9 @@ namespace TS_ENGINE {
 	}
 #else
 	SceneCamera::SceneCamera(const std::string& name) : 
-		Camera(name),
-		mSceneCameraFrustrumNode(nullptr),
-		mSceneCameraGuiNode(nullptr)
+		Camera(name)
 	{
 		mCameraNode = CreateRef<Node>();
-		mCameraNode->SetNodeRef(mCameraNode);
 		mCameraType = Type::SCENECAMERA;
 	}
 #endif
@@ -278,7 +275,7 @@ namespace TS_ENGINE {
 		//Mouse Move
 		{
 			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
-			glm::vec2 deltaMousePos = (mouse - mInitialMousePosition) * 0.003f;
+			glm::vec2 deltaMousePos = (mouse - mInitialMousePosition) * 3.0f;
 			mInitialMousePosition = mouse;
 
 			//Yaw - Mouse
