@@ -136,9 +136,9 @@ namespace TS_ENGINE
 		//std::string modelName = "Y Bot.fbx";
 
 		if (TS_ENGINE::Utility::FileExists("..//..//..//Assets//Models//" + modelName))
-			modelNode = Factory::GetInstance()->InstantiateModel("..//..//..//Assets//Models//" + modelName, scene->GetSceneNode());// Instantiate Model
+			modelNode = Factory::GetInstance()->InstantiateModel("..//..//..//Assets//Models//" + modelName, scene->GetSceneNode()).first;// Instantiate Model
 		else if (TS_ENGINE::Utility::FileExists("Assets//Models//" + modelName))
-			modelNode = Factory::GetInstance()->InstantiateModel("Assets//Models//" + modelName, scene->GetSceneNode());			// Instantiate Model
+			modelNode = Factory::GetInstance()->InstantiateModel("Assets//Models//" + modelName, scene->GetSceneNode()).first;			// Instantiate Model
 		else
 			TS_CORE_ERROR("Invalid model path!");
 

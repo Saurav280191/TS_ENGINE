@@ -1,9 +1,6 @@
 #pragma once
 #include "Scene.h"
-
-#ifdef TS_ENGINE_EDITOR
 #include "SceneSerializer.h"
-#endif
 
 namespace TS_ENGINE
 {
@@ -42,9 +39,7 @@ namespace TS_ENGINE
 		static SceneManager* mInstance;
 		Ref<Scene> mCurrentScene;
 
-#ifdef TS_ENGINE_EDITOR
-		Ref<SceneSerializer> mSceneSerializer;
-#endif				
+		Ref<SceneSerializer> mSceneSerializer;				
 
 		std::unordered_map<uint32_t, Ref<Node>> mNodeMap = {};	// Unique Id and Node Map
 		std::queue<uint32_t> mFreeIds;							// ID recycling queue
