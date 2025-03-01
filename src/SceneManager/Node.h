@@ -17,6 +17,7 @@ namespace TS_ENGINE
 		BONEGUI,
 		CAMERA,
 		SKYBOX,
+		TERRAIN,
 		SCENE,
 		LIGHT,
 		EMPTY

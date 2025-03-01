@@ -222,6 +222,8 @@ source_group("Utils" FILES ${UtilsSrc})
 file (GLOB ComponentsSrc
 src/Components/Animation.h
 src/Components/Animation.cpp
+src/Components/Terrain.h
+src/Components/Terrain.cpp
 ) 
 source_group("Components" FILES ${ComponentsSrc})
 

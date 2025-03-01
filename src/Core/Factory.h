@@ -7,6 +7,7 @@
 #include "Primitive/Sphere.h"
 #include "Primitive/Cylinder.h"
 #include "Primitive/Cone.h"
+#include "Components/Terrain.h"
 #include "Primitive/Model.h"
 #include "ModelLoader.h"
 
@@ -40,7 +41,9 @@ namespace TS_ENGINE
 		Ref<Node> InstantiateSphere(const std::string& name, Ref<Node> parentNode);
 		Ref<Node> InstantiateSphere(const std::string& _name, float _radius, Ref<Node> _parentNode);
 		Ref<Node> InstantiateCylinder(const std::string& name, Ref<Node> parentNode);
-		Ref<Node> InstantiateCone(const std::string& name, Ref<Node> parentNode);				
+		Ref<Node> InstantiateCone(const std::string& name, Ref<Node> parentNode);
+		Ref<Node> InstantiateTerrain(const std::string& name, Ref<Node> parentNode);				
+		Ref<Node> InstantiateTerrain(const std::string& name, double _width, double _depth, double _gridSpacing, Ref<Node> parentNode);
 
 		Ref<Node> InstantiateSphereGui(const std::string& name, Ref<Node> parentNode);
 		Ref<Node> InstantiateBone(const std::string& name, Ref<Node> parentNode);
