@@ -13,9 +13,9 @@ namespace TS_ENGINE {
 
 	}
 
-	Ref<Mesh> Cube::GetMesh()
+	Ref<StaticMesh> Cube::GetMesh()
 	{
-		Ref<Mesh> mesh = CreateRef<Mesh>();
+		Ref<StaticMesh> mesh = CreateRef<StaticMesh>();
 		mesh->SetPrimitiveType(PrimitiveType::CUBE);
 
 		//Front
@@ -107,9 +107,9 @@ namespace TS_ENGINE {
 		return mesh;
 	}
 
-	Ref<Mesh> Cube::GetMesh(const Matrix4& transformationMatrix)
+	Ref<StaticMesh> Cube::GetMesh(const Matrix4& transformationMatrix)
 	{
-		Ref<Mesh> mesh = CreateRef<Mesh>();
+		Ref<StaticMesh> mesh = CreateRef<StaticMesh>();
 		mesh->SetPrimitiveType(PrimitiveType::CUBE);
 
 		//Front

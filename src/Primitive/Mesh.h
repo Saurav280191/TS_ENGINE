@@ -5,6 +5,8 @@
 
 namespace TS_ENGINE {
 
+#define MAX_BONE_INFLUENCE 4
+
 	enum class PrimitiveType
 	{
 		LINE,
@@ -14,6 +16,19 @@ namespace TS_ENGINE {
 		CYLINDER,
 		CONE,
 		MODEL
+	};
+
+	enum class DrawMode
+	{
+		TRIANGLE,
+		LINE
+	};
+
+	enum class MeshType
+	{
+		STATIC,
+		SKINNED,
+		TERRAIN
 	};
 
 	struct AssimpMaterial
@@ -26,18 +41,13 @@ namespace TS_ENGINE {
 		float shininess = 0.0f;
 	};
 
-#define MAX_BONE_INFLUENCE 4
 
 	struct Vertex
 	{
 		Vector4 position = Vector4(0, 0, 0, 0);		// Position
+		Vector4 color = Vector4(1, 1, 1, 1);		// Color
 		Vector2 texCoord = Vector2(0, 0);			// UV
 		Vector3 normal = Vector3(0, 0, 0);			// Normal
-
-		// Bone indices that will influence vertex
-		int boneIds[MAX_BONE_INFLUENCE] = { -1, -1, -1, -1 };			// Bone Ids
-		// Weights from each bone
-		float weights[MAX_BONE_INFLUENCE] = {0.0f, 0.0f, 0.0f, 0.0f };	// Bone Weights
 
 		Vertex()
 		{
@@ -63,6 +73,14 @@ namespace TS_ENGINE {
 			texCoord = _texCoord;
 			normal = _normal;
 		}
+	};
+
+	struct SkinnedVertex : public Vertex
+	{
+		// Bone indices that will influence vertex
+		int boneIds[MAX_BONE_INFLUENCE] = { -1, -1, -1, -1 };			// Bone Ids
+		// Weights from each bone
+		float weights[MAX_BONE_INFLUENCE] = { 0.0f, 0.0f, 0.0f, 0.0f };	// Bone Weights
 
 		void ResetBoneInfoToDefault()
 		{
@@ -87,30 +105,23 @@ namespace TS_ENGINE {
 		}
 	};
 
-	enum class DrawMode
+	struct TerrainVertex : public Vertex
 	{
-		TRIANGLE,
-		LINE
+		float normalizedHeight = 0.0f;  // Height value for terrain displacement
 	};
-
 
 	class Mesh
 	{
 	public:
-		Mesh();		
+		Mesh();
 		~Mesh();
 
 		void SetName(const std::string& name);
 		void SetPrimitiveType(PrimitiveType primitiveType);
 		void SetMaterial(Ref<Material> material);
-		void SetVertices(std::vector<Vertex> vertices);
 		void SetIndices(std::vector<uint32_t> indices);
 
-		void AddVertex(Vertex vertex);
 		void AddIndex(uint32_t index);
-
-		void CloneMesh(Mesh* mesh);
-		void CloneMesh(Ref<Mesh> mesh);
 
 		/// <summary>
 		/// 1. Sets draw mode(Triangle/Line)
@@ -120,39 +131,92 @@ namespace TS_ENGINE {
 		/// 5. Creates index buffer and sets that in vertex array
 		/// </summary>
 		/// <param name="drawMode"></param>
-		void Create(DrawMode drawMode = DrawMode::TRIANGLE);
+		virtual void Create(DrawMode drawMode = DrawMode::TRIANGLE) = 0;
 
 #ifdef TS_ENGINE_EDITOR
-		void Render(int _nodeId, bool _enableTextures);
+		virtual void Render(int _nodeId, bool _enableTextures) = 0;
 #else
-		void Render(bool _enableTextures);
+		virtual void Render(bool _enableTextures) = 0;
 #endif
 
-		void Destroy();
+		virtual void Destroy();
 
 		const std::string& GetName() const { return mName; }
-		std::vector<Vertex>& GetVertices() { return mVertices; }
-		std::vector<Vertex> GetWorldSpaceVertices(Vector3 position, Vector3 eulerAngles, Vector3 scale);
+		//std::vector<Vertex> GetWorldSpaceVertices(Vector3 position, Vector3 eulerAngles, Vector3 scale);
 		std::vector<uint32_t>& GetIndices() { return mIndices; }
 		Ref<Material> GetMaterial() const { return mMaterial; }
 		PrimitiveType GetPrimitiveType() { return mPrimitiveType; }
+		MeshType GetType() { return mMeshType; }
 
 		Ref<VertexArray> GetVertexArray();
-		uint32_t GetNumIndices();		
-		
-		void SetHasBoneInfluence(bool _hasBoneInfluence);
-		bool HasBoneInfluence() { return mHasBoneInfluence; }		
-	private:
-		std::string mName;
-		PrimitiveType mPrimitiveType;
-		std::vector<Vertex> mVertices;
-		std::vector<uint32_t> mIndices;		
-		Ref<VertexArray> mVertexArray;
-		bool mStatsRegistered;
-		DrawMode mDrawMode;
-		Ref<Material> mMaterial;
+		uint32_t GetNumIndices();
 
+		void SetHasBoneInfluence(bool _hasBoneInfluence);
+		bool HasBoneInfluence() { return mHasBoneInfluence; }
+
+	protected:
+		std::string mName;
+		std::vector<uint32_t> mIndices;
+		PrimitiveType mPrimitiveType;
+		Ref<VertexArray> mVertexArray;
+		Ref<Material> mMaterial;
+		DrawMode mDrawMode;
+		bool mMeshCreated;
+		MeshType mMeshType;
+
+	private:
+		bool mStatsRegistered;
 		bool mHasBoneInfluence;
+	};
+
+	class StaticMesh : public Mesh
+	{
+	public:
+		StaticMesh();
+		~StaticMesh();
+
+		void Create(DrawMode drawMode = DrawMode::TRIANGLE) override;
+
+		void Render(bool _enableTextures) override;
+
+		void Destroy() override;
+
+		void SetVertices(std::vector<Vertex> vertices);
+
+		void AddVertex(Vertex vertex);
+
+		void CloneMesh(StaticMesh* mesh);
+
+		void CloneMesh(Ref<StaticMesh> mesh);
+
+		std::vector<Vertex>& GetVertices() { return mVertices; }
+	private:
+		std::vector<Vertex> mVertices;
+	};
+
+	class SkinnedMesh : public Mesh
+	{
+	public:
+		SkinnedMesh();
+		~SkinnedMesh();
+
+		void Create(DrawMode drawMode = DrawMode::TRIANGLE) override;
+
+		void Render(bool _enableTextures) override;
+
+		void Destroy() override;
+
+		void SetVertices(std::vector<SkinnedVertex> _skinnedVertices);
+
+		void AddVertex(SkinnedVertex _skinnedVertex);
+
+		void CloneMesh(SkinnedMesh* _mesh);
+
+		void CloneMesh(Ref<SkinnedMesh> _mesh);
+
+		std::vector<SkinnedVertex>& GetSkinnedVertices() { return mVertices; }
+	private:
+		std::vector<SkinnedVertex> mVertices;
 	};
 }
 

@@ -176,13 +176,18 @@ namespace TS_ENGINE
 #endif
 
 		// Default Ground
-		//Ref<Node> groundNode = Factory::GetInstance()->InstantiateQuad("Ground",		// Instantiate Ground
-		//	scene->GetSceneNode());	
-		//groundNode->GetTransform()->SetLocalEulerAngles(-90.0f, 0.0f, 0.0f);
-		//groundNode->GetTransform()->SetLocalScale(10.0f, 10.0f, 10.0f);
-		//auto& groundMesh = groundNode->GetMesh();
-		//groundMesh->GetMaterial()->SetAmbientColor(Vector4(0.7f, 0.7f, 0.7f, 1.0f));
-		//groundNode->ComputeTransformMatrices();
+		Ref<Node> groundNode = Factory::GetInstance()->InstantiateQuad("Ground",		// Instantiate Ground
+			scene->GetSceneNode());	
+		groundNode->GetTransform()->SetLocalEulerAngles(-90.0f, 0.0f, 0.0f);
+		groundNode->GetTransform()->SetLocalScale(10.0f, 10.0f, 10.0f);
+		auto& groundMesh = groundNode->GetMesh();
+		groundMesh->GetMaterial()->SetAmbientColor(Vector4(0.7f, 0.7f, 0.7f, 1.0f));
+		groundNode->ComputeTransformMatrices();
+
+		Ref<Node> duplicateGround = groundNode->Duplicate();
+		duplicateGround->SetPosition(groundNode->GetTransform()->GetPosition() + Vector3(0.0f, 0.0f, -10.0f));
+		duplicateGround->SetParent(scene->GetSceneNode());
+		duplicateGround->ComputeTransformMatrices();
 
 		Ref<Node> terrainNode = Factory::GetInstance()->InstantiateTerrain("Terrain",	// Terrain 
 			100.0, 100.0, 0.5, scene->GetSceneNode());		

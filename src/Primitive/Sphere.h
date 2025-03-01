@@ -11,11 +11,11 @@ namespace TS_ENGINE {
 		Sphere(float _radius);
 		~Sphere();
 
-		Ref<Mesh> GetMesh();
+		Ref<StaticMesh> GetMesh();
 
 	private:
-		void CreateVertices(Ref<Mesh> mesh);
-		void CreateIndices(Ref<Mesh> mesh);
+		void CreateVertices(Ref<StaticMesh> mesh);
+		void CreateIndices(Ref<StaticMesh> mesh);
 
 		void CreateMesh();
 	
@@ -25,6 +25,6 @@ namespace TS_ENGINE {
 		int mStackCount = 20;
 		int mSectorCount = 20;
 
-		Ref<Mesh> mMesh = nullptr;
+		Ref<StaticMesh> mMesh = nullptr;
 	};
 }

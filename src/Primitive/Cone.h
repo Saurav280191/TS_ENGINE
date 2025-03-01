@@ -10,10 +10,10 @@ namespace TS_ENGINE {
 		Cone();
 		~Cone();
 
-		Ref<Mesh> GetMesh();
+		Ref<StaticMesh> GetMesh();
 
 	private:
-		void CreateMesh(Ref<Mesh> mesh, float radius, float height, int numSegments);		
+		void CreateMesh(Ref<StaticMesh> mesh, float radius, float height, int numSegments);		
 	
 	private:
 		float mPI = 3.141f;

@@ -11,7 +11,7 @@ namespace TS_ENGINE
 		mWidth(10.0),
 		mDepth(10.0),
 		mGridSpacing(1.0),
-		mMesh(CreateRef<Mesh>()),
+		mMesh(CreateRef<StaticMesh>()),
 		mHeightMapData(nullptr),
 		mHeightMapRes(0, 0)
 	{
@@ -63,7 +63,7 @@ namespace TS_ENGINE
 		mDepth = _depth;
 		mGridSpacing = _gridSpacing;
 
-		mMesh = CreateRef<Mesh>();
+		mMesh = CreateRef<StaticMesh>();
 
 		mHeightMapData = nullptr;
 		mHeightMapRes = Vector2(0, 0);
@@ -149,7 +149,7 @@ namespace TS_ENGINE
 
 		TS_CORE_ASSERT(mHeightMapData, "Failed to load heightMap!");
 		
-		mMesh = CreateRef<Mesh>();
+		mMesh = CreateRef<StaticMesh>();
 
 		for (double z = 0; z < mDepth; z += mGridSpacing)
 		{

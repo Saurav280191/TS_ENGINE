@@ -24,13 +24,13 @@ namespace TS_ENGINE
 		double PerlinNoise(Vector2 _point);
 		Vector2 RandomGradient(int x, int y);
 
-		Ref<Mesh> GetMesh() { return mMesh; }
+		Ref<StaticMesh> GetMesh() { return mMesh; }
 	private:
 		double mWidth;
 		double mDepth;
 		double mGridSpacing;
 
-		Ref<Mesh> mMesh;
+		Ref<StaticMesh> mMesh;
 
 		unsigned char* mHeightMapData;
 		//Ref<Texture2D> mHeightMapTexture;

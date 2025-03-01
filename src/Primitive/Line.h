@@ -11,9 +11,9 @@ namespace TS_ENGINE
 		~Line();
 
 		void CreateMesh(const std::vector<Vector3>& points);
-		Ref<Mesh> GetMesh();
+		Ref<StaticMesh> GetMesh();
 	private:
-		Ref<Mesh> mMesh;
+		Ref<StaticMesh> mMesh;
 	};
 }
 

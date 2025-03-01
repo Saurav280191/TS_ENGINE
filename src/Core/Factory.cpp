@@ -199,7 +199,7 @@ namespace TS_ENGINE
 	Ref<Node> Factory::InstantiateBone(const std::string& name, Ref<Node> parentNode)
 	{
 		Ref<Node> boneNode = CreateRef<Node>();		
-		Ref<Mesh> mesh = CreateRef<Mesh>();
+		Ref<StaticMesh> mesh = CreateRef<StaticMesh>();
 
 		mesh->AddVertex(Vertex(Vector3(-0.5f, 0.0f, 0.0f)));// Left Tip
 

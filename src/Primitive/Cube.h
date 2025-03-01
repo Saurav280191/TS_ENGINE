@@ -10,8 +10,8 @@ namespace TS_ENGINE {
 		Cube();		
 		~Cube();
 
-		Ref<Mesh> GetMesh();
-		Ref<Mesh> GetMesh(const Matrix4& transformationMatrix);
+		Ref<StaticMesh> GetMesh();
+		Ref<StaticMesh> GetMesh(const Matrix4& transformationMatrix);
 	};
 }
 

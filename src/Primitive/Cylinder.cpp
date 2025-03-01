@@ -13,7 +13,7 @@ namespace TS_ENGINE {
 
 	}
 
-	void Cylinder::CreateMesh(Ref<Mesh> mesh, float radius, float height, int numSegments)
+	void Cylinder::CreateMesh(Ref<StaticMesh> mesh, float radius, float height, int numSegments)
 	{
 		float segmentAngle = 2 * mPI / numSegments;
 
@@ -64,9 +64,9 @@ namespace TS_ENGINE {
 	}
 
 
-	Ref<Mesh> Cylinder::GetMesh()
+	Ref<StaticMesh> Cylinder::GetMesh()
 	{
-		Ref<Mesh> mesh = CreateRef<Mesh>();
+		Ref<StaticMesh> mesh = CreateRef<StaticMesh>();
 		mesh->SetPrimitiveType(PrimitiveType::CYLINDER);
 
 		CreateMesh(mesh, mRadius, mHeight, mNumSegments);

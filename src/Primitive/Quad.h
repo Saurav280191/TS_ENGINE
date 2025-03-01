@@ -16,8 +16,8 @@ namespace TS_ENGINE {
 		/// Creates mesh data and vertexBuffer using mesh::Create() func
 		/// And add the mesh in GameObject's mMeshes vector
 		/// </summary>
-		Ref<Mesh> GetMesh();
-		Ref<Mesh> GetMesh(const Matrix4& transformationMatrix);
+		Ref<StaticMesh> GetMesh();
+		Ref<StaticMesh> GetMesh(const Matrix4& transformationMatrix);
 	};
 }
 

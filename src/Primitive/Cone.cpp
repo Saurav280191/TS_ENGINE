@@ -13,7 +13,7 @@ namespace TS_ENGINE {
 
 	}
 
-	void Cone::CreateMesh(Ref<Mesh> mesh, float radius, float height, int numSegments)
+	void Cone::CreateMesh(Ref<StaticMesh> mesh, float radius, float height, int numSegments)
 	{
         float segmentAngle = 2 * mPI / numSegments;
 
@@ -71,9 +71,9 @@ namespace TS_ENGINE {
 		}
 	}
 
-	Ref<Mesh> Cone::GetMesh()
+	Ref<StaticMesh> Cone::GetMesh()
 	{
-		Ref<Mesh> mesh = CreateRef<Mesh>();
+		Ref<StaticMesh> mesh = CreateRef<StaticMesh>();
 		mesh->SetPrimitiveType(PrimitiveType::CONE);
 
 		CreateMesh(mesh, mRadius, mHeight, mNumSegments);

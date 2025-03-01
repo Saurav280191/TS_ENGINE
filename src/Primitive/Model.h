@@ -21,7 +21,8 @@ namespace TS_ENGINE {
 	private:
 		Ref<Texture2D> ProcessTexture(aiMaterial* _assimpMaterial, aiTextureType _textureType, uint32_t _numMaps);	// Process Texture		
 		Ref<Material> ProcessMaterial(aiMaterial* _assimpMaterial);													// Process Material		
-		Ref<Mesh> ProcessMesh(aiMesh* aiMesh, const aiScene* scene);												// Process Mesh
+		Ref<StaticMesh> ProcessStaticMesh(aiMesh* aiMesh, const aiScene* scene);									// Process Static Mesh
+		Ref<SkinnedMesh> ProcessSkinnedMesh(aiMesh* aiMesh, const aiScene* scene);									// Process Skinned Mesh
 		Ref<Node> ProcessNode(aiNode* aiNode, Ref<Node> _parentNode, const aiScene* scene);							// Process Node
 		
 #pragma region Bone related functions
@@ -33,7 +34,7 @@ namespace TS_ENGINE {
 		
 		const std::unordered_map<std::string, Ref<Bone>>& GetBoneInfoMap() { return mBoneInfoMap; }
 	private:
-		void ExtractBoneWeightForVertices(std::vector<Vertex>& _vertices, aiMesh* _aiMesh);
+		void ExtractBoneWeightForVertices(std::vector<SkinnedVertex>& _skinnedVertices, aiMesh* _aiMesh);
 		
 		// Sets nodes for bones
 		// Created GUI nodes for bones
@@ -47,12 +48,13 @@ namespace TS_ENGINE {
 		AssimpMaterial mAssimpMaterial;		
 		std::string mModelDirectory;
 
-		Ref<Node> mRootNode;														// Root Node
+		Ref<Node> mRootNode;															// Root Node
 		
-		std::unordered_map<std::string, Ref<Material>> mProcessedMaterials = {};	// Processed Materials
-		std::unordered_map<std::string, Ref<Mesh>> mProcessedMeshes = {};			// Processed Meshes
-		std::unordered_map<std::string, Ref<Node>> mProcessedNodes = {};			// Processed Nodes
-		std::unordered_map<std::string, Ref<Bone>> mBoneInfoMap;					// Name & Bone Map
+		std::unordered_map<std::string, Ref<Material>> mProcessedMaterials = {};		// Processed Materials
+		std::unordered_map<std::string, Ref<StaticMesh>> mProcessedStaticMeshes = {};	// Processed Static Meshes
+		std::unordered_map<std::string, Ref<SkinnedMesh>> mProcessedSkinnedMeshes = {};	// Processed Skinned Meshes
+		std::unordered_map<std::string, Ref<Node>> mProcessedNodes = {};				// Processed Nodes
+		std::unordered_map<std::string, Ref<Bone>> mBoneInfoMap;						// Name & Bone Map
 
 		int mBoneCounter = 0;
 	};

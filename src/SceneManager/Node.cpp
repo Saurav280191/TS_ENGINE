@@ -184,9 +184,22 @@ namespace TS_ENGINE
 
 	void Node::CloneMesh(const Ref<Mesh>& _originalMesh)
 	{
-		Ref<Mesh> clonedMesh = CreateRef<Mesh>();
-		clonedMesh->CloneMesh(_originalMesh);
-		AddMesh(clonedMesh);
+		if (_originalMesh->GetType() == MeshType::STATIC)
+		{
+			Ref<StaticMesh> staticMesh = CreateRef<StaticMesh>();
+			staticMesh->CloneMesh(std::static_pointer_cast<StaticMesh>(_originalMesh));
+			AddMesh(staticMesh);
+		}
+		else if (_originalMesh->GetType() == MeshType::SKINNED)
+		{
+			Ref<SkinnedMesh> skinnedMesh = CreateRef<SkinnedMesh>();
+			skinnedMesh->CloneMesh(std::static_pointer_cast<SkinnedMesh>(_originalMesh));
+			AddMesh(skinnedMesh);
+		}
+		else if (_originalMesh->GetType() == MeshType::TERRAIN)
+		{
+			// TODO: Add code to duplicate terrain mesh 
+		}
 	}
 
 	void Node::SetParent(Ref<Node> parentNode)

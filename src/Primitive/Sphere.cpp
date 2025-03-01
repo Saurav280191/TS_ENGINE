@@ -19,7 +19,7 @@ namespace TS_ENGINE {
 
 	}
 
-	void Sphere::CreateVertices(Ref<Mesh> mesh)
+	void Sphere::CreateVertices(Ref<StaticMesh> mesh)
 	{
 		float x, y, z, xy;                              // vertex position
 		float nx, ny, nz, lengthInv = 1.0f / mRadius;    // vertex normal
@@ -60,7 +60,7 @@ namespace TS_ENGINE {
 		}
 	}
 
-	void Sphere::CreateIndices(Ref<Mesh> mesh)
+	void Sphere::CreateIndices(Ref<StaticMesh> mesh)
 	{
 		// generate CCW index list of sphere triangles
 		// k1--k1+1
@@ -109,7 +109,7 @@ namespace TS_ENGINE {
 
 	void Sphere::CreateMesh()
 	{
-		mMesh = CreateRef<Mesh>();
+		mMesh = CreateRef<StaticMesh>();
 		mMesh->SetPrimitiveType(PrimitiveType::SPHERE);
 
 		CreateVertices(mMesh);
@@ -118,7 +118,7 @@ namespace TS_ENGINE {
 		mMesh->Create();
 	}
 
-	Ref<Mesh> Sphere::GetMesh()
+	Ref<StaticMesh> Sphere::GetMesh()
 	{
 		return mMesh;
 	}

@@ -36,9 +36,9 @@ namespace TS_ENGINE {
 		mMesh->Create();		
 	}*/
 
-	Ref<Mesh> Quad::GetMesh()
+	Ref<StaticMesh> Quad::GetMesh()
 	{
-		Ref<Mesh> mesh = CreateRef<Mesh>();
+		Ref<StaticMesh> mesh = CreateRef<StaticMesh>();
 		mesh->SetPrimitiveType(PrimitiveType::QUAD);
 		
 		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.0f), Vector2(0, 0), Vector3(0, 1, 0)));
@@ -58,9 +58,9 @@ namespace TS_ENGINE {
 		return mesh;
 	}
 
-	Ref<Mesh> Quad::GetMesh(const Matrix4& transformationMatrix)
+	Ref<StaticMesh> Quad::GetMesh(const Matrix4& transformationMatrix)
 	{
-		Ref<Mesh> mesh = CreateRef<Mesh>();
+		Ref<StaticMesh> mesh = CreateRef<StaticMesh>();
 
 		mesh->AddVertex(Vertex(Vector3(-0.5, -0.5f, 0.0f), Vector2(0, 0), Vector3(0, 1, 0), transformationMatrix));
 		mesh->AddVertex(Vertex(Vector3(-0.5, 0.5f, 0.0f), Vector2(0, 1), Vector3(0, 1, 0), transformationMatrix));

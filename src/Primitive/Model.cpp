@@ -32,7 +32,7 @@ namespace TS_ENGINE {
 		mRootNode = nullptr;
 
 		mProcessedMaterials.clear();
-		mProcessedMeshes.clear();
+		mProcessedStaticMeshes.clear();
 		mProcessedNodes.clear();
 	}
 
@@ -62,8 +62,17 @@ namespace TS_ENGINE {
 		for (unsigned int i = 0; i < mAssimpScene->mNumMeshes; i++)
 		{
 			aiMesh* assimpMesh = mAssimpScene->mMeshes[i];
-			Ref<Mesh> mesh = ProcessMesh(assimpMesh, mAssimpScene);
-			mProcessedMeshes.insert({ mesh->GetName(), mesh });
+
+			if (assimpMesh->mNumBones == 0)
+			{
+				Ref<StaticMesh> mesh = ProcessStaticMesh(assimpMesh, mAssimpScene);
+				mProcessedStaticMeshes.insert({ mesh->GetName(), mesh });
+			}
+			else
+			{
+				Ref<SkinnedMesh> mesh = ProcessSkinnedMesh(assimpMesh, mAssimpScene);
+				mProcessedSkinnedMeshes.insert({ mesh->GetName(), mesh });
+			}
 		}
 
 		// Process Nodes
@@ -163,7 +172,7 @@ namespace TS_ENGINE {
 			{
 				aiMesh* assimpMesh = scene->mMeshes[aiNode->mMeshes[i]];
 				// Fetch mesh from mProcessedMeshes map and add to node's meshes
-				Ref<Mesh> processedMesh = mProcessedMeshes[assimpMesh->mName.C_Str()];
+				Ref<Mesh> processedMesh = mProcessedStaticMeshes[assimpMesh->mName.C_Str()];
 				TS_CORE_ASSERT(processedMesh);
 				node->AddMesh(processedMesh);
 			}
@@ -182,9 +191,9 @@ namespace TS_ENGINE {
 		return node;
 	}
 
-	Ref<Mesh> Model::ProcessMesh(aiMesh* aiMesh, const aiScene* scene)
+	Ref<StaticMesh> Model::ProcessStaticMesh(aiMesh* aiMesh, const aiScene* scene)
 	{
-		TS_CORE_TRACE("Processing mesh named: {0}", aiMesh->mName.C_Str());
+		TS_CORE_TRACE("Processing static mesh named: {0}", aiMesh->mName.C_Str());
 
 		std::vector<Vertex> vertices;
 		std::vector<GLuint> indices;
@@ -196,7 +205,81 @@ namespace TS_ENGINE {
 		for (GLuint i = 0; i < aiMesh->mNumVertices; i++)
 		{
 			Vertex vertex;
-			vertex.ResetBoneInfoToDefault();
+
+			// Position
+			Vector4 position = Vector4(Utility::AssimpVec3ToGlmVec3(aiMesh->mVertices[i]), 1.0f);
+
+			// UV
+			Vector2 uv(0.0f);
+			if (aiMesh->mTextureCoords[0])
+			{
+				uv.x = aiMesh->mTextureCoords[0][i].x;
+				uv.y = aiMesh->mTextureCoords[0][i].y;
+			}
+
+			// Normal
+			Vector3 normal(0.0f);
+			if (aiMesh->HasNormals())
+			{
+				normal = Utility::AssimpVec3ToGlmVec3(aiMesh->mNormals[i]);
+			}
+
+			vertex.position = position;
+			vertex.texCoord = uv;
+			vertex.normal = normal;
+
+			vertices.push_back(vertex);			// Add to mesh vertices
+		}
+
+		// Fetch Indices From AssimpMesh
+		for (GLuint i = 0; i < aiMesh->mNumFaces; i++)
+		{
+			aiFace face = aiMesh->mFaces[i];
+
+			for (GLuint j = 0; j < face.mNumIndices; j++)
+			{
+				indices.push_back(face.mIndices[j]);
+			}
+		}
+
+		// Fetch Material Info From mProcessedMaterials
+		Ref<Material> material = nullptr;
+
+		if (aiMesh->mMaterialIndex >= 0)
+		{
+			aiMaterial* aiMat = scene->mMaterials[aiMesh->mMaterialIndex];
+
+			// Material name should not be null
+			TS_CORE_ASSERT(mProcessedMaterials[aiMat->GetName().C_Str()]);
+			material = mProcessedMaterials[aiMat->GetName().C_Str()];
+		}
+
+		Ref<StaticMesh> mesh = CreateRef<StaticMesh>();
+		mesh->SetName(meshName);		// Name
+		mesh->SetVertices(vertices);	// Vertices
+		mesh->SetIndices(indices);		// Indices		
+		mesh->SetMaterial(material);	// Materials
+
+		// Create mesh
+		mesh->Create();
+
+		return mesh;
+	}
+
+	Ref<SkinnedMesh> Model::ProcessSkinnedMesh(aiMesh* aiMesh, const aiScene* scene)
+	{
+		TS_CORE_TRACE("Processing mesh named: {0}", aiMesh->mName.C_Str());
+
+		std::vector<SkinnedVertex> vertices;
+		std::vector<GLuint> indices;
+		std::vector<Texture> textures;
+
+		std::string meshName = aiMesh->mName.C_Str();
+
+		// Fetch Vertices From AssimpMesh
+		for (GLuint i = 0; i < aiMesh->mNumVertices; i++)
+		{
+			SkinnedVertex vertex;
 
 			// Position
 			Vector4 position = Vector4(Utility::AssimpVec3ToGlmVec3(aiMesh->mVertices[i]), 1.0f);
@@ -236,7 +319,7 @@ namespace TS_ENGINE {
 
 		// Set BoneId and BoneWeight for vertices
 		ExtractBoneWeightForVertices(vertices, aiMesh);
-		
+
 		// Fetch Material Info From mProcessedMaterials
 		Ref<Material> material = nullptr;
 
@@ -249,15 +332,15 @@ namespace TS_ENGINE {
 			material = mProcessedMaterials[aiMat->GetName().C_Str()];
 		}
 
-		Ref<Mesh> mesh = CreateRef<Mesh>();
+		Ref<SkinnedMesh> mesh = CreateRef<SkinnedMesh>();
 		mesh->SetName(meshName);		// Name
 		mesh->SetVertices(vertices);	// Vertices
 		mesh->SetIndices(indices);		// Indices		
 		mesh->SetMaterial(material);	// Materials
 
-		for(auto& vertex : mesh->GetVertices())
+		for (auto& vertex : mesh->GetSkinnedVertices())
 		{
-			for(auto& weight : vertex.weights)
+			for (auto& weight : vertex.weights)
 			{
 				if (weight != 0.0f)
 				{
@@ -407,7 +490,7 @@ namespace TS_ENGINE {
 		return mBoneInfoMap[_name];	
 	}
 
-	void Model::ExtractBoneWeightForVertices(std::vector<Vertex>& _vertices, aiMesh* _aiMesh)
+	void Model::ExtractBoneWeightForVertices(std::vector<SkinnedVertex>& _skinnedVertices, aiMesh* _aiMesh)
 	{
 		for (int boneIndex = 0; boneIndex < (int)_aiMesh->mNumBones; ++boneIndex)
 		{
@@ -438,9 +521,9 @@ namespace TS_ENGINE {
 				int vertexId = weights[weightIndex].mVertexId;
 				float weight = weights[weightIndex].mWeight;
 
-				TS_CORE_ASSERT(vertexId <= _vertices.size());
+				TS_CORE_ASSERT(vertexId <= _skinnedVertices.size());
 
-				_vertices[vertexId].SetBoneIdAndWeight(boneID, weight);
+				_skinnedVertices[vertexId].SetBoneIdAndWeight(boneID, weight);
 			}
 		}
 	}

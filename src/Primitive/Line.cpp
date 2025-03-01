@@ -15,7 +15,7 @@ namespace TS_ENGINE
 
 	void Line::CreateMesh(const std::vector<Vector3>& points)
 	{
-		mMesh = CreateRef<Mesh>();
+		mMesh = CreateRef<StaticMesh>();
 		mMesh->SetPrimitiveType(PrimitiveType::LINE);
 
 		for (int i = 0; i < points.size(); i++)
@@ -26,7 +26,7 @@ namespace TS_ENGINE
 		mMesh->Create(DrawMode::LINE);
 	}
 
-	Ref<Mesh> Line::GetMesh()
+	Ref<StaticMesh> Line::GetMesh()
 	{
 		return mMesh;
 	}
