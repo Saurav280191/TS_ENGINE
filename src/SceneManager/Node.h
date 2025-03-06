@@ -17,6 +17,7 @@ namespace TS_ENGINE
 		BONEGUI,
 		CAMERA,
 		SKYBOX,
+		TERRAIN,
 		SCENE,
 		LIGHT,
 		EMPTY
@@ -124,7 +125,7 @@ namespace TS_ENGINE
 		const std::string& GetName() { return mName; }
 		NodeType GetNodeType() { return mType; }
 		std::string GetNodeTypeStr(const NodeType& _nodeType);
-		const bool IsVisibleInEditor() const { return mIsVisibleInEditor; }			
+		//const bool IsVisibleInEditor() const { return mIsVisibleInEditor; }			
 		Ref<Node> GetChildAt(uint32_t childIndex) const;
 		Ref<Node> GetParentNode() const { return mParentNode; }
 		std::vector<Ref<Node>> GetChildren() const { return mChildren; }

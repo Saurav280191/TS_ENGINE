@@ -159,6 +159,32 @@ namespace TS_ENGINE
 		return coneNode;
 	}
 
+	Ref<Node> Factory::InstantiateTerrain(const std::string& name, Ref<Node> parentNode)
+	{
+		Ref<Node> terrainNode = CreateRef<Node>();
+		Ref<Terrain> terrain = CreateRef<Terrain>();
+		Ref<Mesh> mesh = terrain->GetMesh();
+		mesh->SetName(name);
+		terrainNode->AddMesh(mesh);
+		terrainNode->SetParent(parentNode);
+		terrainNode->Initialize(name, NodeType::TERRAIN);
+		return terrainNode;		
+	}
+
+	Ref<Node> Factory::InstantiateTerrain(const std::string& name, double _width, double _depth, double _gridSpacing, Ref<Node> parentNode)
+	{
+		Ref<Node> terrainNode = CreateRef<Node>();
+		Ref<Terrain> terrain = CreateRef<Terrain>(_width, _depth, _gridSpacing);
+		terrain->LoadHeightMap(Application::s_AssetsDir.string() + "\\Textures\\Heightmap.png", 10.0f);
+		//terrain->LoadHeightMap(Application::s_AssetsDir.string() + "\\Textures\\iceland_heightmap.png", 2.0f);
+		Ref<Mesh> mesh = terrain->GetMesh();
+		mesh->SetName(name);
+		terrainNode->AddMesh(mesh);
+		terrainNode->SetParent(parentNode);
+		terrainNode->Initialize(name, NodeType::TERRAIN);
+		return terrainNode;		
+	}
+
 	Ref<Node> Factory::InstantiateSphereGui(const std::string& name, Ref<Node> parentNode)
 	{
 		Ref<Node> sphereNode = CreateRef<Node>();		

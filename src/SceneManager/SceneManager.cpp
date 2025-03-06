@@ -2,6 +2,7 @@
 #include "SceneManager.h"
 #include "Factory.h"
 #include "Utils/Utility.h"
+#include "Renderer/MaterialManager.h"
 
 namespace TS_ENGINE
 {
@@ -122,43 +123,48 @@ namespace TS_ENGINE
 		sceneCamera->SetPerspective(TS_ENGINE::Camera::Perspective(60.0f, 1.77f, 0.1f, 1000.0f));
 		sceneCamera->CreateFramebuffer(1920, 1080);																					// Create Framebuffer For Sandbox
 		sceneCamera->Initialize();
-		sceneCameraNode->GetTransform()->SetLocalPosition(7.156f, 2.951f, 8.770f);
-		sceneCameraNode->GetTransform()->SetLocalEulerAngles(-13.235f, 38.064f, 0.0f);
+		//sceneCameraNode->GetTransform()->SetLocalPosition(7.156f, 2.951f, 8.770f);
+		//sceneCameraNode->GetTransform()->SetLocalEulerAngles(-13.235f, 38.064f, 0.0f);
+		sceneCameraNode->GetTransform()->SetLocalPosition(-5.24730539f, 7.7407055f, -6.37276411f);
+		sceneCameraNode->GetTransform()->SetLocalEulerAngles(-15.0f, 225.0f, 0);
 		sceneCameraNode->ComputeTransformMatrices();
 
 		// Add scene camera to scene
 		scene->AddSceneCamera(sceneCamera);																							// Add Scene Camera to Scene
-		
-		// Instantiate test model for Sandbox
-		Ref<Node> modelNode = nullptr;
 
-		std::string modelName = "Ely By K.Atienza.fbx";
+		// Instantiate test model for Sandbox
+		//Ref<Node> modelNode = nullptr;
+
+		//std::string modelName = "Ely By K.Atienza.fbx";
 		//std::string modelName = "Y Bot.fbx";
 
-		if (TS_ENGINE::Utility::FileExists("..//..//..//Assets//Models//" + modelName))
-			modelNode = Factory::GetInstance()->InstantiateModel("..//..//..//Assets//Models//" + modelName, scene->GetSceneNode()).first;// Instantiate Model
-		else if (TS_ENGINE::Utility::FileExists("Assets//Models//" + modelName))
-			modelNode = Factory::GetInstance()->InstantiateModel("Assets//Models//" + modelName, scene->GetSceneNode()).first;			// Instantiate Model
-		else
-			TS_CORE_ERROR("Invalid model path!");
+		//if (TS_ENGINE::Utility::FileExists("..//..//..//Assets//Models//" + modelName))
+		//	modelNode = Factory::GetInstance()->InstantiateModel("..//..//..//Assets//Models//" + modelName, scene->GetSceneNode()).first;// Instantiate Model
+		//else if (TS_ENGINE::Utility::FileExists("Assets//Models//" + modelName))
+		//	modelNode = Factory::GetInstance()->InstantiateModel("Assets//Models//" + modelName, scene->GetSceneNode()).first;			// Instantiate Model
+		//else
+		//	TS_CORE_ERROR("Invalid model path!");
 
-		// Rotate leftArm for testing bone influence
-		Ref<Node> leftArmNode = scene->GetSceneNode()->FindNodeByName("mixamorig:LeftArm");
-		Vector3 leftArmLocalEulerAngles = leftArmNode->GetTransform()->GetLocalEulerAngles();
-		leftArmNode->GetTransform()->SetLocalEulerAngles(leftArmLocalEulerAngles.x, leftArmLocalEulerAngles.y , leftArmLocalEulerAngles.z + 45.0f);
+		//// Rotate leftArm for testing bone influence
+		//Ref<Node> leftArmNode = scene->GetSceneNode()->FindNodeByName("mixamorig:LeftArm");
+		//Vector3 leftArmLocalEulerAngles = leftArmNode->GetTransform()->GetLocalEulerAngles();
+		//leftArmNode->GetTransform()->SetLocalEulerAngles(leftArmLocalEulerAngles.x, leftArmLocalEulerAngles.y , leftArmLocalEulerAngles.z + 45.0f);
 
-		Ref<Node> rightArmNode = scene->GetSceneNode()->FindNodeByName("mixamorig:RightArm");
-		Vector3 rightArmLocalEulerAngles = rightArmNode->GetTransform()->GetLocalEulerAngles();
-		rightArmNode->GetTransform()->SetLocalEulerAngles(rightArmLocalEulerAngles.x, rightArmLocalEulerAngles.y, rightArmLocalEulerAngles.z - 45.0f);
-		
-		Ref<Node> spineNode = scene->GetSceneNode()->FindNodeByName("mixamorig:Spine");
-		Vector3 spineLocalEulerAngles = spineNode->GetTransform()->GetLocalEulerAngles();
-		spineNode->GetTransform()->SetLocalEulerAngles(spineLocalEulerAngles.x, spineLocalEulerAngles.y + 45.0f, spineLocalEulerAngles.z);
+		//Ref<Node> rightArmNode = scene->GetSceneNode()->FindNodeByName("mixamorig:RightArm");
+		//Vector3 rightArmLocalEulerAngles = rightArmNode->GetTransform()->GetLocalEulerAngles();
+		//rightArmNode->GetTransform()->SetLocalEulerAngles(rightArmLocalEulerAngles.x, rightArmLocalEulerAngles.y, rightArmLocalEulerAngles.z - 45.0f);
+		//
+		//Ref<Node> spineNode = scene->GetSceneNode()->FindNodeByName("mixamorig:Spine");
+		//Vector3 spineLocalEulerAngles = spineNode->GetTransform()->GetLocalEulerAngles();
+		//spineNode->GetTransform()->SetLocalEulerAngles(spineLocalEulerAngles.x, spineLocalEulerAngles.y + 45.0f, spineLocalEulerAngles.z);
 
-		modelNode->GetTransform()->SetLocalScale(0.1f, 0.1f, 0.1f);
-		modelNode->ComputeTransformMatrices();
-		
-		Ref<Model> model = nullptr;
+		//if (modelNode)
+		//{
+		//	modelNode->GetTransform()->SetLocalScale(0.1f, 0.1f, 0.1f);
+		//	modelNode->ComputeTransformMatrices();
+		//}
+
+		/*Ref<Model> model = nullptr;
 
 		if (TS_ENGINE::Utility::FileExists("..//..//..//Assets//Models//" + modelName))
 			model = Factory::GetInstance()->mLoadedModelNodeMap["..//..//..//Assets//Models//" + modelName].second;
@@ -166,20 +172,26 @@ namespace TS_ENGINE
 			model = Factory::GetInstance()->mLoadedModelNodeMap["Assets//Models//" + modelName].second;
 
 		Ref<Bone> bone = model->FindBoneByName("mixamorig:LeftArm");
-		scene->mSelectedBoneId = bone->GetId();
+		scene->mSelectedBoneId = bone->GetId();*/
 #endif
 
 		// Default Ground
-		auto groundNode = Factory::GetInstance()->InstantiateQuad("Ground", scene->GetSceneNode());			// Instantiate Ground
-		groundNode->GetTransform()->SetLocalEulerAngles(-90.0f, 0.0f, 0.0f);
-		groundNode->GetTransform()->SetLocalScale(10.0f, 10.0f, 10.0f);
-		auto& groundMesh = groundNode->GetMesh();
-		groundMesh->GetMaterial()->SetAmbientColor(Vector4(0.7f, 0.7f, 0.7f, 1.0f));
-		groundNode->ComputeTransformMatrices();
+		//Ref<Node> groundNode = Factory::GetInstance()->InstantiateQuad("Ground",		// Instantiate Ground
+		//	scene->GetSceneNode());	
+		//groundNode->GetTransform()->SetLocalEulerAngles(-90.0f, 0.0f, 0.0f);
+		//groundNode->GetTransform()->SetLocalScale(10.0f, 10.0f, 10.0f);
+		//auto& groundMesh = groundNode->GetMesh();
+		//groundMesh->GetMaterial()->SetAmbientColor(Vector4(0.7f, 0.7f, 0.7f, 1.0f));
+		//groundNode->ComputeTransformMatrices();
 
-		scene->Initialize();																				// Initialize Scene
+		Ref<Node> terrainNode = Factory::GetInstance()->InstantiateTerrain("Terrain",	// Terrain 
+			100.0, 100.0, 0.5, scene->GetSceneNode());		
+		//terrainNode->GetMesh()->SetMaterial(MaterialManager::GetInstance()->GetMaterial("Lit"));
+		terrainNode->ComputeTransformMatrices();
+
+		scene->Initialize();															// Initialize Scene
 		
-		mCurrentScene = scene;																				// Set Scene As Current Scene
+		mCurrentScene = scene;															// Set Scene As Current Scene
 	}
 
 	void SceneManager::SaveCurrentScene()
