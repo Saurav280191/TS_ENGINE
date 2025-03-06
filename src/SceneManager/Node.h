@@ -140,6 +140,8 @@ namespace TS_ENGINE
 		std::string GetModelPath() { return mModelPath; }
 		const int GetSiblingIndex(Ref<Node> node);
 		
+		int GetId() { return mId; }
+
 		// Finds and returns root node's Id
 		int GetModelRootNodeId();
 
