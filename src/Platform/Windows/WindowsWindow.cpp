@@ -110,7 +110,7 @@ namespace TS_ENGINE {
 			data.EventCallback(event);
 		});
 
-		//Mouse Callbacks		
+		// Mouse Callbacks		
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);

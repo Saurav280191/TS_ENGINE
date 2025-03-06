@@ -27,7 +27,9 @@ namespace TS_ENGINE {
 		TS_CORE_INFO(" Renderer: {0}", gl_renderer.str());
 		TS_CORE_INFO(" Version: {0}", gl_version.str());
 
-		TS_CORE_ASSERT(GLVersion.major > 4 || (GLVersion.major == 4 && GLVersion.minor >= 5), "TS_ENGINE required at least OpenGL version 4.5!");
+		TS_CORE_ASSERT(GLVersion.major > 4 
+			|| (GLVersion.major == 4 && GLVersion.minor >= 5), 
+			"TS_ENGINE required at least OpenGL version 4.5!");
 	}
 
 	void OpenGLContext::SwapBuffers()
