@@ -2,7 +2,7 @@
 #include <memory>
 #include <intrin.h>
 
-//Base
+// Base
 #ifdef TS_DEBUG
 	#if defined(TS_PLATFORM_WINDOWS)
 		#define TS_DEBUGBREAK() __debugbreak()
@@ -17,7 +17,7 @@
 
 #define TS_BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
 
-//Unique pointer template
+// Unique pointer template
 template<typename T>
 using Scope = std::unique_ptr<T>;
 
@@ -27,7 +27,7 @@ constexpr Scope<T> CreateScope(Args&& ... args)
 	return std::make_unique<T>(std::forward<Args>(args) ...);
 }
 
-//Shared pointer template
+// Shared pointer template
 template<typename T>
 using Ref = std::shared_ptr<T>;
 template<typename T, typename ... Args>
