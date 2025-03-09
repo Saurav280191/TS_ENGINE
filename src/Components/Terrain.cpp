@@ -156,26 +156,27 @@ namespace TS_ENGINE
 			for (double x = 0; x < mWidth; x += mGridSpacing)
 			{
 				Vertex vertex;
-				double height = GetHeight(x, z, _heightScale);
-				vertex.position = Vector4(x, height, z, 1);
+				double height = GetHeight(x, z);
+				vertex.position = Vector4(x, height * _heightScale, z, 1);
 				//TS_CORE_INFO("Vertex: {0}, {1}, {2}", vertex.position.x, vertex.position.y, vertex.position.z);
 				vertex.normal = ComputeNormal(x, z, _heightScale);
 				vertex.texCoord = Vector2(x / mWidth, z / mDepth);
+				vertex.height = height;
 
 				// **Height-based coloring**
-				double normalizedHeight = height / _heightScale; // Normalize to [0,1]
+				//double normalizedHeight = height; // [0,1]
 				
-				//Vector4 color;
-				//if (normalizedHeight < 0.3) // Low altitude (green)
-				//	color = Vector4(0.0f, 0.6f + normalizedHeight * 1.3f, 0.0f, 1.0f);
-				//else if (normalizedHeight < 0.6) // Mid altitude (brown/gray)
-				//	color = Vector4(0.5f, 0.4f, 0.3f, 1.0f);
-				//else if (normalizedHeight < 0.8) // High altitude (dark gray)
-				//	color = Vector4(0.6f, 0.6f, 0.6f, 1.0f);
-				//else // Snowy peaks (white)
-				//	color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+				Vector3 color;
+				if (height < 0.3) // Low altitude (green)
+					color = Vector3(0.0f, 0.6f + height * 1.3f, 0.0f);
+				else if (height < 0.6) // Mid altitude (brown/gray)
+					color = Vector3(0.5f, 0.4f, 0.3f);
+				else if (height < 0.8) // High altitude (dark gray)
+					color = Vector3(0.6f, 0.6f, 0.6f);
+				else // Snowy peaks (white)
+					color = Vector3(1.0f, 1.0f, 1.0f);
 
-				//vertex.color = color;
+				vertex.color = color;
 
 				mMesh->AddVertex(vertex);
 			}
@@ -207,7 +208,7 @@ namespace TS_ENGINE
 		mMesh->Create();
 	}
 
-	double Terrain::GetHeight(double _x, double _z, double _heightScale)
+	double Terrain::GetHeight(double _x, double _z)
 	{
 		if (!mHeightMapData) // No heightmap? Default to flat terrain.
 			return 0.0f;
@@ -237,15 +238,15 @@ namespace TS_ENGINE
 		float height = top * (1 - dz) + bottom * dz;
 
 		// Return the interpolated height, scaled to the terrain height range
-		return height * _heightScale;
+		return height;
 	}
 
-	Vector3 Terrain::ComputeNormal(double _x, double _z, double _heightScale) 
+	Vector3 Terrain::ComputeNormal(double _x, double _z, double _heightMap) 
 	{
-		double hl = GetHeight(_x - 1, _z, _heightScale);	// Left
-		double hr = GetHeight(_x + 1, _z, _heightScale);	// Right
-		double hu = GetHeight(_x, _z - 1, _heightScale);	// Up
-		double hd = GetHeight(_x, _z + 1, _heightScale);	// Down
+		double hl = GetHeight(_x - 1, _z) * _heightMap;	// Left
+		double hr = GetHeight(_x + 1, _z) * _heightMap;	// Right
+		double hu = GetHeight(_x, _z - 1) * _heightMap;	// Up
+		double hd = GetHeight(_x, _z + 1) * _heightMap;	// Down
 
 		Vector3 normal = Vector3(hl - hr, 2.0f, hu - hd);
 		return glm::normalize(normal);

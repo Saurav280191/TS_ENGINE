@@ -13,11 +13,10 @@ namespace TS_ENGINE
 		void Set(double _width, double _depth, double _gridSpacing);
 		void LoadHeightMap(std::string _heightMapFilepath, double _heightScale);
 
-		double GetHeight(double _x, double _z, double _heightScale);
+		double GetHeight(double _x, double _z);
 
-		Vector3 ComputeNormal(double _x, double _z, double _heightScale);
-
-		Vector3 ComputeNormal(double x, double z);
+		Vector3 ComputeNormal(double _x, double _z, double _heightMap);
+		Vector3 ComputeNormal(double _x, double _z);
 
 		double FractalPerlin(Vector2 pos, int octaves, double persistence);
 
