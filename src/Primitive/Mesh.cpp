@@ -76,10 +76,12 @@ namespace TS_ENGINE {
 
 		vertexBuffer->SetLayout({
 			{ ShaderDataType::FLOAT4, "a_Position"},	// Position
+			{ ShaderDataType::FLOAT3, "a_Color"},		// Color
 			{ ShaderDataType::FLOAT2, "a_TexCoord"},	// UV
 			{ ShaderDataType::FLOAT3, "a_Normal"},		// Normal
 			{ ShaderDataType::INT4,   "a_BoneIds" },	// Bone IDs
-			{ ShaderDataType::FLOAT4, "a_Weights" }		// Bone Weights
+			{ ShaderDataType::FLOAT4, "a_Weights" },	// Bone Weights
+			{ ShaderDataType::FLOAT, "a_Height" },		// Height for terrain
 			});
 
 		mVertexArray->AddVertexBuffer(vertexBuffer);

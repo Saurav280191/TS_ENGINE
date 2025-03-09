@@ -30,14 +30,19 @@ namespace TS_ENGINE {
 
 	struct Vertex
 	{
-		Vector4 position = Vector4(0, 0, 0, 0);		// Position
-		Vector2 texCoord = Vector2(0, 0);			// UV
-		Vector3 normal = Vector3(0, 0, 0);			// Normal
+		Vector4 position = Vector4(0, 0, 0, 0);	// Position
+		Vector3 color = Vector3(1, 1, 1);		// Color
+		Vector2 texCoord = Vector2(0, 0);		// UV
+		Vector3 normal = Vector3(0, 0, 0);		// Normal
 
 		// Bone indices that will influence vertex
-		int boneIds[MAX_BONE_INFLUENCE] = { -1, -1, -1, -1 };			// Bone Ids
+		int boneIds[MAX_BONE_INFLUENCE] = {		// Bone Ids
+			-1, -1, -1, -1 };			
 		// Weights from each bone
-		float weights[MAX_BONE_INFLUENCE] = {0.0f, 0.0f, 0.0f, 0.0f };	// Bone Weights
+		float weights[MAX_BONE_INFLUENCE] = {	// Bone Weights
+			0.0f, 0.0f, 0.0f, 0.0f };	
+
+		float height = 0;						// Height for terrain vertices
 
 		Vertex()
 		{
